@@ -81,4 +81,19 @@ public class EnrollmentList {
             violations.addAll(o.getCourse().canBeTakenBy(s));
         return violations;
     }
+
+    private List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        float gpa = s.calculateGPA();
+        int credits = sections.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
+        if (credits < 12)
+            violations.add(new MinCreditLimitNotMet());
+        else if (gpa < 12 && credits > 14)
+            violations.add(new MaxCreditLimitExceeded(14));
+        else if (gpa < 17 && credits > 20)
+            violations.add(new MaxCreditLimitExceeded(20));
+        else
+            violations.add(new MaxCreditLimitExceeded(24));
+        return violations;
+    }
 }
