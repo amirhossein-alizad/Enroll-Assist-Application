@@ -68,7 +68,6 @@ public class Student {
                 credits = sr.getCourse().getCredits();
             }
         }
-        System.out.println(sum);
         return sum / credits;
     }
 }

@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,7 +60,8 @@ public class EnrollmentList {
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
+    @VisibleForTesting
+    List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (int i = 0; i < sections.size(); i++)
             for (int j = i + 1; j < sections.size(); j++)
@@ -68,7 +70,8 @@ public class EnrollmentList {
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
+    @VisibleForTesting
+    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
             if (s.hasPassed(o.getCourse()))
@@ -76,14 +79,16 @@ public class EnrollmentList {
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
+    @VisibleForTesting
+    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
             violations.addAll(o.getCourse().canBeTakenBy(s));
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
+    @VisibleForTesting
+    List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         float gpa = s.calculateGPA();
         int credits = sections.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
