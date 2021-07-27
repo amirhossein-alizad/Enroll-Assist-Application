@@ -55,6 +55,7 @@ public class EnrollmentList {
         violations.addAll(checkHasPassedAllPrerequisites(owner));
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
+        violations.addAll(checkValidGPALimit(owner));
         return violations;
     }
 
@@ -92,7 +93,7 @@ public class EnrollmentList {
             violations.add(new MaxCreditLimitExceeded(14));
         else if (gpa < 17 && credits > 20)
             violations.add(new MaxCreditLimitExceeded(20));
-        else
+        else if (credits > 24)
             violations.add(new MaxCreditLimitExceeded(24));
         return violations;
     }
