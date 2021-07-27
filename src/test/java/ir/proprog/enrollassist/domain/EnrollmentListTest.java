@@ -29,6 +29,27 @@ public class EnrollmentListTest {
     }
 
     @Test
+    void Enrollment_list_prerequisite_rule_passes() {
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("1", "MATH1", 3);
+        Course phys1 = new Course("2", "PHYS1", 3);
+        Course prog = new Course("3", "PROG", 4);
+        Course ap = new Course("3", "AP", 3).withPre(prog);
+        Course math2 = new Course("5", "MATH2", 3).withPre(math1);
+        Section math1_1 = new Section(math1, "01");
+        Section phys1_1 = new Section(phys1, "01");
+        Section math2_1 = new Section(math2, "01");
+        Section ap_1 = new Section(ap, "01");
+        when(bebe.hasPassed(math1)).thenReturn(true);
+        when(bebe.hasPassed(prog)).thenReturn(true);
+        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+        list.addSections(math1_1, phys1_1, math2_1, ap_1);
+        assertThat(list.checkHasPassedAllPrerequisites(bebe))
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
     void Enrollment_list_course_already_passed_rule_fails() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
