@@ -55,6 +55,10 @@ public class Student {
         return this;
     }
 
+    public int getTotalTakenCredits() {
+        return grades.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
+    }
+
     public float calculateGPA() {
         int credits = 0;
         int sum = 0;
@@ -64,6 +68,7 @@ public class Student {
                 credits = sr.getCourse().getCredits();
             }
         }
+        System.out.println(sum);
         return sum / credits;
     }
 }
