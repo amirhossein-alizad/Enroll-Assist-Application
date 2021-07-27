@@ -65,7 +65,7 @@ public class Student {
         for (StudyRecord sr : grades) {
             if (sr.getGrade() >= 10) {
                 sum += sr.getCourse().getCredits() * sr.getGrade();
-                credits = sr.getCourse().getCredits();
+                credits += sr.getCourse().getCredits();
             }
         }
         return sum / credits;
