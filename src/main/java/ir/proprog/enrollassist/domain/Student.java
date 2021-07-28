@@ -66,6 +66,6 @@ public class Student {
             sum += sr.getCourse().getCredits() * sr.getGrade();
             credits += sr.getCourse().getCredits();
         }
-        return sum / credits;
+        return (float) sum / credits;
     }
 }
