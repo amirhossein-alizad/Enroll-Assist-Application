@@ -10,7 +10,7 @@ import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
     @Test
-    void Enrollment_list_prerequisite_rule_fails() {
+    void Enrollment_list_cannot_have_courses_with_prerequisites_not_taken_by_owner() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course phys1 = new Course("2", "PHYS1", 3);
@@ -29,7 +29,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_prerequisite_rule_passes() {
+    void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course phys1 = new Course("2", "PHYS1", 3);
@@ -50,7 +50,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_course_already_passed_rule_fails() {
+    void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course phys1 = new Course("2", "PHYS1", 3);
@@ -69,7 +69,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_course_requested_twice_rule_fails() {
+    void Enrollment_list_cannot_have_duplicate_courses() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course phys1 = new Course("2", "PHYS1", 3);
@@ -84,22 +84,22 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
-    @Test
-    void Enrollment_list_min_limit_rule_fails() {
-        Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course prog = new Course("3", "PROG", 4);
-        Section math1_1 = new Section(math1, "01");
-        Section prog_1 = new Section(prog, "01");
-        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(math1_1, prog_1);
-        assertThat(list.checkValidGPALimit(bebe))
-                .isNotNull()
-                .hasSize(1);
-    }
+//    @Test
+//    void Enrollment_list_min_limit_rule_fails() {
+//        Student bebe = mock(Student.class);
+//        Course math1 = new Course("1", "MATH1", 3);
+//        Course prog = new Course("3", "PROG", 4);
+//        Section math1_1 = new Section(math1, "01");
+//        Section prog_1 = new Section(prog, "01");
+//        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+//        list.addSections(math1_1, prog_1);
+//        assertThat(list.checkValidGPALimit(bebe))
+//                .isNotNull()
+//                .hasSize(1);
+//    }
 
     @Test
-    void Enrollment_list_max_limit_rule_fails_gpa_less_than_12() {
+    void Enrollment_list_belonging_to_student_with_gpa_less_than_12_cannot_take_more_than_14_credits() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -122,7 +122,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_max_limit_rule_fails_gpa_less_than_17() {
+    void Enrollment_list_belonging_to_student_with_gpa_less_than_17_cannot_take_more_than_20_credits() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -143,7 +143,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_max_limit_rule_fails_with_more_than_24_credits() {
+    void Nobody_can_take_more_than_24_credits() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 8);
@@ -162,7 +162,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_max_limit_rule_passes_1() {
+    void Enrollment_list_() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         bebe.setGrade("1", math1, 11);
@@ -186,7 +186,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_multiple_rules_fail_1() {
+    void Enrollment_list_cannot_have_duplicate_courses_and_more_than_24_credits() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -218,7 +218,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_multiple_rules_fail_2() {
+    void Students_cannot_take_courses_without_their_prerequisites_taken_and_more_than_14_credits_with_gpa_less_than_12() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -250,7 +250,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_multiple_rules_fail_3() {
+    void Enrollment_list_cannot_have_duplicate_courses_and_their_prerequisites_not_taken() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course eco = new Course("3", "ECO", 3);
@@ -264,41 +264,13 @@ public class EnrollmentListTest {
         ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
         assertThat(list.checkEnrollmentRules())
                 .isNotNull()
-                .hasSize(3);
+                .hasSize(2);
         assertThat(violations.get(0).getClass())
                 .isEqualTo(PrerequisiteNotTaken.class);
         assertThat(violations.get(1).getClass())
                 .isEqualTo(CourseRequestedTwice.class);
-        assertThat(violations.get(2).getClass())
-                .isEqualTo(MinCreditLimitNotMet.class);
-    }
-
-    @Test
-    void Enrollment_list_multiple_rules_fail_4() {
-        Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course eco = new Course("3", "ECO", 3);
-        Course prog = new Course("2", "PROG", 4);
-        Course da = new Course("7", "DS", 3).withPre(prog);
-        Course dm = new Course("8", "DM", 3);
-        Section math1_1 = new Section(math1, "01");
-        Section eco_1 = new Section(eco, "01");
-        Section da_1 = new Section(da, "01");
-        Section dm_1 = new Section(dm, "01");
-        when(bebe.hasPassed(math1)).thenReturn(true);
-        when(bebe.calculateGPA()).thenReturn(12F);
-        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(math1_1, eco_1, eco_1, da_1, dm_1);
-        ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
-        assertThat(list.checkEnrollmentRules())
-                .isNotNull()
-                .hasSize(3);
-        assertThat(violations.get(0).getClass())
-                .isEqualTo(PrerequisiteNotTaken.class);
-        assertThat(violations.get(1).getClass())
-                .isEqualTo(RequestedCourseAlreadyPassed.class);
-        assertThat(violations.get(2).getClass())
-                .isEqualTo(CourseRequestedTwice.class);
+//        assertThat(violations.get(2).getClass())
+//                .isEqualTo(MinCreditLimitNotMet.class);
     }
 }
 
