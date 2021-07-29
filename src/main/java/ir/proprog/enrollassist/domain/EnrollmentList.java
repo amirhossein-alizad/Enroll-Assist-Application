@@ -92,8 +92,6 @@ public class EnrollmentList {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         float gpa = s.calculateGPA();
         int credits = sections.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
-//        if (credits < 12)
-//            violations.add(new MinCreditLimitNotMet());
         if (gpa < 12 && credits > 14)
             violations.add(new MaxCreditLimitExceeded(14));
         else if (gpa < 17 && credits > 20)

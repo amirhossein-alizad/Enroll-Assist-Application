@@ -84,20 +84,6 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
-//    @Test
-//    void Enrollment_list_min_limit_rule_fails() {
-//        Student bebe = mock(Student.class);
-//        Course math1 = new Course("1", "MATH1", 3);
-//        Course prog = new Course("3", "PROG", 4);
-//        Section math1_1 = new Section(math1, "01");
-//        Section prog_1 = new Section(prog, "01");
-//        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-//        list.addSections(math1_1, prog_1);
-//        assertThat(list.checkValidGPALimit(bebe))
-//                .isNotNull()
-//                .hasSize(1);
-//    }
-
     @Test
     void Enrollment_list_belonging_to_student_with_gpa_less_than_12_cannot_take_more_than_14_credits() {
         Student bebe = mock(Student.class);
@@ -269,8 +255,6 @@ public class EnrollmentListTest {
                 .isEqualTo(PrerequisiteNotTaken.class);
         assertThat(violations.get(1).getClass())
                 .isEqualTo(CourseRequestedTwice.class);
-//        assertThat(violations.get(2).getClass())
-//                .isEqualTo(MinCreditLimitNotMet.class);
     }
 }
 
