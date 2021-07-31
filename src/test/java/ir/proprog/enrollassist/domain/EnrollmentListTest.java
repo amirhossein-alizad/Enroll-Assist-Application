@@ -85,7 +85,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_belonging_to_student_with_gpa_less_than_12_cannot_take_more_than_14_credits() {
+    void Enrollment_list_cannot_have_more_than_14_credits_belonging_to_student_with_gpa_less_than_12() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -108,7 +108,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_belonging_to_student_with_gpa_less_than_17_cannot_take_more_than_20_credits() {
+    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         Course prog = new Course("2", "PROG", 4);
@@ -148,7 +148,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_() {
+    void Enrollment_list_has_no_violations() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
         bebe.setGrade("1", math1, 11);
