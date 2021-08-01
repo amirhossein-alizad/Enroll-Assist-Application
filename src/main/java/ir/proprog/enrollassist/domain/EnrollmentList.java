@@ -55,9 +55,7 @@ public class EnrollmentList {
         violations.addAll(checkHasPassedAllPrerequisites(owner));
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
-        EnrollmentRuleViolation limitRule = checkValidGPALimit(owner);
-        if(limitRule != null)
-            violations.add(limitRule);
+        violations.addAll(checkValidGPALimit(owner));
         return violations;
     }
 
@@ -89,22 +87,23 @@ public class EnrollmentList {
         return violations;
     }
 
-    EnrollmentRuleViolation checkValidGPALimit(Student s) {
+    List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
         double GPA = s.calculateGPA();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
         if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
             if (credits > 20)
-                return new MaxCreditsLimitExceeded(20);
+                violations.add(new MaxCreditsLimitExceeded(20));
         }
         else if(s.getTotalTakenCredits() > 0) {
             if (credits > 14 && GPA < 12)
-                return new MaxCreditsLimitExceeded(14);
+                violations.add(new MaxCreditsLimitExceeded(14));
             else if (credits > 20 && GPA < 17)
-                return new MaxCreditsLimitExceeded(20);
+                violations.add(new MaxCreditsLimitExceeded(20));
             else if (credits > 24 && GPA >= 17)
-                return new MaxCreditsLimitExceeded(24);
+                violations.add(new MaxCreditsLimitExceeded(24));
         }
-        return null;
+        return violations;
     }
 
 }
