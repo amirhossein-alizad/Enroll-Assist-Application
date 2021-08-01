@@ -60,12 +60,16 @@ public class EnrollmentList {
 
     private List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (int i = 0; i < sections.size(); i++)
-            for (int j = i + 1; j < sections.size(); j++)
-                if (sections.get(i).getCourse().equals(sections.get(j).getCourse()))
-                    violations.add(new CourseRequestedTwice(sections.get(i), sections.get(j)));
+        Set<Course> Courses = new HashSet<>();
+        for (Section section : sections)
+            if (Courses.contains(section.getCourse()))
+                violations.add(new CourseRequestedTwice(section.getCourse()));
+            else
+                Courses.add(section.getCourse());
+
         return violations;
     }
+
 
     private List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
