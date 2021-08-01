@@ -17,32 +17,6 @@ import static org.mockito.Mockito.*;
 
 public class StudentTest {
 
-    Course math;
-    Student mehrnaz;
-
-    @BeforeEach
-    void setUp() {
-        this.math = mock(Course.class);
-        this.mehrnaz = new Student("810196493", "Mehrnaz");
-    }
-
-    @Test
-    void Student_has_not_passed_any_courses() {
-        assertFalse(this.mehrnaz.hasPassed(this.math));
-    }
-
-    @Test
-    void Student_has_passed_a_course() {
-        this.mehrnaz.setGrade("t1", this.math, 12);
-        assertTrue(this.mehrnaz.hasPassed(this.math));
-    }
-
-    @Test
-    void Student_has_not_passed_a_course() {
-        this.mehrnaz.setGrade("t1", this.math, 7);
-        assertFalse(this.mehrnaz.hasPassed(this.math));
-    }
-
     @Test
     void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed(){
         Student bebe = new Student("810197546", "bebe");
@@ -69,6 +43,7 @@ public class StudentTest {
                 .isEqualTo(15.53F);
     }
 
+    @Test
     void Student_has_not_passed_records_that_are_not_in_grades_set() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
