@@ -22,7 +22,7 @@ public class EnrollmentList {
     List<Section> sections = new ArrayList<>();
 
     public EnrollmentList(@NonNull String listName, @NonNull Student owner) {
-        if (listName == "")
+        if (listName.equals(""))
             throw new IllegalArgumentException("Enrollment list must have a name");
         this.listName = listName;
         this.owner = owner;
@@ -81,4 +81,23 @@ public class EnrollmentList {
             violations.addAll(o.getCourse().canBeTakenBy(s));
         return violations;
     }
+
+    private EnrollmentRuleViolation checkMeetsCreditsLimit(Student s) {
+        double GPA = s.calculateGPA();
+        int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
+        if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
+            if (credits > 20)
+                return new MaxCreditsLimitExceeded(20);
+        }
+        else if(s.getTotalTakenCredits() > 0) {
+            if (credits > 14 && GPA < 12)
+                return new MaxCreditsLimitExceeded(14);
+            else if (credits > 20 && GPA < 17)
+                return new MaxCreditsLimitExceeded(20);
+            else if (credits > 24 && GPA >= 17)
+                return new MaxCreditsLimitExceeded(24);
+        }
+        return null;
+    }
+
 }
