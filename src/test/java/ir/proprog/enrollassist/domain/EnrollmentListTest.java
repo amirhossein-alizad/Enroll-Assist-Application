@@ -101,10 +101,12 @@ public class EnrollmentListTest {
         Section ds_1 = new Section(ds, "01");
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(11.5F);
+        when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, eco_1, ap_1, ds_1);
         assertThat(list.checkValidGPALimit(bebe))
-                .isNotNull();
+                .isNotNull()
+                .hasSize(1);
     }
 
     @Test
@@ -121,10 +123,12 @@ public class EnrollmentListTest {
         Section ap_1 = new Section(ap, "01");
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(16F);
+        when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, eco_1, ap_1);
         assertThat(list.checkValidGPALimit(bebe))
-                .isNotNull();
+                .isNotNull()
+                .hasSize(1);
     }
 
     @Test
@@ -139,10 +143,12 @@ public class EnrollmentListTest {
         Section eco_1 = new Section(eco, "01");
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(20F);
+        when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, eco_1);
         assertThat(list.checkValidGPALimit(bebe))
-                .isNotNull();
+                .isNotNull()
+                .hasSize(1);
     }
 
     @Test
@@ -189,6 +195,7 @@ public class EnrollmentListTest {
         Section dm_1 = new Section(dm, "01");
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(20F);
+        when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, eco_1, ap_1, ds_1, da_1, dm_1, dm_1);
         ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
@@ -221,6 +228,7 @@ public class EnrollmentListTest {
         Section dm_1 = new Section(dm, "01");
         when(bebe.hasPassed(math1)).thenReturn(false);
         when(bebe.calculateGPA()).thenReturn(11F);
+        when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, eco_1, ap_1, ds_1, da_1, dm_1);
         ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
@@ -255,7 +263,8 @@ public class EnrollmentListTest {
                 .isEqualTo(CourseRequestedTwice.class);
     }
 
-    void New_Students_Can_Take_More_Than_Twelve_Credits(){
+    @Test
+    void New_students_can_take_more_than_twelve_credits(){
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 3);
         Course phys1 = new Course("8", "PHYS1", 3);
@@ -276,7 +285,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void New_Students_Cant_Take_More_Than_Twenty_Credits(){
+    void New_students_cant_take_more_than_twenty_credits(){
         Student bebe = mock(Student.class);
         Course phys1 = new Course("8", "PHYS1", 3);
         Course prog = new Course("7", "PROG", 4);
@@ -303,7 +312,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Students_Taking_Less_Than_Twelve_Credits_is_not_a_Violation() {
+    void Students_aking_Less_Than_Twelve_Credits_is_not_a_Violation() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 3);
         Course phys1 = new Course("8", "PHYS1", 3);
