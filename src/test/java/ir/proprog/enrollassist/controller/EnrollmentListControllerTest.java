@@ -448,12 +448,12 @@ public class EnrollmentListControllerTest {
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
 
         when(bob.calculateGPA()).thenReturn(11F);
-
+        when(bob.getTotalTakenCredits()).thenReturn(1);
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.violationMessages", hasSize(1)))
-                .andExpect(jsonPath("$.violationMessages[0]",is("Maximum number of credits is 14")));
+                .andExpect(jsonPath("$.violationMessages[0]",is("Maximum number of credits(14) exceeded.")));
     }
 
 }
