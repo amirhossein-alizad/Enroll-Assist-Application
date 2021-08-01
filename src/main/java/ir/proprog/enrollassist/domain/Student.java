@@ -61,14 +61,14 @@ public class Student {
 
     public float calculateGPA() {
         int credits = 0;
-        int sum = 0;
+        float sum = 0;
         for (StudyRecord sr : grades) {
             sum += sr.getCourse().getCredits() * sr.getGrade();
             credits += sr.getCourse().getCredits();
         }
         if(credits == 0) return 0F;
 
-        return (float) sum / credits;
+        return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
 }
