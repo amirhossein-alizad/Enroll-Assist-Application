@@ -66,7 +66,7 @@ public class StudentTest {
         bebe.setGrade("t1", economy, 19.5);
         bebe.setGrade("t1", maaref, 16);
         assertThat(bebe.calculateGPA())
-                .isEqualTo(15.53);
+                .isEqualTo(15.53F);
     }
 
     void Student_has_not_passed_records_that_are_not_in_grades_set() {
