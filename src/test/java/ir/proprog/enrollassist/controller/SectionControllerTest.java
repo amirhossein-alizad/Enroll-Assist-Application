@@ -20,7 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
-
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -49,19 +49,17 @@ public class SectionControllerTest {
         );
 
         given(sectionRepository.findAll()).willReturn(sections);
-
-        // TODO: Since there is no requirement on the order of the returned list, $[0] must be changed to proper filtering
         mvc.perform(get("/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(sections.size())))
-                .andExpect(jsonPath("$[0].courseTitle", is("C1")))
-                .andExpect(jsonPath("$[0].courseNumber", is("1")))
-                .andExpect(jsonPath("$[0].sectionNo", is("01")));
+                .andExpect(jsonPath("$[0].courseTitle", anyOf(is("C1"), is("C2"))))
+                .andExpect(jsonPath("$[0].courseNumber", anyOf(is("1"), is("2"))))
+                .andExpect(jsonPath("$[0].sectionNo", anyOf(is("01"), is("02"))));
     }
 
     @Test
-    public void Section_is_returned_correctly() throws Exception {
+    public void Requested_section_is_returned_correctly() throws Exception {
         Section section = new Section(new Course("1", "ap", 3), "01");
         given(sectionRepository.findById(1L)).willReturn(Optional.of(section));
         mvc.perform(get("/sections/1")
@@ -71,36 +69,6 @@ public class SectionControllerTest {
                 .andExpect(jsonPath("$.courseNumber", is("1")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
 
-    }
-
-    @Test
-    public void Unreal_section_not_found() throws Exception {
-        given(sectionRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
-        mvc.perform(get("/sections/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError());
-    }
-
-    @Test
-    public void Demands_are_returned_correctly() throws Exception {
-        SectionDemandView sectionDemandView1 = new SectionDemandView(1L, 4L);
-        SectionDemandView sectionDemandView2 = new SectionDemandView(2L, 8L);
-        Section section1 = new Section(new Course("1", "ap", 3), "01");
-        Section section2 = new Section(new Course("2", "dm", 3), "01");
-        given(enrollmentListRepository.findDemandForAllSections()).willReturn(List.of(sectionDemandView1, sectionDemandView2));
-        given(sectionRepository.findById(1L)).willReturn(Optional.of(section1));
-        given(sectionRepository.findById(2L)).willReturn(Optional.of(section2));
-        mvc.perform(get("/sections/demands")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].demand", is(4)))
-                .andExpect(jsonPath("$[0].sectionView.courseTitle", is("ap")))
-                .andExpect(jsonPath("$[0].sectionView.courseNumber", is("1")))
-                .andExpect(jsonPath("$[0].sectionView.sectionNo", is("01")))
-                .andExpect(jsonPath("$[1].demand", is(8)))
-                .andExpect(jsonPath("$[1].sectionView.courseTitle", is("dm")))
-                .andExpect(jsonPath("$[1].sectionView.courseNumber", is("2")))
-                .andExpect(jsonPath("$[1].sectionView.sectionNo", is("01")));
     }
 
     @Test
@@ -133,49 +101,9 @@ public class SectionControllerTest {
     }
 
     @Test
-    public void One_section_is_returned_correctly() throws Exception {
-        Section section = new Section(new Course("1", "C1", 3), "01");
-
-        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
-
-        mvc.perform(get("/sections/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseTitle", is("C1")))
-                .andExpect(jsonPath("$.courseNumber", is("1")))
-                .andExpect(jsonPath("$.sectionNo", is("01")));
-    }
-
-    @Test
-    public void Sections_that_dont_exist_are_not_found() throws Exception{
+    public void Section_that_doesnt_exist_is_not_found() throws Exception{
         mvc.perform(get("/sections/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void All_demands_are_returned_correctly() throws Exception {
-        Section S1 = new Section(new Course("1", "C1", 3), "01");
-        Section S2 = new Section(new Course("2", "C2", 3), "02");
-        Section S3 = new Section(new Course("2", "C2", 3), "01");
-        SectionView SV1 = new SectionView(S1);
-        SectionView SV2 = new SectionView(S2);
-        SectionView SV3 = new SectionView(S3);
-        List<SectionDemandView> demandViews = List.of(new SectionDemandView(SV1, 10),
-                new SectionDemandView(SV2, 20),
-                new SectionDemandView(SV3, 30));
-
-        given(enrollmentListRepository.findDemandForAllSections()).willReturn(demandViews);
-        given(sectionRepository.findById(S1.getId())).willReturn(java.util.Optional.of(S1));
-        given(sectionRepository.findById(S2.getId())).willReturn(java.util.Optional.of(S2));
-        given(sectionRepository.findById(S3.getId())).willReturn(java.util.Optional.of(S3));
-
-        mvc.perform(get("/sections/demands")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(demandViews.size())))
-                .andExpect(jsonPath("$[0].demand", is(10)))
-                .andExpect(jsonPath("$[1].demand", is(20)))
-                .andExpect(jsonPath("$[2].demand", is(30)));
     }
 }
