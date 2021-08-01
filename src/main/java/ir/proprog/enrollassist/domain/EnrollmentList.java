@@ -55,10 +55,13 @@ public class EnrollmentList {
         violations.addAll(checkHasPassedAllPrerequisites(owner));
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
+        EnrollmentRuleViolation limitRule = checkValidGPALimit(owner);
+        if(limitRule != null)
+            violations.add(limitRule);
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
+    List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         Set<Course> Courses = new HashSet<>();
         for (Section section : sections)
@@ -71,7 +74,7 @@ public class EnrollmentList {
     }
 
 
-    private List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
+    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
             if (s.hasPassed(o.getCourse()))
@@ -79,14 +82,14 @@ public class EnrollmentList {
         return violations;
     }
 
-    private List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
+    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
             violations.addAll(o.getCourse().canBeTakenBy(s));
         return violations;
     }
 
-    private EnrollmentRuleViolation checkMeetsCreditsLimit(Student s) {
+    EnrollmentRuleViolation checkValidGPALimit(Student s) {
         double GPA = s.calculateGPA();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
