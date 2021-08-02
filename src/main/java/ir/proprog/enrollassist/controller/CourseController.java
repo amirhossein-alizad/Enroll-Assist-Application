@@ -26,7 +26,7 @@ public class CourseController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView AddNewCourse(@RequestBody CourseView courseView){
+    public CourseView addNewCourse(@RequestBody CourseView courseView){
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
