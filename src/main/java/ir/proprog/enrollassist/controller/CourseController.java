@@ -24,9 +24,13 @@ public class CourseController {
         this.courseRepository = courseRepository;
     }
 
+    @GetMapping
+    public Iterable<CourseView> all() {
+        return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
+    }
+
     @PostMapping(value = "/addNew", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public void Add_new_course(@RequestBody Course course){
-        System.out.println(course.getTitle());
         courseRepository.save(course);
     }
 }
