@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,6 +40,8 @@ public class SectionControllerTest {
     private SectionRepository sectionRepository;
     @MockBean
     private EnrollmentListRepository enrollmentListRepository;
+    @MockBean
+    private CourseRepository courseRepository;
 
     @Test
     public void All_sections_are_returned_correctly() throws Exception {
@@ -119,5 +122,22 @@ public class SectionControllerTest {
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.courseNumber", is("1")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
+    }
+
+    @Test
+    public void Section_of_unreal_course_is_not_added_correctly() throws Exception {
+        given(this.courseRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/5")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void Section_with_invalid_section_number_is_not_added_correctly() throws Exception {
+        Course course = mock(Course.class);
+        given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

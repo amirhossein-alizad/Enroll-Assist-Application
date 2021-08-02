@@ -23,9 +23,10 @@ public class SectionController {
     EnrollmentListRepository enrollmentListRepository;
     CourseRepository courseRepository;
 
-    public SectionController(SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
+    public SectionController(SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository, CourseRepository courseRepository) {
         this.sectionRepository = sectionRepository;
         this.enrollmentListRepository = enrollmentListRepository;
+        this.courseRepository = courseRepository;
     }
 
     @GetMapping
