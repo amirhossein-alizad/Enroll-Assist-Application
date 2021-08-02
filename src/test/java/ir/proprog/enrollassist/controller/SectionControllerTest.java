@@ -16,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -29,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SectionController.class)
 public class SectionControllerTest {
@@ -139,5 +140,15 @@ public class SectionControllerTest {
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void Valid_section_is_added_correctly() throws Exception {
+        Course course = new Course("10", "DM", 3);
+        given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.sectionNo", is("01")))
+                .andExpect(status().isOk());
     }
 }

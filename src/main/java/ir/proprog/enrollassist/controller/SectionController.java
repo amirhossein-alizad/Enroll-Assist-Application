@@ -57,7 +57,7 @@ public class SectionController {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         try {
             Section newSection = new Section(course, sectionNo);
-            sectionRepository.save(newSection);
+            this.sectionRepository.save(newSection);
             return newSection;
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Section number is not valid.");
