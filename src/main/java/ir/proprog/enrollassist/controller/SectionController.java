@@ -1,17 +1,17 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.swing.*;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 public class SectionController {
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
+    CourseRepository courseRepository;
 
     public SectionController(SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
         this.sectionRepository = sectionRepository;
@@ -48,5 +49,16 @@ public class SectionController {
         }
         return demands;
     }
+
+    @PostMapping("/addSection")
+    public Section addNewSection(@RequestBody SectionView section) {
+        Course course = this.courseRepository.findById(section.getCourseId())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        Section newSection = new Section(course, section.getSectionNo());
+        sectionRepository.save(newSection);
+        return newSection;
+    }
+
+
 }
 
