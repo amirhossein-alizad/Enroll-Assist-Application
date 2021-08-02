@@ -123,4 +123,23 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(1)));
     }
+
+    @Test
+    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
+        JSONObject request = new JSONObject();
+        JSONArray jArray = new JSONArray();
+        jArray.put(1);
+        request.put("courseNumber","4");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        try {
+            request.put("prerequisites", jArray);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        mvc.perform(post("/courses")
+                        .content(request.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
