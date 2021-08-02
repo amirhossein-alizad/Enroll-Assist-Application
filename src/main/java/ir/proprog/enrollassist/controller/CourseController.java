@@ -29,8 +29,9 @@ public class CourseController {
         return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/addNew", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public void Add_new_course(@RequestBody Course course){
+    @PostMapping(value = "/addNewCourse", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public CourseView Add_new_course(@RequestBody Course course){
         courseRepository.save(course);
+        return new CourseView(course);
     }
 }
