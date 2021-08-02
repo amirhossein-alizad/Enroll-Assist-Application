@@ -48,6 +48,8 @@ public class EnrollmentListController {
     )
     public EnrollmentListView addOne(@RequestBody NewEnrollmentList req) {
         Student student = studentRepository.findStudentByStudentNumber(req.studentNumber);
+        if (student == null)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
         EnrollmentList enrollmentList = new EnrollmentList(req.listName, student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
