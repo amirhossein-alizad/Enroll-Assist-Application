@@ -7,7 +7,7 @@ import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
-import org.json.JSONArray;
+import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,22 +16,18 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 import static org.mockito.Mockito.when;
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasItemInArray;
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -75,6 +71,31 @@ public class EnrollmentListControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.enrollmentListName", is(this.list1.getListName())));
+    }
+
+    @Test
+    public void New_list_is_added_correctly() throws Exception {
+        Student std = new Student("00000", "gina");
+        JSONObject req = new JSONObject();
+        req.put("studentNumber", "00000");
+        req.put("listName", "new_list");
+        given(studentRepository.findStudentByStudentNumber("00000")).willReturn(std);
+        mvc.perform(post("/lists")
+                .content(req.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.enrollmentListName", is("new_list")));
+    }
+
+    @Test
+    public void New_list_cannot_be_added_if_owners_student_number_does_not_exist() throws Exception {
+        JSONObject req = new JSONObject();
+        req.put("studentNumber", "00000");
+        req.put("listName", "new_list");
+        mvc.perform(post("/lists")
+                .content(req.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
