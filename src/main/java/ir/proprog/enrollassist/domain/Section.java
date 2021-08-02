@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import antlr.StringUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,8 +32,11 @@ public class Section {
     private void validateSectionNo(String sectionNo) {
         if (sectionNo.equals(""))
             throw new IllegalArgumentException("Section number cannot be empty");
-        if (isNumeric(sectionNo))
+        try {
+            Integer.parseInt(sectionNo);
+        } catch (NumberFormatException numberFormatException) {
             throw new IllegalArgumentException("Section number must be number");
+        }
     }
 
     @Override

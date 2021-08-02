@@ -54,11 +54,14 @@ public class SectionController {
     public Section addNewSection(@RequestBody SectionView section) {
         Course course = this.courseRepository.findById(section.getCourseId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
-        Section newSection = new Section(course, section.getSectionNo());
-        this.sectionRepository.save(newSection);
-        return newSection;
+        try {
+            Section newSection = new Section(course, section.getSectionNo());
+            sectionRepository.save(newSection);
+            return newSection;
+        } catch (IllegalArgumentException illegalArgumentException) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Section number is not valid.");
+        }
     }
-
 
 }
 
