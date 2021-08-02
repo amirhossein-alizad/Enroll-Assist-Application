@@ -49,6 +49,7 @@ public class CourseControllerTest {
     void SetUp(){
         course1 = new Course("1", "C1", 3);
         course2 = new Course("2", "C2", 3);
+        course2.withPre(course1);
         course3 = new Course("3", "C3", 5);
         courses.addAll(List.of(course1, course2, course3));
     }
@@ -75,6 +76,18 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(0)));
+    }
+
+    @Test
+    public void Requested_with_prerequisite_course_is_returned_correctly() throws Exception{
+        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(course2));
+        mvc.perform(get("/courses/2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseNumber", is("2")))
+                .andExpect(jsonPath("$.courseCredits", is(3)))
+                .andExpect(jsonPath("$.courseTitle", is("C2")))
+                .andExpect(jsonPath("$.prerequisites", hasSize(1)));
     }
 
     @Test
