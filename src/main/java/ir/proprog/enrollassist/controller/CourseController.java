@@ -36,4 +36,11 @@ public class CourseController {
         courseRepository.save(newCourse);
         return new CourseView(newCourse);
     }
+
+    @GetMapping("/{id}")
+    public CourseView one(@PathVariable Long id){
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        return new CourseView(course);
+    }
 }
