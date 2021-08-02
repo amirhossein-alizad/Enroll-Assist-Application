@@ -55,7 +55,7 @@ public class SectionController {
         Course course = this.courseRepository.findById(section.getCourseId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         Section newSection = new Section(course, section.getSectionNo());
-        sectionRepository.save(newSection);
+        this.sectionRepository.save(newSection);
         return newSection;
     }
 

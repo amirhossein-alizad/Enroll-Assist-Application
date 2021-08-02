@@ -7,6 +7,9 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.Objects;
+import java.util.Optional;
+
+import static org.hibernate.query.criteria.internal.ValueHandlerFactory.isNumeric;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
@@ -20,10 +23,16 @@ public class Section {
     private Course course;
 
     public Section(@NonNull Course course, String sectionNo) {
-        if (sectionNo == "")
-            throw new IllegalArgumentException("Section number cannot be empty");
+        this.validateSectionNo(sectionNo);
         this.sectionNo = sectionNo;
         this.course = course;
+    }
+
+    private void validateSectionNo(String sectionNo) {
+        if (sectionNo.equals(""))
+            throw new IllegalArgumentException("Section number cannot be empty");
+        if (isNumeric(sectionNo))
+            throw new IllegalArgumentException("Section number must be number");
     }
 
     @Override
@@ -38,4 +47,5 @@ public class Section {
     public int hashCode() {
         return Objects.hash(course, sectionNo);
     }
+
 }
