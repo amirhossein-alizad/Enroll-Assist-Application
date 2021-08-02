@@ -106,4 +106,18 @@ public class SectionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void One_section_is_returned_correctly() throws Exception {
+        Section section = new Section(new Course("1", "C1", 3), "01");
+
+        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
+
+        mvc.perform(get("/sections/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseTitle", is("C1")))
+                .andExpect(jsonPath("$.courseNumber", is("1")))
+                .andExpect(jsonPath("$.sectionNo", is("01")));
+    }
 }

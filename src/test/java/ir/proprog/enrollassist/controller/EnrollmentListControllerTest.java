@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
+import ir.proprog.enrollassist.repository.StudentRepository;
 import org.json.JSONArray;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -42,6 +43,8 @@ public class EnrollmentListControllerTest {
     private SectionRepository sectionRepository;
     @MockBean
     private EnrollmentListRepository enrollmentListRepository;
+    @MockBean
+    private StudentRepository studentRepository;
 
     List<EnrollmentList> lists;
     EnrollmentList list1;
