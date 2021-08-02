@@ -33,7 +33,6 @@ public class EnrollmentListController {
         return new EnrollmentListView(enrollmentList);
     }
 
-
     @GetMapping("/{id}/sections")
     public Iterable<SectionView> getListSections(@PathVariable Long id) {
         EnrollmentList enrollmentList = enrollmentListRepository.findById(id)
