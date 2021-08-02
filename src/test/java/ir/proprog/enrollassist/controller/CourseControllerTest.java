@@ -53,8 +53,6 @@ public class CourseControllerTest {
         courses.addAll(List.of(course1, course2, course3));
     }
 
-
-
     @Test
     public void All_courses_are_returned_correctly() throws Exception{
         given(courseRepository.findAll()).willReturn(courses);
@@ -65,5 +63,17 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$[0].courseNumber", is("1")))
                 .andExpect(jsonPath("$[1].courseTitle", is("C2")))
                 .andExpect(jsonPath("$[2].courseCredits", is(5)));
+    }
+
+    @Test
+    public void Requested_course_is_returned_correctly() throws Exception{
+        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
+        mvc.perform(get("/courses/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseNumber", is("1")))
+                .andExpect(jsonPath("$.courseCredits", is(3)))
+                .andExpect(jsonPath("$.courseTitle", is("C1")))
+                .andExpect(jsonPath("$.prerequisites", hasSize(0)));
     }
 }
