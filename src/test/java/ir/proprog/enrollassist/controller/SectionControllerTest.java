@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +16,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -28,8 +31,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SectionController.class)
 public class SectionControllerTest {
@@ -39,6 +41,8 @@ public class SectionControllerTest {
     private SectionRepository sectionRepository;
     @MockBean
     private EnrollmentListRepository enrollmentListRepository;
+    @MockBean
+    private CourseRepository courseRepository;
 
     @Test
     public void All_sections_are_returned_correctly() throws Exception {
@@ -119,5 +123,32 @@ public class SectionControllerTest {
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.courseNumber", is("1")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
+    }
+
+    @Test
+    public void Section_of_unreal_course_is_not_added_correctly() throws Exception {
+        given(this.courseRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/5")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void Section_with_invalid_section_number_is_not_added_correctly() throws Exception {
+        Course course = mock(Course.class);
+        given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void Valid_section_is_added_correctly() throws Exception {
+        Course course = new Course("10", "DM", 3);
+        given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.sectionNo", is("01")))
+                .andExpect(status().isOk());
     }
 }
