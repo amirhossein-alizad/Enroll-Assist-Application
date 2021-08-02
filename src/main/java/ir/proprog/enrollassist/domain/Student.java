@@ -21,9 +21,9 @@ public class Student {
     private Set<StudyRecord> grades = new HashSet<>();
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
-        if (studentNumber == "")
+        if (studentNumber.equals(""))
             throw new IllegalArgumentException("Student number cannot be empty");
-        if (name == "")
+        if (name.equals(""))
             throw new IllegalArgumentException("Student must have a name");
         this.studentNumber = studentNumber;
         this.name = name;
@@ -61,11 +61,14 @@ public class Student {
 
     public float calculateGPA() {
         int credits = 0;
-        int sum = 0;
+        float sum = 0;
         for (StudyRecord sr : grades) {
             sum += sr.getCourse().getCredits() * sr.getGrade();
             credits += sr.getCourse().getCredits();
         }
-        return (float) sum / credits;
+        if(credits == 0) return 0F;
+
+        return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
+
 }

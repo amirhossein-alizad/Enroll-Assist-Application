@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.domain;
 
-import com.google.common.annotations.VisibleForTesting;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,7 @@ public class EnrollmentList {
     List<Section> sections = new ArrayList<>();
 
     public EnrollmentList(@NonNull String listName, @NonNull Student owner) {
-        if (listName == "")
+        if (listName.equals(""))
             throw new IllegalArgumentException("Enrollment list must have a name");
         this.listName = listName;
         this.owner = owner;
@@ -60,17 +59,19 @@ public class EnrollmentList {
         return violations;
     }
 
-    @VisibleForTesting
     List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (int i = 0; i < sections.size(); i++)
-            for (int j = i + 1; j < sections.size(); j++)
-                if (sections.get(i).getCourse().equals(sections.get(j).getCourse()))
-                    violations.add(new CourseRequestedTwice(sections.get(i), sections.get(j)));
+        Set<Course> Courses = new HashSet<>();
+        for (Section section : sections)
+            if (Courses.contains(section.getCourse()))
+                violations.add(new CourseRequestedTwice(section.getCourse()));
+            else
+                Courses.add(section.getCourse());
+
         return violations;
     }
 
-    @VisibleForTesting
+
     List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
@@ -79,7 +80,6 @@ public class EnrollmentList {
         return violations;
     }
 
-    @VisibleForTesting
     List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section o : sections)
@@ -87,17 +87,23 @@ public class EnrollmentList {
         return violations;
     }
 
-    @VisibleForTesting
     List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
+        double GPA = s.calculateGPA();
+        int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        float gpa = s.calculateGPA();
-        int credits = sections.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
-        if (gpa < 12 && credits > 14)
-            violations.add(new MaxCreditLimitExceeded(14));
-        else if (gpa < 17 && credits > 20)
-            violations.add(new MaxCreditLimitExceeded(20));
-        else if (credits > 24)
-            violations.add(new MaxCreditLimitExceeded(24));
+        if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
+            if (credits > 20)
+                violations.add(new MaxCreditsLimitExceeded(20));
+        }
+        else if(s.getTotalTakenCredits() > 0) {
+            if (credits > 14 && GPA < 12)
+                violations.add(new MaxCreditsLimitExceeded(14));
+            else if (credits > 20 && GPA < 17)
+                violations.add(new MaxCreditsLimitExceeded(20));
+            else if (credits > 24 && GPA >= 17)
+                violations.add(new MaxCreditsLimitExceeded(24));
+        }
         return violations;
     }
+
 }
