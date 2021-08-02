@@ -76,4 +76,11 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(0)));
     }
+
+    @Test
+    public void Course_that_doesnt_exist_is_not_found() throws Exception {
+        mvc.perform(get("/courses/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
