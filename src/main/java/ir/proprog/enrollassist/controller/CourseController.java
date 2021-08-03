@@ -57,8 +57,8 @@ public class CourseController {
         }
     }
 
-    private void ValidateCourseTitle(String courseTitle) {
-        if (courseTitle.equals(""))
+    private void ValidateCourseTitle(String title) {
+        if (title.equals(""))
             this.courseRuleViolations.add(new CourseTitleEmpty());
     }
 
