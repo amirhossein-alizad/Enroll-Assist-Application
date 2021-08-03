@@ -22,12 +22,6 @@ public class Course {
     private Set<Course> prerequisites = new HashSet<>();
 
     public Course(@NonNull String courseNumber, @NonNull String title, int credits) {
-        if (courseNumber == "")
-            throw new IllegalArgumentException("Course number cannot be empty");
-        if (title == "")
-            throw new IllegalArgumentException("Course must have a name");
-        if (credits < 0)
-            throw new IllegalArgumentException("Course credit units cannot be negative");
         this.courseNumber = courseNumber;
         this.title = title;
         this.credits = credits;
