@@ -29,7 +29,7 @@ public class CourseController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@RequestBody CourseView courseView){
+    public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView){
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
@@ -37,9 +37,11 @@ public class CourseController {
             newCourse.withPre(prerequisite);
         }
         validateCourse(newCourse);
-        if(courseRuleViolations.isEmpty())
+        if(courseRuleViolations.isEmpty()) {
             courseRepository.save(newCourse);
-        return new CourseView(newCourse);
+            courseRuleViolations.add(new CourseValidationSuccessful(newCourse.getTitle()));
+        }
+        return new CourseValidationResultView(courseRuleViolations);
     }
 
     private void validateCourse(Course newCourse){
