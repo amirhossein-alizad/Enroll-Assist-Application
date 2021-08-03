@@ -56,14 +56,9 @@ public class CourseController {
     private void validateCourseNumber(String courseNumber){
         if(courseNumber.equals(""))
             this.courseRuleViolations.add(new CourseNumberEmpty());
-        else{
-            try {
-                Integer.parseInt(courseNumber);
-                if(courseRepository.findCourseByCourseNumber(courseNumber).isPresent())
-                    this.courseRuleViolations.add(new CourseNumberExists());
-            } catch (NumberFormatException numberFormatException) {
-                this.courseRuleViolations.add(new WrongCourseNumberFormat());
-            }
+        else {
+            if (courseRepository.findCourseByCourseNumber(courseNumber).isPresent())
+                this.courseRuleViolations.add(new CourseNumberExists());
         }
     }
     private void validatePrerequisites(Course prerequisite){
