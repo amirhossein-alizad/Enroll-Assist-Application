@@ -1,7 +1,9 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.EnrollmentList;
+import lombok.Getter;
 
+@Getter
 public class EnrollmentListView {
     private Long enrollmentListId;
     private String enrollmentListName;

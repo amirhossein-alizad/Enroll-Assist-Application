@@ -21,17 +21,6 @@ public class EnrollmentListController {
     private SectionRepository sectionRepository;
     private StudentRepository studentRepository;
 
-    static class NewEnrollmentList {
-        String studentNumber;
-        String listName;
-        public NewEnrollmentList() {
-        }
-        public NewEnrollmentList(String studentNumber, String listName) {
-            this.studentNumber = studentNumber;
-            this.listName = listName;
-        }
-    }
-
     public EnrollmentListController(EnrollmentListRepository enrollmentListRepository, SectionRepository sectionRepository, StudentRepository studentRepository) {
         this.enrollmentListRepository = enrollmentListRepository;
         this.sectionRepository = sectionRepository;
@@ -44,13 +33,15 @@ public class EnrollmentListController {
     }
 
     @PostMapping(
+            value="/{studentNo}",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }
     )
-    public EnrollmentListView addOne(@RequestBody NewEnrollmentList req) {
-        Student student = studentRepository.findStudentByStudentNumber(req.studentNumber);
-        if (student == null)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found");
-        EnrollmentList enrollmentList = new EnrollmentList(req.listName, student);
+    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
+        Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        if (req.getEnrollmentListName().equals(""))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment list must have a name");
+
+        EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
     }
