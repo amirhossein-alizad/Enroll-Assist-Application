@@ -17,7 +17,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
-    List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+    List<CourseRuleViolation> courseRuleViolations;
 
     public CourseController(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
@@ -30,6 +30,7 @@ public class CourseController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView){
+        courseRuleViolations = new ArrayList<>();
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
