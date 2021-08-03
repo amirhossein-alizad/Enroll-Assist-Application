@@ -15,6 +15,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static org.checkerframework.checker.nullness.Opt.orElseThrow;
+
 
 @RestController
 @RequestMapping("/sections")
@@ -55,6 +57,9 @@ public class SectionController {
     public Section addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) {
         Course course = this.courseRepository.findById(courseId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(courseId, sectionNo);
+        if (sections.size() != 0)
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "This section is already exists.");
         try {
             Section newSection = new Section(course, sectionNo);
             this.sectionRepository.save(newSection);
