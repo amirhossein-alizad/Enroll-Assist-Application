@@ -37,6 +37,10 @@ public class EnrollmentList {
         sections.add(section);
     }
 
+    public void removeSection(Section section) {
+        sections.remove(section);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

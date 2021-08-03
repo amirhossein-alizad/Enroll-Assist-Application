@@ -70,6 +70,16 @@ public class EnrollmentListController {
         return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
     }
 
+    @DeleteMapping("/{listId}/sections/{sectionId}")
+    public Iterable<SectionView> removeSection(@PathVariable Long listId, @PathVariable Long sectionId) {
+        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        enrollmentList.removeSection(section);
+        enrollmentListRepository.save(enrollmentList);
+        return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
+    }
+
     @GetMapping("/{listId}/check")
     public EnrollmentCheckResultView checkRegulations(@PathVariable Long listId) {
         EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
