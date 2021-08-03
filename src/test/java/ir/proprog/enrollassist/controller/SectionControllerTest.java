@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -128,6 +129,7 @@ public class SectionControllerTest {
     @Test
     public void Section_of_unreal_course_is_not_added_correctly() throws Exception {
         given(this.courseRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -137,6 +139,7 @@ public class SectionControllerTest {
     public void Section_with_invalid_section_number_is_not_added_correctly() throws Exception {
         Course course = mock(Course.class);
         given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
@@ -145,10 +148,22 @@ public class SectionControllerTest {
     @Test
     public void Valid_section_is_added_correctly() throws Exception {
         Course course = new Course("10", "DM", 3);
-        given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
+        given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.sectionNo", is("01")))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Existed_section_is_not_added_correctly() throws Exception{
+        Course course = new Course("10", "DM", 3);
+        List<Section> findSections = List.of(new Section(course, "01"));
+        given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);
+        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
     }
 }
