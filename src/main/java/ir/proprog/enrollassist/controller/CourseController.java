@@ -31,9 +31,9 @@ public class CourseController {
     public CourseView addNewCourse(@RequestBody CourseView courseView){
 
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
-        ValidateCourseNumber(newCourse.getCourseNumber());
-        ValidateCourseTitle(newCourse.getTitle());
-        ValidateCourseCredits(newCourse.getCredits());
+        validateCourseNumber(newCourse.getCourseNumber());
+        validateCourseTitle(newCourse.getTitle());
+        validateCourseCredits(newCourse.getCredits());
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
@@ -43,13 +43,13 @@ public class CourseController {
         return new CourseView(newCourse);
     }
 
-    private void ValidateCourseNumber(String courseNumber){
+    private void validateCourseNumber(String courseNumber){
         if(courseNumber.equals(""))
             this.courseRuleViolations.add(new CourseNumberEmpty());
         else{
             try {
                 Integer.parseInt(courseNumber);
-                if(courseRepository.FindCourseByCourseNumber(courseNumber).isPresent())
+                if(courseRepository.findCourseByCourseNumber(courseNumber).isPresent())
                     this.courseRuleViolations.add(new CourseNumberExists());
             } catch (NumberFormatException numberFormatException) {
                 this.courseRuleViolations.add(new WrongCourseNumberFormat());
@@ -57,12 +57,12 @@ public class CourseController {
         }
     }
 
-    private void ValidateCourseTitle(String title) {
+    private void validateCourseTitle(String title) {
         if (title.equals(""))
             this.courseRuleViolations.add(new CourseTitleEmpty());
     }
 
-    private void ValidateCourseCredits(int credits){
+    private void validateCourseCredits(int credits){
         if(credits < 0)
             this.courseRuleViolations.add(new CourseCreditsNegative());
     }
