@@ -144,7 +144,7 @@ public class CourseControllerTest {
         JSONObject request = new JSONObject();
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","a");
+        request.put("courseNumber","4");
         request.put("courseCredits", -1);
         request.put("courseTitle", "");
         request.put("prerequisites", jArray);
@@ -162,9 +162,8 @@ public class CourseControllerTest {
                         .content(request.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.violationMessages[0]", is("Course number must be a number.")))
-                .andExpect(jsonPath("$.violationMessages[1]", is("Course must have a name.")))
-                .andExpect(jsonPath("$.violationMessages[2]", is("Course credit units cannot be negative.")))
-                .andExpect(jsonPath("$.violationMessages[3]", is("mockedCourse1 has made a loop in prerequisites.")));
+                .andExpect(jsonPath("$.violationMessages[0]", is("Course must have a name.")))
+                .andExpect(jsonPath("$.violationMessages[1]", is("Course credit units cannot be negative.")))
+                .andExpect(jsonPath("$.violationMessages[2]", is("mockedCourse1 has made a loop in prerequisites.")));
     }
 }
