@@ -60,7 +60,7 @@ public class CourseController {
     private List<CourseRuleViolation> ValidateCourseTitle(String courseTitle) {
         List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
         if (courseTitle.equals(""))
-            courseRuleViolations.add(new CourseNumberEmpty());
+            courseRuleViolations.add(new CourseTitleEmpty());
         return courseRuleViolations;
     }
 
