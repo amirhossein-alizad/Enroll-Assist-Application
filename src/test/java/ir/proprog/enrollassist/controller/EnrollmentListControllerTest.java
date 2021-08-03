@@ -79,7 +79,7 @@ public class EnrollmentListControllerTest {
         JSONObject req = new JSONObject();
         req.put("studentNumber", "00000");
         req.put("listName", "new_list");
-        given(studentRepository.findStudentByStudentNumber("00000")).willReturn(std);
+        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
         mvc.perform(post("/lists")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
