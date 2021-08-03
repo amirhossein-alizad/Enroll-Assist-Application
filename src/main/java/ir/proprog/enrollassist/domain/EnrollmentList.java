@@ -21,6 +21,14 @@ public class EnrollmentList {
     @ManyToMany
     List<Section> sections = new ArrayList<>();
 
+    public List<String> isValid()
+    {
+        List<String> errors = new ArrayList<>();
+        if (listName.equals(""))
+            errors.add("Enrollment list must have a name");
+        return errors;
+    }
+
     public EnrollmentList(@NonNull String listName, @NonNull Student owner) {
         if (listName.equals(""))
             throw new IllegalArgumentException("Enrollment list must have a name");
@@ -35,6 +43,10 @@ public class EnrollmentList {
 
     public void addSection(Section section) {
         sections.add(section);
+    }
+
+    public void removeSection(Section section) {
+        sections.remove(section);
     }
 
     @Override
