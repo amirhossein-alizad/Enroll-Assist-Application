@@ -77,10 +77,9 @@ public class EnrollmentListControllerTest {
     public void New_list_is_added_correctly() throws Exception {
         Student std = new Student("00000", "gina");
         JSONObject req = new JSONObject();
-        req.put("studentNumber", "00000");
-        req.put("listName", "new_list");
-        given(studentRepository.findStudentByStudentNumber("00000")).willReturn(std);
-        mvc.perform(post("/lists")
+        req.put("enrollmentListName", "new_list");
+        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -90,9 +89,8 @@ public class EnrollmentListControllerTest {
     @Test
     public void New_list_cannot_be_added_if_owners_student_number_does_not_exist() throws Exception {
         JSONObject req = new JSONObject();
-        req.put("studentNumber", "00000");
-        req.put("listName", "new_list");
-        mvc.perform(post("/lists")
+        req.put("enrollmentListName", "new_list");
+        mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
