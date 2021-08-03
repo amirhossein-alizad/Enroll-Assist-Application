@@ -44,11 +44,12 @@ public class EnrollmentListController {
     }
 
     @PostMapping(
+            value="/{studentNo}",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }
     )
-    public EnrollmentListView addOne(@RequestBody NewEnrollmentList req) {
-        Student student = studentRepository.findByStudentNumber(req.studentNumber).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
-        EnrollmentList enrollmentList = new EnrollmentList(req.listName, student);
+    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
+        Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
     }
