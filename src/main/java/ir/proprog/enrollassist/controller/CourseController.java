@@ -31,6 +31,7 @@ public class CourseController {
         List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         courseRuleViolations.addAll(this.ValidateCourseNumber(newCourse.getCourseNumber()));
+        courseRuleViolations.addAll(this.ValidateCourseTitle(newCourse.getTitle()));
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
@@ -53,6 +54,13 @@ public class CourseController {
                 courseRuleViolations.add(new WrongCourseNumberFormat());
             }
         }
+        return courseRuleViolations;
+    }
+
+    private List<CourseRuleViolation> ValidateCourseTitle(String courseTitle) {
+        List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+        if (courseTitle.equals(""))
+            courseRuleViolations.add(new CourseNumberEmpty());
         return courseRuleViolations;
     }
 
