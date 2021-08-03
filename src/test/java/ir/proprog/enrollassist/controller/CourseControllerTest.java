@@ -45,7 +45,7 @@ public class CourseControllerTest {
     private MockMvc mvc;
     @MockBean
     private CourseRepository courseRepository;
-    private Course course1, course2, course3, courseMock;
+    private Course course1, course2, course3;
     private List<Course> courses = new ArrayList<>();
     @BeforeEach
     void SetUp(){
@@ -53,7 +53,6 @@ public class CourseControllerTest {
         course2 = new Course("2", "C2", 3);
         course2.withPre(course1);
         course3 = new Course("3", "C3", 5);
-        courseMock = mock(Course.class);
         courses.addAll(List.of(course1, course2, course3));
     }
 
@@ -118,10 +117,7 @@ public class CourseControllerTest {
                         .content(request.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseCredits", is(3)))
-                .andExpect(jsonPath("$.courseNumber", is("4")))
-                .andExpect(jsonPath("$.courseTitle", is("C4")))
-                .andExpect(jsonPath("$.prerequisites", hasSize(1)));
+                .andExpect(jsonPath("$.violationMessages[0]", is("C4 was successfully added to courses list.")));
     }
 
     @Test
