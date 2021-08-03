@@ -30,20 +30,24 @@ public class CourseController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@RequestBody CourseView courseView){
-
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
-        validateCourseNumber(newCourse.getCourseNumber());
-        validateCourseTitle(newCourse.getTitle());
-        validateCourseCredits(newCourse.getCredits());
-        for(Course p : newCourse.getPrerequisites())
-            validatePrerequisites(p);
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
             newCourse.withPre(prerequisite);
         }
-        courseRepository.save(newCourse);
+        validateCourse(newCourse);
+        if(courseRuleViolations.isEmpty())
+            courseRepository.save(newCourse);
         return new CourseView(newCourse);
+    }
+
+    private void validateCourse(Course newCourse){
+        validateCourseNumber(newCourse.getCourseNumber());
+        validateCourseTitle(newCourse.getTitle());
+        validateCourseCredits(newCourse.getCredits());
+        for(Course p : newCourse.getPrerequisites())
+            validatePrerequisites(p);
     }
 
     private void validateCourseNumber(String courseNumber){
