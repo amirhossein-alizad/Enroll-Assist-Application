@@ -120,7 +120,7 @@ public class CourseControllerTest {
                         .content(request.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.violationMessages[0]", is("C4 was successfully added to courses list.")));
+                .andExpect(jsonPath("$.messages[0]", is("C4 was successfully added to courses list.")));
     }
 
     @Test
