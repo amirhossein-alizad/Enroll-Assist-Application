@@ -10,6 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Stack;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 @RestController
@@ -34,6 +35,8 @@ public class CourseController {
         validateCourseNumber(newCourse.getCourseNumber());
         validateCourseTitle(newCourse.getTitle());
         validateCourseCredits(newCourse.getCredits());
+        for(Course p : newCourse.getPrerequisites())
+            validatePrerequisites(p);
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
@@ -56,7 +59,21 @@ public class CourseController {
             }
         }
     }
-
+    private void validatePrerequisites(Course prerequisite){
+        Stack<Course> courseStack = new Stack<>();
+        List<Course> courseList = new ArrayList<>();
+        courseStack.push(prerequisite);
+        while(!courseStack.isEmpty()){
+            Course c = courseStack.pop();
+            if(courseList.contains(c))
+                this.courseRuleViolations.add(new PrerequisitesHaveLoop(c.getTitle()));
+            else{
+                for(Course p : c.getPrerequisites())
+                    courseStack.push(p);
+                courseList.add(c);
+            }
+        }
+    }
     private void validateCourseTitle(String title) {
         if (title.equals(""))
             this.courseRuleViolations.add(new CourseTitleEmpty());
