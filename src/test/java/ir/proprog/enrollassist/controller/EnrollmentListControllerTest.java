@@ -170,6 +170,35 @@ public class EnrollmentListControllerTest {
     }
 
     @Test
+    public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
+        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
+        given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
+
+        mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
+        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
+
+        mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void Section_cannot_be_removed_if_it_does_not_exist() throws Exception {
+        given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
+        mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 

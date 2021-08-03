@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -38,10 +39,10 @@ public class EnrollmentListController {
     )
     public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
         Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
-        if (req.getEnrollmentListName().equals(""))
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment list must have a name");
-
         EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
+        List<String> errors = enrollmentList.isValid();
+        if (errors.size() == 1)
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, errors.get(0));
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
     }
@@ -66,6 +67,16 @@ public class EnrollmentListController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
         Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         enrollmentList.addSection(section);
+        enrollmentListRepository.save(enrollmentList);
+        return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
+    }
+
+    @DeleteMapping("/{listId}/sections/{sectionId}")
+    public Iterable<SectionView> removeSection(@PathVariable Long listId, @PathVariable Long sectionId) {
+        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        enrollmentList.removeSection(section);
         enrollmentListRepository.save(enrollmentList);
         return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
     }
