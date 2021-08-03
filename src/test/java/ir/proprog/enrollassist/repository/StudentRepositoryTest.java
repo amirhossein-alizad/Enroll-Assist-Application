@@ -28,7 +28,6 @@ public class StudentRepositoryTest {
     @Test
     public void No_student_is_returned_if_student_number_is_invalid() {
         Optional<Student> res = studentRepository.findByStudentNumber("810199999");
-        System.out.println(res);
         assertThat(res).isEmpty();
     }
 }
