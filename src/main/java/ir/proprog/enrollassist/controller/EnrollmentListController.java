@@ -61,6 +61,15 @@ public class EnrollmentListController {
         return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
     }
 
+    @PutMapping("/{listId}/clear")
+    public Iterable<SectionView> emptyList(@PathVariable Long listId) {
+        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        enrollmentList.clear();
+        enrollmentListRepository.save(enrollmentList);
+        return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
+    }
+
     @PutMapping("/{listId}/sections/{sectionId}")
     public Iterable<SectionView> addSection(@PathVariable Long listId, @PathVariable Long sectionId) {
         EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)

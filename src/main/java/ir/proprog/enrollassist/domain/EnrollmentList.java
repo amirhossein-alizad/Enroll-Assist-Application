@@ -49,6 +49,8 @@ public class EnrollmentList {
         sections.remove(section);
     }
 
+    public void clear() { sections.clear(); }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
