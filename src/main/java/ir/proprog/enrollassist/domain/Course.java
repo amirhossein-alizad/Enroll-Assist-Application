@@ -32,6 +32,26 @@ public class Course {
         return this;
     }
 
+    public List<CourseRuleViolation> validatePrerequisites(Course prerequisite){
+        List<CourseRuleViolation> violations = new ArrayList<>();
+        if(prerequisites.isEmpty())
+            return violations;
+        Stack<Course> courseStack = new Stack<>();
+        List<Course> courseList = new ArrayList<>();
+        courseStack.push(prerequisite);
+        while(!courseStack.isEmpty()){
+            Course c = courseStack.pop();
+            if(courseList.contains(c))
+                violations.add(new PrerequisitesHaveLoop(c.getTitle()));
+            else{
+                for(Course p : c.getPrerequisites())
+                    courseStack.push(p);
+                courseList.add(c);
+            }
+        }
+        return violations;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
