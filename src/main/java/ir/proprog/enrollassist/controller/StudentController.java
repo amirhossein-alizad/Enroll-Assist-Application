@@ -8,6 +8,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/student")
 public class StudentController {
@@ -24,12 +26,15 @@ public class StudentController {
         return new StudentView(student);
     }
 
-    @PostMapping(value = "/addStudent", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public Student addStudent(@RequestBody StudentView studentView) {
-        this.studentRepository.findByStudentNumber(studentView.getStudentNo())
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.CONFLICT, "This section is already exists."));
+    @PostMapping(value ="/addStudent", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    public StudentView addStudent(@RequestBody StudentView studentView) {
+        Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
+        if (student.isPresent())
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This section is already exists.");
         try {
-            return new Student(studentView.getStudentNo(), studentView.getName());
+            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName());
+            this.studentRepository.save(newStudent);
+            return new StudentView(newStudent);
         }catch (IllegalArgumentException illegalArgumentException) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student number or student name is not valid.");
         }

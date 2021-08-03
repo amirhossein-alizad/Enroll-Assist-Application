@@ -8,6 +8,9 @@ public class StudentView {
     @Getter private String studentNo;
     @Getter private String name;
 
+    public StudentView() {
+    }
+
     public StudentView(Student student) {
         this.studentId = student.getId();
         this.studentNo = student.getStudentNumber();

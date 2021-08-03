@@ -54,7 +54,7 @@ public class SectionController {
     }
 
     @PutMapping("/addSection/{courseId}/{sectionNo}")
-    public Section addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) {
+    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) {
         Course course = this.courseRepository.findById(courseId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(courseId, sectionNo);
@@ -63,7 +63,7 @@ public class SectionController {
         try {
             Section newSection = new Section(course, sectionNo);
             this.sectionRepository.save(newSection);
-            return newSection;
+            return new SectionView(newSection);
         } catch (IllegalArgumentException illegalArgumentException) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Section number is not valid.");
         }
