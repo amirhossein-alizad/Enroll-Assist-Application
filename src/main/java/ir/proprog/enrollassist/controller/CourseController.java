@@ -33,7 +33,7 @@ public class CourseController {
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         ValidateCourseNumber(newCourse.getCourseNumber());
         ValidateCourseTitle(newCourse.getTitle());
-
+        ValidateCourseCredits(newCourse.getCredits());
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
@@ -60,6 +60,11 @@ public class CourseController {
     private void ValidateCourseTitle(String title) {
         if (title.equals(""))
             this.courseRuleViolations.add(new CourseTitleEmpty());
+    }
+
+    private void ValidateCourseCredits(int credits){
+        if(credits < 0)
+            this.courseRuleViolations.add(new CourseCreditsNegative());
     }
 
     @GetMapping("/{id}")
