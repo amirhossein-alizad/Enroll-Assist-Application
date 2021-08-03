@@ -16,6 +16,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
+    List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
 
     public CourseController(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
@@ -28,10 +29,11 @@ public class CourseController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@RequestBody CourseView courseView){
-        List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
-        courseRuleViolations.addAll(this.ValidateCourseNumber(newCourse.getCourseNumber()));
-        courseRuleViolations.addAll(this.ValidateCourseTitle(newCourse.getTitle()));
+        ValidateCourseNumber(newCourse.getCourseNumber());
+        ValidateCourseTitle(newCourse.getTitle());
+
         for(Long L : courseView.getPrerequisites()){
             Course prerequisite = courseRepository.findById(L)
                     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
@@ -41,27 +43,23 @@ public class CourseController {
         return new CourseView(newCourse);
     }
 
-    private List<CourseRuleViolation> ValidateCourseNumber(String courseNumber){
-        List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+    private void ValidateCourseNumber(String courseNumber){
         if(courseNumber.equals(""))
-            courseRuleViolations.add(new CourseNumberEmpty());
+            this.courseRuleViolations.add(new CourseNumberEmpty());
         else{
             try {
                 Integer.parseInt(courseNumber);
                 if(courseRepository.FindCourseByCourseNumber(courseNumber).isPresent())
-                    courseRuleViolations.add(new CourseNumberExists());
+                    this.courseRuleViolations.add(new CourseNumberExists());
             } catch (NumberFormatException numberFormatException) {
-                courseRuleViolations.add(new WrongCourseNumberFormat());
+                this.courseRuleViolations.add(new WrongCourseNumberFormat());
             }
         }
-        return courseRuleViolations;
     }
 
-    private List<CourseRuleViolation> ValidateCourseTitle(String courseTitle) {
-        List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+    private void ValidateCourseTitle(String courseTitle) {
         if (courseTitle.equals(""))
-            courseRuleViolations.add(new CourseTitleEmpty());
-        return courseRuleViolations;
+            this.courseRuleViolations.add(new CourseTitleEmpty());
     }
 
     @GetMapping("/{id}")
