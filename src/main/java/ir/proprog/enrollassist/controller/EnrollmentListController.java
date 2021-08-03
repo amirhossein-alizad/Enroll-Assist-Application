@@ -21,17 +21,6 @@ public class EnrollmentListController {
     private SectionRepository sectionRepository;
     private StudentRepository studentRepository;
 
-    static class NewEnrollmentList {
-        String studentNumber;
-        String listName;
-        public NewEnrollmentList() {
-        }
-        public NewEnrollmentList(String studentNumber, String listName) {
-            this.studentNumber = studentNumber;
-            this.listName = listName;
-        }
-    }
-
     public EnrollmentListController(EnrollmentListRepository enrollmentListRepository, SectionRepository sectionRepository, StudentRepository studentRepository) {
         this.enrollmentListRepository = enrollmentListRepository;
         this.sectionRepository = sectionRepository;
