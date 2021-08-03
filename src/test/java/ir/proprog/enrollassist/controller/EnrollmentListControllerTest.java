@@ -199,6 +199,15 @@ public class EnrollmentListControllerTest {
     }
 
     @Test
+    public void Enrollment_list_is_emptied_correctly() throws Exception {
+        given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
+        mvc.perform(MockMvcRequestBuilders.put("/lists/12/clear")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 
