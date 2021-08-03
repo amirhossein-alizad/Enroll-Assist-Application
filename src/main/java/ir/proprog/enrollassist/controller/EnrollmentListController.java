@@ -38,6 +38,9 @@ public class EnrollmentListController {
     )
     public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
         Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        if (req.getEnrollmentListName().equals(""))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment list must have a name");
+
         EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
