@@ -40,9 +40,12 @@ public class EnrollmentListController {
     public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
         Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
-        List<String> errors = enrollmentList.isValid();
-        if (errors.size() == 1)
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, errors.get(0));
+        if (!enrollmentList.isValid())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enrollment List must have a name");
+        List<EnrollmentListView> lists = studentRepository.findAllListsForStudent(studentNo);
+        for (EnrollmentListView e: lists)
+            if (e.getEnrollmentListName().equals(req.getEnrollmentListName()))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enrollment list name already exists");
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
     }
