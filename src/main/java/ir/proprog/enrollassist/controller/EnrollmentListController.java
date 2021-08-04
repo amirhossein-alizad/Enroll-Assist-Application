@@ -11,6 +11,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -37,17 +38,31 @@ public class EnrollmentListController {
             value="/{studentNo}",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }
     )
-    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
+    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req, HttpServletResponse res) {
         Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
-        if (!enrollmentList.isValid())
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enrollment List must have a name");
+        EnrollmentListView result = validateListName(enrollmentList);
+        if (result.getMessage() != null) {
+            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            return result;
+        }
         List<EnrollmentListView> lists = studentRepository.findAllListsForStudent(studentNo);
         for (EnrollmentListView e: lists)
-            if (e.getEnrollmentListName().equals(req.getEnrollmentListName()))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Enrollment list name already exists");
+            if (e.getEnrollmentListName().equals(req.getEnrollmentListName())) {
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                result.setMessage("Enrollment list name already exists");
+                return result;
+            }
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
+    }
+
+    public EnrollmentListView validateListName(EnrollmentList enrollmentList) {
+        String errorMessage = enrollmentList.isValid();
+        EnrollmentListView result = new EnrollmentListView(enrollmentList);
+        if (errorMessage != null)
+            result.setMessage(errorMessage);
+        return result;
     }
 
     @GetMapping("/{id}")

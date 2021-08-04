@@ -21,16 +21,14 @@ public class EnrollmentList {
     @ManyToMany
     List<Section> sections = new ArrayList<>();
 
-    public Boolean isValid()
+    public String isValid()
     {
         if (listName.equals(""))
-            return false;
-        return true;
+            return "Enrollment list must have a name";
+        return null;
     }
 
     public EnrollmentList(@NonNull String listName, @NonNull Student owner) {
-        if (listName.equals(""))
-            throw new IllegalArgumentException("Enrollment list must have a name");
         this.listName = listName;
         this.owner = owner;
     }
