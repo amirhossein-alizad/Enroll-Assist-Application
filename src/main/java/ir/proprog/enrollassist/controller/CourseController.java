@@ -34,9 +34,12 @@ public class CourseController {
         courseRuleViolations = new ArrayList<>();
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
-            Course prerequisite = courseRepository.findById(L)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
-            newCourse.withPre(prerequisite);
+            Optional<Course> prerequisite = courseRepository.findById(L);
+            if(prerequisite.isEmpty()){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return new CourseValidationResultView(List.of(new PrerequisiteCourseNotFound(L.intValue())));
+            }
+            newCourse.withPre(prerequisite.get());
         }
         validateCourse(newCourse);
         if(courseRuleViolations.isEmpty()) {
