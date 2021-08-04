@@ -161,7 +161,7 @@ public class CourseControllerTest {
         mvc.perform(post("/courses")
                         .content(request.toString())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.messages[0]", is("Course number cannot be empty.")))
                 .andExpect(jsonPath("$.messages[1]", is("Course must have a name.")))
                 .andExpect(jsonPath("$.messages[2]", is("Course credit units cannot be negative.")))
