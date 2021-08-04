@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,7 +18,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
-    List<CourseRuleViolation> courseRuleViolations = new ArrayList<>();
+    List<CourseRuleViolation> courseRuleViolations;
 
     public CourseController(CourseRepository courseRepository) {
         this.courseRepository = courseRepository;
@@ -29,18 +30,24 @@ public class CourseController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView){
+    public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView, HttpServletResponse response){
+        courseRuleViolations = new ArrayList<>();
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
-            Course prerequisite = courseRepository.findById(L)
-                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Prerequisite course not found"));
-            newCourse.withPre(prerequisite);
+            Optional<Course> prerequisite = courseRepository.findById(L);
+            if(prerequisite.isEmpty()){
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                return new CourseValidationResultView(List.of(new PrerequisiteCourseNotFound(L.intValue())));
+            }
+            newCourse.withPre(prerequisite.get());
         }
         validateCourse(newCourse);
         if(courseRuleViolations.isEmpty()) {
             courseRepository.save(newCourse);
             courseRuleViolations.add(new CourseValidationSuccessful(newCourse.getTitle()));
         }
+        else
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return new CourseValidationResultView(courseRuleViolations);
     }
 
@@ -55,14 +62,9 @@ public class CourseController {
     private void validateCourseNumber(String courseNumber){
         if(courseNumber.equals(""))
             this.courseRuleViolations.add(new CourseNumberEmpty());
-        else{
-            try {
-                Integer.parseInt(courseNumber);
-                if(courseRepository.findCourseByCourseNumber(courseNumber).isPresent())
-                    this.courseRuleViolations.add(new CourseNumberExists());
-            } catch (NumberFormatException numberFormatException) {
-                this.courseRuleViolations.add(new WrongCourseNumberFormat());
-            }
+        else {
+            if (courseRepository.findCourseByCourseNumber(courseNumber).isPresent())
+                this.courseRuleViolations.add(new CourseNumberExists());
         }
     }
     private void validatePrerequisites(Course prerequisite){

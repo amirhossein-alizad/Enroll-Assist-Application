@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CourseValidationResultView {
-    List<String> violationMessages;
+    List<String> messages;
 
     public CourseValidationResultView(List<CourseRuleViolation> courseRuleViolations) {
-        violationMessages = courseRuleViolations.stream().map(Object::toString).collect(Collectors.toList());
+        messages = courseRuleViolations.stream().map(Object::toString).collect(Collectors.toList());
     }
 }
