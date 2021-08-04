@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +30,7 @@ public class CourseController {
     }
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView){
+    public CourseValidationResultView addNewCourse(@RequestBody CourseView courseView, HttpServletResponse response){
         courseRuleViolations = new ArrayList<>();
         Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         for(Long L : courseView.getPrerequisites()){
@@ -42,6 +43,8 @@ public class CourseController {
             courseRepository.save(newCourse);
             courseRuleViolations.add(new CourseValidationSuccessful(newCourse.getTitle()));
         }
+        else
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         return new CourseValidationResultView(courseRuleViolations);
     }
 
