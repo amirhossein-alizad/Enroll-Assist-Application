@@ -8,7 +8,10 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @RestController
 @RequestMapping("/student")
@@ -19,6 +22,10 @@ public class StudentController {
         this.studentRepository = studentRepository;
     }
 
+    @GetMapping("/all")
+    public Iterable<StudentView> all(){
+        return StreamSupport.stream(studentRepository.findAll().spliterator(), false).map(StudentView::new).collect(Collectors.toList());
+    }
     @GetMapping("/{studentNumber}")
     public StudentView one(@PathVariable String studentNumber) {
         Student student = this.studentRepository.findByStudentNumber(studentNumber)
