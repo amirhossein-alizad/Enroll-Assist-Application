@@ -114,6 +114,36 @@ public class EnrollmentListControllerTest {
     }
 
     @Test
+    public void Untitled_enrollment_lists_cannot_be_added() throws Exception {
+        Student std = new Student("00000", "gina");
+        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        JSONObject req = new JSONObject();
+        req.put("enrollmentListName", "");
+        mvc.perform(post("/lists/00000")
+                .content(req.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is("Enrollment list must have a name")));
+    }
+
+    @Test
+    public void Enrollment_lists_with_same_name_cannot_be_added() throws Exception {
+        Student std = new Student("00000", "gina");
+        EnrollmentList list = new EnrollmentList("Mahsa's List", std);
+        List<EnrollmentListView> lists = new ArrayList<>();
+        lists.add(new EnrollmentListView(list));
+        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        given(studentRepository.findAllListsForStudent("00000")).willReturn(lists);
+        JSONObject req = new JSONObject();
+        req.put("enrollmentListName", "Mahsa's List");
+        mvc.perform(post("/lists/00000")
+                .content(req.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message", is("Enrollment list name already exists")));
+    }
+
+    @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
         this.list1.addSection(new Section(new Course("1", "ap", 3), "01"));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
