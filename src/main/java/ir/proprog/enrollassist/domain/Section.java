@@ -21,6 +21,8 @@ public class Section {
     private Long id;
     private String sectionNo;
     @ManyToOne
+    private ExamTime examTime;
+    @ManyToOne
     private Course course;
 
     public Section(@NonNull Course course, String sectionNo) {
