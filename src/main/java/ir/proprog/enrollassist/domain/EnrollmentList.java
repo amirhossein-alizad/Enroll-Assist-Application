@@ -120,8 +120,10 @@ public class EnrollmentList {
 
     List<EnrollmentRuleViolation> checkExamTimeConflicts() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Section s1:sections) {
-            for (Section s2:sections) {
+        for (int i = 0; i < sections.size(); i++) {
+            Section s1 = sections.get(i);
+            for (int j = i + 1; j < sections.size(); j++) {
+                Section s2 = sections.get(j);
                 if (s1 != s2 && s1.getExamTime().hasTimeConflict(s2.getExamTime()))
                     violations.add(new ExamTimeCollision(s1, s2));
             }
