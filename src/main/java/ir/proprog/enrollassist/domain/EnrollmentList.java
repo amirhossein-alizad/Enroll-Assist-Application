@@ -67,6 +67,7 @@ public class EnrollmentList {
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
         violations.addAll(checkValidGPALimit(owner));
+        violations.addAll(checkExamTimeConflicts());
         return violations;
     }
 
@@ -113,6 +114,19 @@ public class EnrollmentList {
                 violations.add(new MaxCreditsLimitExceeded(20));
             else if (credits > 24 && GPA >= 17)
                 violations.add(new MaxCreditsLimitExceeded(24));
+        }
+        return violations;
+    }
+
+    List<EnrollmentRuleViolation> checkExamTimeConflicts() {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        for (int i = 0; i < sections.size(); i++) {
+            Section s1 = sections.get(i);
+            for (int j = i + 1; j < sections.size(); j++) {
+                Section s2 = sections.get(j);
+                if (s1 != s2 && s1.getExamTime().hasTimeConflict(s2.getExamTime()))
+                    violations.add(new ExamTimeCollision(s1, s2));
+            }
         }
         return violations;
     }

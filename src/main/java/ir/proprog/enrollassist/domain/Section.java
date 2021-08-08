@@ -21,6 +21,8 @@ public class Section {
     private Long id;
     private String sectionNo;
     @ManyToOne
+    private ExamTime examTime;
+    @ManyToOne
     private Course course;
 
     public Section(@NonNull Course course, String sectionNo) {
@@ -37,6 +39,10 @@ public class Section {
         } catch (NumberFormatException numberFormatException) {
             throw new IllegalArgumentException("Section number must be number");
         }
+    }
+
+    public void setExamTime(ExamTime examTime) {
+        this.examTime = examTime;
     }
 
     @Override
