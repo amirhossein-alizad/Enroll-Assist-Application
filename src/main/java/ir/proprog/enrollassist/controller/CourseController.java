@@ -37,10 +37,14 @@ public class CourseController {
             Optional<Course> prerequisite = courseRepository.findById(L);
             if(prerequisite.isEmpty()){
                 response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                return new CourseValidationResultView(List.of(new PrerequisiteCourseNotFound(L.intValue())));
+                courseRuleViolations.add(new PrerequisiteCourseNotFound(L.intValue()));
+                continue;
             }
             newCourse.withPre(prerequisite.get());
         }
+        if(courseRuleViolations.size() != 0)
+            return new CourseValidationResultView(courseRuleViolations);
+
         validateCourse(newCourse);
         if(courseRuleViolations.isEmpty()) {
             courseRepository.save(newCourse);
