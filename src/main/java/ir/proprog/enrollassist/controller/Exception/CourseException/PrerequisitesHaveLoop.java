@@ -1,6 +1,6 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.controller.Exception.CourseException;
 
-public class PrerequisitesHaveLoop extends CourseRuleViolation{
+public class PrerequisitesHaveLoop extends CourseException {
     String course;
     public PrerequisitesHaveLoop(String course){ this.course = course;}
 

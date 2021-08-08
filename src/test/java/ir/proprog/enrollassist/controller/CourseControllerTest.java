@@ -102,69 +102,69 @@ public class CourseControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    @Test
-    public void New_course_is_added_and_returned_correctly() throws Exception{
-        JSONObject request = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        jArray.put(1);
-        request.put("courseNumber","4");
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        try {
-            request.put("prerequisites", jArray);
-        } catch(JSONException e) {
-            e.printStackTrace();
-        }
-        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
-        mvc.perform(post("/courses")
-                        .content(request.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.messages[0]", is("C4 was successfully added to courses list.")));
-    }
-
-    @Test
-    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-        JSONObject request = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        jArray.put(1);
-        request.put("courseNumber","4");
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        request.put("prerequisites", jArray);
-
-        mvc.perform(post("/courses")
-                        .content(request.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void New_courses_with_violation_are_returned_correctly() throws Exception{
-        JSONObject request = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        jArray.put(1);
-        request.put("courseNumber","");
-        request.put("courseCredits", -1);
-        request.put("courseTitle", "");
-        request.put("prerequisites", jArray);
-        Course mockedCourse1 = mock(Course.class);
-        Course mockedCourse2 = mock(Course.class);
-
-        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
-        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
-        Set<Course> set1 = Set.of(mockedCourse1);
-        Set<Course> set2 = Set.of(mockedCourse2);
-        when(mockedCourse1.getPrerequisites()).thenReturn(set2);
-        when(mockedCourse2.getPrerequisites()).thenReturn(set1);
-        when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
-        mvc.perform(post("/courses")
-                        .content(request.toString())
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.messages[0]", is("Course number cannot be empty.")))
-                .andExpect(jsonPath("$.messages[1]", is("Course must have a name.")))
-                .andExpect(jsonPath("$.messages[2]", is("Course credit units cannot be negative.")))
-                .andExpect(jsonPath("$.messages[3]", is("mockedCourse1 has made a loop in prerequisites.")));
-    }
+//    @Test
+//    public void New_course_is_added_and_returned_correctly() throws Exception{
+//        JSONObject request = new JSONObject();
+//        JSONArray jArray = new JSONArray();
+//        jArray.put(1);
+//        request.put("courseNumber","4");
+//        request.put("courseCredits", 3);
+//        request.put("courseTitle", "C4");
+//        try {
+//            request.put("prerequisites", jArray);
+//        } catch(JSONException e) {
+//            e.printStackTrace();
+//        }
+//        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
+//        mvc.perform(post("/courses")
+//                        .content(request.toString())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.messages[0]", is("C4 was successfully added to courses list.")));
+//    }
+//
+//    @Test
+//    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
+//        JSONObject request = new JSONObject();
+//        JSONArray jArray = new JSONArray();
+//        jArray.put(1);
+//        request.put("courseNumber","4");
+//        request.put("courseCredits", 3);
+//        request.put("courseTitle", "C4");
+//        request.put("prerequisites", jArray);
+//
+//        mvc.perform(post("/courses")
+//                        .content(request.toString())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNotFound());
+//    }
+//
+//    @Test
+//    public void New_courses_with_violation_are_returned_correctly() throws Exception{
+//        JSONObject request = new JSONObject();
+//        JSONArray jArray = new JSONArray();
+//        jArray.put(1);
+//        request.put("courseNumber","");
+//        request.put("courseCredits", -1);
+//        request.put("courseTitle", "");
+//        request.put("prerequisites", jArray);
+//        Course mockedCourse1 = mock(Course.class);
+//        Course mockedCourse2 = mock(Course.class);
+//
+//        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
+//        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
+//        Set<Course> set1 = Set.of(mockedCourse1);
+//        Set<Course> set2 = Set.of(mockedCourse2);
+//        when(mockedCourse1.getPrerequisites()).thenReturn(set2);
+//        when(mockedCourse2.getPrerequisites()).thenReturn(set1);
+//        when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
+//        mvc.perform(post("/courses")
+//                        .content(request.toString())
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isBadRequest())
+//                .andExpect(jsonPath("$.messages[0]", is("Course number cannot be empty.")))
+//                .andExpect(jsonPath("$.messages[1]", is("Course must have a name.")))
+//                .andExpect(jsonPath("$.messages[2]", is("Course credit units cannot be negative.")))
+//                .andExpect(jsonPath("$.messages[3]", is("mockedCourse1 has made a loop in prerequisites.")));
+//    }
 }
