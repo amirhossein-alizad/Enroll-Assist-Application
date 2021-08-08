@@ -117,4 +117,14 @@ public class EnrollmentList {
         return violations;
     }
 
+    List<EnrollmentRuleViolation> checkExamTimeConflicts() {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        for (Section s1:sections) {
+            for (Section s2:sections) {
+                if (s1 != s2 && s1.getExamTime().hasTimeConflict(s2.getExamTime()))
+                    violations.add(new ExamTimeCollision(s1, s2));
+            }
+        }
+    }
+
 }
