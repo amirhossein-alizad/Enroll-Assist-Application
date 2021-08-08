@@ -5,5 +5,5 @@ public class PrerequisitesHaveLoop extends CourseException {
     public PrerequisitesHaveLoop(String course){ this.course = course;}
 
     @Override
-    public String toString(){return String.format("%s has made a loop in prerequisites.", course);}
+    public String getMessage(){return String.format("%s has made a loop in prerequisites.", course);}
 }

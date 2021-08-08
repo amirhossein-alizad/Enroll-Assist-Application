@@ -6,5 +6,5 @@ public class CourseNumberExists extends CourseException {
     public CourseNumberExists(){}
 
     @Override
-    public String toString(){return "Course number already exists.";}
+    public String getMessage(){return "Course number already exists.";}
 }

@@ -4,5 +4,5 @@ public class CourseNumberEmpty extends CourseException {
     public CourseNumberEmpty(){}
 
     @Override
-    public String toString() {return "Course number cannot be empty.";}
+    public String getMessage() {return "Course number cannot be empty.";}
 }

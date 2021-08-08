@@ -6,5 +6,5 @@ public class PrerequisiteCourseNotFound extends CourseException {
     public PrerequisiteCourseNotFound(Long id){this.id = id;}
 
     @Override
-    public String toString() {return String.format("Course with id = %s was not found.", id);}
+    public String getMessage() {return String.format("Course with id = %s was not found.", id);}
 }
