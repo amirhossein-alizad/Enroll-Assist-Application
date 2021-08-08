@@ -1,9 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.Section;
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.EnrollmentList;
-import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -170,8 +167,11 @@ public class EnrollmentListControllerTest {
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
         Course ap = new Course("1", "ap", 3);
-        this.list1.addSection(new Section(ap, "01"));
-        this.list1.addSection(new Section(ap, "02"));
+        Section ap_1 = new Section(ap, "01");
+        Section ap_2 = new Section(ap, "02");
+        ap_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
+        ap_2.setExamTime(new ExamTime("2021-06-22T14:00:00", "2021-06-22T15:00:00"));
+        this.list1.addSections(ap_1, ap_2);
         String error = String.format("%s is requested to be taken twice", ap);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
@@ -245,6 +245,10 @@ public class EnrollmentListControllerTest {
         Section S2 = new Section(new Course("2", "C2", 3), "02");
         Section S3 = new Section(new Course("3", "C3", 3), "01");
         Section S4 = new Section(new Course("3", "C3", 3), "01");
+        S1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
+        S2.setExamTime(new ExamTime("2021-06-22T14:00:00", "2021-06-22T15:00:00"));
+        S3.setExamTime(new ExamTime("2021-06-23T14:00:00", "2021-06-23T15:00:00"));
+        S4.setExamTime(new ExamTime("2021-06-24T14:00:00", "2021-06-24T15:00:00"));
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
@@ -275,6 +279,10 @@ public class EnrollmentListControllerTest {
         Section S2 = new Section(new Course("2", "C2", 5), "02");
         Section S3 = new Section(new Course("3", "C3", 3), "01");
         Section S4 = new Section(new Course("3", "C3", 3), "01");
+        S1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
+        S2.setExamTime(new ExamTime("2021-06-22T14:00:00", "2021-06-22T15:00:00"));
+        S3.setExamTime(new ExamTime("2021-06-23T14:00:00", "2021-06-23T15:00:00"));
+        S4.setExamTime(new ExamTime("2021-06-24T14:00:00", "2021-06-24T15:00:00"));
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
