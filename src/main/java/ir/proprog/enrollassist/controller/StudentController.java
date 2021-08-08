@@ -56,7 +56,8 @@ public class StudentController {
     @GetMapping("/takeableSections/{studentNumber}")
     public Iterable<CourseView> takeableSections(@PathVariable String studentNumber){
         List<CourseView> takeable  = new ArrayList<>();
-        List<Course> notPassed = (List<Course>)courseRepository.findAll();
+        List<Course> notPassed = new ArrayList<>();
+        courseRepository.findAll().forEach(notPassed::add);
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentNumber);
         if(student.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
