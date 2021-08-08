@@ -71,4 +71,12 @@ public class Student {
         return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
+    public List<Course> getPassedCourses(){
+        List<Course> list = new ArrayList<>();
+        for (StudyRecord sr : grades)
+            if (sr.getGrade() >= 10)
+                list.add(sr.getCourse());
+        return list;
+    }
+
 }
