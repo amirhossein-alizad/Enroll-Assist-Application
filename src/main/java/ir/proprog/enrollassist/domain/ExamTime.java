@@ -27,4 +27,8 @@ public class ExamTime {
         }
         catch (Exception ignored) {}
     }
+
+    public boolean hasTimeConflict(ExamTime other) {
+        return other.start.compareTo(this.end) < 0 && other.end.compareTo(this.start) > 0;
+    }
 }
