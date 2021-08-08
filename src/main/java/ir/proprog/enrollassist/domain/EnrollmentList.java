@@ -67,6 +67,7 @@ public class EnrollmentList {
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
         violations.addAll(checkValidGPALimit(owner));
+        violations.addAll(checkExamTimeConflicts());
         return violations;
     }
 
@@ -125,6 +126,7 @@ public class EnrollmentList {
                     violations.add(new ExamTimeCollision(s1, s2));
             }
         }
+        return violations;
     }
 
 }
