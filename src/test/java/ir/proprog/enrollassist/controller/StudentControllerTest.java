@@ -131,4 +131,11 @@ public class StudentControllerTest {
 
     }
 
+
+    @Test
+    public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
+        mvc.perform(get("/student/takeableSections/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
 }
