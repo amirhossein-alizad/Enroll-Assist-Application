@@ -1,12 +1,15 @@
 package ir.proprog.enrollassist.controller.Exception;
 
+import ir.proprog.enrollassist.domain.Section;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
 
+import javax.persistence.ManyToMany;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class ExceptionList {
+public class ExceptionList extends Exception{
     private final List<Exception> exceptions = new ArrayList<>();
 
     public ExceptionList() {}
@@ -19,12 +22,21 @@ public class ExceptionList {
         return this.exceptions.size() > 0;
     }
 
+    public void addExceptions(List<Exception> newExceptions) {
+
+        this.exceptions.addAll(newExceptions);
+    }
+
+    public List<Exception> getExceptions() {
+        return this.exceptions;
+    }
+
     @SneakyThrows
     @Override
     public String toString() {
         JSONObject exceptionListJson = new JSONObject();
         for (int i=0; i<this.exceptions.size(); i++)
-            exceptionListJson.put(Integer.toString(i+1), this.exceptions.get(i).getLocalizedMessage());
+            exceptionListJson.put(Integer.toString(i+1), this.exceptions.get(i).getMessage());
         return exceptionListJson.toString();
     }
 

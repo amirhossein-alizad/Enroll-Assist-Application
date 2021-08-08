@@ -1,6 +1,6 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.controller.Exception.CourseException;
 
-public class CourseCreditsNegative extends CourseRuleViolation{
+public class CourseCreditsNegative extends CourseException {
     public CourseCreditsNegative() {}
 
     @Override

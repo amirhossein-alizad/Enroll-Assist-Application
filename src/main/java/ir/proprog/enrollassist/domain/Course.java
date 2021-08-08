@@ -50,6 +50,10 @@ public class Course {
         return String.format("[%s] %s", courseNumber, title);
     }
 
+    public void setPrerequisites(Set<Course> prerequisites) {
+        this.prerequisites = prerequisites;
+    }
+
     public List<EnrollmentRuleViolation> canBeTakenBy(Student student) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         Set<Course> prereqs = getPrerequisites();
