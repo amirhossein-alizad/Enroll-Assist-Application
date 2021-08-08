@@ -161,7 +161,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Students_With_GPA_More_Than_Twelve_Can_Take_More_Than_Fourteen_Credits(){
+    void Students_with_GPA_more_than_12_can_take_more_than_14_credits(){
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 6);
         Course phys1 = new Course("8", "PHYS1", 6);
@@ -178,7 +178,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Students_With_GPA_More_Than_Seventeen_Can_Take_More_Than_Twenty_Credits(){
+    void Students_with_GPA_more_than_17_can_take_more_than_20_credits(){
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 6);
         Course phys1 = new Course("8", "PHYS1", 6);
@@ -199,7 +199,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Requesting_Courses_With_Two_Prerequisites_Which_None_Has_Been_Passed_Violates_Two_Rules(){
+    void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules(){
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 3);
         Course phys1 = new Course("8", "PHYS1", 3);
@@ -224,7 +224,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Requesting_Courses_With_2_Prerequisites_Which_One_Has_Been_Passed_is_a_Violation(){
+    void Requesting_courses_with_2_prerequisites_when_one_has_been_passed_is_a_violation(){
         Student bebe = mock(Student.class);
         Course math1 = new Course("4", "MATH1", 3);
         Course phys1 = new Course("8", "PHYS1", 3);
