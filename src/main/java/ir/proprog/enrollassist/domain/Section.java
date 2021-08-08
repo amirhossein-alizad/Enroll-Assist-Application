@@ -41,6 +41,10 @@ public class Section {
         }
     }
 
+    public void setExamTime(ExamTime examTime) {
+        this.examTime = examTime;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
