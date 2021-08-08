@@ -4,5 +4,5 @@ public class CourseTitleEmpty extends CourseException {
     public CourseTitleEmpty(){}
 
     @Override
-    public String toString() {return "Course must have a name.";}
+    public String getMessage() {return "Course must have a name.";}
 }

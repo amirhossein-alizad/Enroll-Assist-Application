@@ -8,6 +8,7 @@ import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
+import org.apache.coyote.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,13 +20,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultMatcher;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 import static java.util.List.of;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -102,69 +106,94 @@ public class CourseControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-//    @Test
-//    public void New_course_is_added_and_returned_correctly() throws Exception{
-//        JSONObject request = new JSONObject();
-//        JSONArray jArray = new JSONArray();
-//        jArray.put(1);
-//        request.put("courseNumber","4");
-//        request.put("courseCredits", 3);
-//        request.put("courseTitle", "C4");
-//        try {
-//            request.put("prerequisites", jArray);
-//        } catch(JSONException e) {
-//            e.printStackTrace();
-//        }
-//        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
-//        mvc.perform(post("/courses")
-//                        .content(request.toString())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.messages[0]", is("C4 was successfully added to courses list.")));
-//    }
-//
-//    @Test
-//    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-//        JSONObject request = new JSONObject();
-//        JSONArray jArray = new JSONArray();
-//        jArray.put(1);
-//        request.put("courseNumber","4");
-//        request.put("courseCredits", 3);
-//        request.put("courseTitle", "C4");
-//        request.put("prerequisites", jArray);
-//
-//        mvc.perform(post("/courses")
-//                        .content(request.toString())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//    }
-//
-//    @Test
-//    public void New_courses_with_violation_are_returned_correctly() throws Exception{
-//        JSONObject request = new JSONObject();
-//        JSONArray jArray = new JSONArray();
-//        jArray.put(1);
-//        request.put("courseNumber","");
-//        request.put("courseCredits", -1);
-//        request.put("courseTitle", "");
-//        request.put("prerequisites", jArray);
-//        Course mockedCourse1 = mock(Course.class);
-//        Course mockedCourse2 = mock(Course.class);
-//
-//        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
-//        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
-//        Set<Course> set1 = Set.of(mockedCourse1);
-//        Set<Course> set2 = Set.of(mockedCourse2);
-//        when(mockedCourse1.getPrerequisites()).thenReturn(set2);
-//        when(mockedCourse2.getPrerequisites()).thenReturn(set1);
-//        when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
-//        mvc.perform(post("/courses")
-//                        .content(request.toString())
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$.messages[0]", is("Course number cannot be empty.")))
-//                .andExpect(jsonPath("$.messages[1]", is("Course must have a name.")))
-//                .andExpect(jsonPath("$.messages[2]", is("Course credit units cannot be negative.")))
-//                .andExpect(jsonPath("$.messages[3]", is("mockedCourse1 has made a loop in prerequisites.")));
-//    }
+    @Test
+    public void New_course_is_added_and_returned_correctly() throws Exception{
+        JSONObject request = new JSONObject();
+        JSONArray jArray = new JSONArray();
+        jArray.put(1);
+        request.put("courseNumber","4");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        try {
+            request.put("prerequisites", jArray);
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
+        mvc.perform(post("/courses")
+                        .content(request.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseTitle", is("C4")))
+                .andExpect(jsonPath("$.courseCredits", is(3)))
+                .andExpect(jsonPath("$.courseNumber", is("4")));
+    }
+
+    @Test
+    public void Course_with_duplicate_name_is_not_added_correctly() throws Exception{
+        JSONObject request = new JSONObject();
+        JSONArray jArray = new JSONArray();
+        request.put("courseNumber","4");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        Course course = new Course("4", "C5", 4);
+        given(courseRepository.findCourseByCourseNumber("4")).willReturn(Optional.of(course));
+        MvcResult result =  mvc.perform(post("/courses")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Course number already exists.\"}");
+    }
+
+    @Test
+    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
+        JSONObject request = new JSONObject();
+        JSONArray jArray = new JSONArray();
+        jArray.put(1);
+        request.put("courseNumber","4");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        request.put("prerequisites", jArray);
+
+        MvcResult result =  mvc.perform(post("/courses")
+                            .content(request.toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                            .andExpect(status().isBadRequest())
+                            .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Course with id = 1 was not found.\"}");
+    }
+
+    @Test
+    public void New_courses_with_violation_are_returned_correctly() throws Exception{
+        JSONObject request = new JSONObject();
+        JSONArray jArray = new JSONArray();
+        jArray.put(1);
+        request.put("courseNumber","");
+        request.put("courseCredits", -1);
+        request.put("courseTitle", "");
+        request.put("prerequisites", jArray);
+        Course mockedCourse1 = mock(Course.class);
+        Course mockedCourse2 = mock(Course.class);
+
+        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
+        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
+        Set<Course> set1 = Set.of(mockedCourse1);
+        Set<Course> set2 = Set.of(mockedCourse2);
+        when(mockedCourse1.getPrerequisites()).thenReturn(set2);
+        when(mockedCourse2.getPrerequisites()).thenReturn(set1);
+        when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
+        MvcResult result =  mvc.perform(post("/courses")
+                            .content(request.toString())
+                            .contentType(MediaType.APPLICATION_JSON))
+                            .andExpect(status().isBadRequest())
+                            .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Course number cannot be empty.\"," +
+                                    "\"2\":\"Course must have a name.\"," +
+                                    "\"3\":\"Course credit units cannot be negative.\"," +
+                                    "\"4\":\"mockedCourse1 has made a loop in prerequisites.\"}");
+    }
 }

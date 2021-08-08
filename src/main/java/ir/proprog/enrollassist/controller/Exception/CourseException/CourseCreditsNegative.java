@@ -4,5 +4,5 @@ public class CourseCreditsNegative extends CourseException {
     public CourseCreditsNegative() {}
 
     @Override
-    public String toString() {return "Course credit units cannot be negative.";}
+    public String getMessage() {return "Course credit units cannot be negative.";}
 }
