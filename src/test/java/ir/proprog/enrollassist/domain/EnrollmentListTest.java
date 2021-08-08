@@ -240,4 +240,87 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
+    @Test
+    void Enrollment_list_cannot_have_sections_on_the_same_day_and_time(){
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("4", "MATH1", 3);
+        Course phys2 = new Course("9", "PHYS2", 3);
+        Section math1_1 = new Section(math1, "01");
+        math1_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T17:00:00"));
+        Section phys2_1 = new Section(phys2, "01");
+        phys2_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T17:00:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, phys2_1);
+        assertThat(list1.checkExamTimeConflicts())
+                .isNotNull()
+                .hasSize(1);
+    }
+
+    @Test
+    void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time(){
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("4", "MATH1", 3);
+        Course phys2 = new Course("9", "PHYS2", 3);
+        Section math1_1 = new Section(math1, "01");
+        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        Section phys2_1 = new Section(phys2, "01");
+        phys2_1.setExamTime(new ExamTime("2021-06-21T9:30:00", "2021-06-21T13:00:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, phys2_1);
+        assertThat(list1.checkExamTimeConflicts())
+                .isNotNull()
+                .hasSize(1);
+    }
+
+    @Test
+    void Enrollment_list_may_have_sections_on_the_different_days_and_conflicting_time(){
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("4", "MATH1", 3);
+        Course phys2 = new Course("9", "PHYS2", 3);
+        Section math1_1 = new Section(math1, "01");
+        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        Section phys2_1 = new Section(phys2, "01");
+        phys2_1.setExamTime(new ExamTime("2021-06-23T9:30:00", "2021-06-23T13:00:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, phys2_1);
+        assertThat(list1.checkExamTimeConflicts())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    void Enrollment_list_may_have_sections_intersecting_at_one_time(){
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("4", "MATH1", 3);
+        Course phys2 = new Course("9", "PHYS2", 3);
+        Section math1_1 = new Section(math1, "01");
+        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        Section phys2_1 = new Section(phys2, "01");
+        phys2_1.setExamTime(new ExamTime("2021-06-21T11:00:00", "2021-06-21T13:00:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, phys2_1);
+        assertThat(list1.checkExamTimeConflicts())
+                .isNotNull()
+                .isEmpty();
+    }
+
+    @Test
+    void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections(){
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("1", "MATH1", 3);
+        Course ap = new Course("2", "AP", 4);
+        Course phys2 = new Course("3", "PHYS2", 3);
+        Section math1_1 = new Section(math1, "01");
+        Section phys2_1 = new Section(phys2, "01");
+        Section ap1_1 = new Section(ap, "01");
+        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:30:00"));
+        ap1_1.setExamTime(new ExamTime("2021-06-21T11:00:00", "2021-06-21T14:00:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-21T13:30:00", "2021-06-21T16:30:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, ap1_1, phys2_1);
+        assertThat(list1.checkExamTimeConflicts())
+                .isNotNull()
+                .hasSize(2);
+    }
+
 }
