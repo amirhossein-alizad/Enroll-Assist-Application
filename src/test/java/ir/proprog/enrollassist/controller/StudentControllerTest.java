@@ -100,5 +100,35 @@ public class StudentControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    public void Takeable_sections_are_returned_correctly() throws Exception{
+        Course math1 = new Course("4", "MATH1", 3);
+        Course math2 = mock(Course.class);
+        List<Course> list = List.of(math1, math2);
+        Student mockStudent = mock(Student.class);
+
+        given(courseRepository.findAll()).willReturn(list);
+        given(studentRepository.findByStudentNumber("1")).willReturn(java.util.Optional.of(mockStudent));
+
+        when(mockStudent.getPassedCourses()).thenReturn(List.of(math1));
+        when(mockStudent.hasPassed(math2)).thenReturn(false);
+        when(mockStudent.hasPassed(math1)).thenReturn(true);
+
+        when(math2.getId()).thenReturn(1L);
+        when(math2.getCredits()).thenReturn(3);
+        when(math2.getTitle()).thenReturn("math2");
+        when(math2.getCourseNumber()).thenReturn("1");
+        when(math2.canBeTakenBy(mockStudent)).thenReturn(new ArrayList<>());
+
+        mvc.perform(get("/student/takeableSections/1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].courseId", is(1)))
+                .andExpect(jsonPath("$[0].courseNumber", is("1")))
+                .andExpect(jsonPath("$[0].courseTitle", is("math2")))
+                .andExpect(jsonPath("$[0].courseCredits", is(3)));
+
+    }
 
 }
