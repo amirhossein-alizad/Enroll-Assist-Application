@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -114,7 +113,7 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
-//    @Test
+    @Test
     void Enrollment_list_cannot_have_duplicate_courses_and_more_than_24_credits() {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1", "MATH1", 3);
@@ -246,9 +245,9 @@ public class EnrollmentListTest {
         Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
-        math1_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T17:00:00"));
+        math1_1.setExamTime(new ExamTime("2021-06-21 14:00", "2021-06-21 17:00"));
         Section phys2_1 = new Section(phys2, "01");
-        phys2_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T17:00:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-21 14:00", "2021-06-21 17:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -262,9 +261,9 @@ public class EnrollmentListTest {
         Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
-        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        math1_1.setExamTime(new ExamTime("2021-06-21 08:00", "2021-06-21 11:00"));
         Section phys2_1 = new Section(phys2, "01");
-        phys2_1.setExamTime(new ExamTime("2021-06-21T9:30:00", "2021-06-21T13:00:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-21 09:30", "2021-06-21 13:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -278,9 +277,9 @@ public class EnrollmentListTest {
         Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
-        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        math1_1.setExamTime(new ExamTime("2021-06-21 08:00", "2021-06-21 11:00"));
         Section phys2_1 = new Section(phys2, "01");
-        phys2_1.setExamTime(new ExamTime("2021-06-23T9:30:00", "2021-06-23T13:00:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-23 09:30", "2021-06-23 13:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -294,9 +293,9 @@ public class EnrollmentListTest {
         Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
-        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
+        math1_1.setExamTime(new ExamTime("2021-06-21 08:00", "2021-06-21 11:00"));
         Section phys2_1 = new Section(phys2, "01");
-        phys2_1.setExamTime(new ExamTime("2021-06-21T11:00:00", "2021-06-21T13:00:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-21 11:00", "2021-06-21 13:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -313,9 +312,9 @@ public class EnrollmentListTest {
         Section math1_1 = new Section(math1, "01");
         Section phys2_1 = new Section(phys2, "01");
         Section ap1_1 = new Section(ap, "01");
-        math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:30:00"));
-        ap1_1.setExamTime(new ExamTime("2021-06-21T11:00:00", "2021-06-21T14:00:00"));
-        phys2_1.setExamTime(new ExamTime("2021-06-21T13:30:00", "2021-06-21T16:30:00"));
+        math1_1.setExamTime(new ExamTime("2021-06-21 08:00", "2021-06-21 11:30"));
+        ap1_1.setExamTime(new ExamTime("2021-06-21 11:00", "2021-06-21 14:00"));
+        phys2_1.setExamTime(new ExamTime("2021-06-21 13:30", "2021-06-21 16:30"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, ap1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
