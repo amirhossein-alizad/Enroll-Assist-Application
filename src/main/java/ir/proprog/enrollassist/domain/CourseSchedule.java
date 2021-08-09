@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class CourseSchedule {
-    private List<String> dayOfWeek = new ArrayList<>();
+    private List<String> dayOfWeek;
     private Date startTime;
     private Date endTime;
 
@@ -28,10 +28,12 @@ public class CourseSchedule {
         }
         if (exceptionList.hasException())
             throw exceptionList;
+
+        this.dayOfWeek = dayOfWeek;
     }
 
     private void validateTime(String startTime, String endTime) throws Exception {
-        SimpleDateFormat dataFormat = new SimpleDateFormat("hh:mm");
+        SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
         if (startTime.equals("") || endTime.equals(""))
             throw new EmptyTime();
         try {
@@ -56,16 +58,22 @@ public class CourseSchedule {
         return exceptions;
     }
 
-    public boolean hasConflict(CourseSchedule anotherCourseSchedule) {
-        List<String> keepDaysOfWeek = this.dayOfWeek;
-        keepDaysOfWeek.removeAll(anotherCourseSchedule.dayOfWeek);
-        if (this.dayOfWeek.size() == keepDaysOfWeek.size())
-            return true;
-
-        if (this.endTime.before(anotherCourseSchedule.startTime) || this.startTime.after(anotherCourseSchedule.endTime))
-            return true;
-
+    public boolean hasSameMember(List<String> anotherListOfWeekDay){
+        for (String d: anotherListOfWeekDay) {
+            if (this.dayOfWeek.contains(d))
+                return true;
+        }
         return false;
+    }
+
+    public boolean hasConflict(CourseSchedule anotherCourseSchedule) {
+        if (!this.hasSameMember(anotherCourseSchedule.dayOfWeek))
+            return false;
+        else if (this.endTime.before(anotherCourseSchedule.startTime) || this.endTime.equals(anotherCourseSchedule.startTime))
+            return false;
+        else if (this.startTime.after(anotherCourseSchedule.endTime) || this.startTime.equals(anotherCourseSchedule.endTime))
+            return false;
+        return true;
     }
 
 }
