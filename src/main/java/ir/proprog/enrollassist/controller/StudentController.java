@@ -1,5 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.Exception.StudentException.StudentNumberExists;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
@@ -42,8 +44,11 @@ public class StudentController {
     @PostMapping(value ="/addStudent", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public StudentView addStudent(@RequestBody StudentView studentView) {
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
-        if (student.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This student already exists.");
+        ExceptionList exceptionList = new ExceptionList();
+        if (student.isPresent()) {
+            exceptionList.addNewException(new StudentNumberExists());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
+        }
         try {
             Student newStudent = new Student(studentView.getStudentNo(), studentView.getName());
             this.studentRepository.save(newStudent);
