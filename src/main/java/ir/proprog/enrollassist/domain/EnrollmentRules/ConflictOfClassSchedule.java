@@ -1,4 +1,6 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.EnrollmentRules;
+
+import ir.proprog.enrollassist.domain.Course;
 
 public class ConflictOfClassSchedule extends EnrollmentRuleViolation{
     private Course firstCourseTitle;

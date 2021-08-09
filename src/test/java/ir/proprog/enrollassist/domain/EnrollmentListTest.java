@@ -1,5 +1,8 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
+import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

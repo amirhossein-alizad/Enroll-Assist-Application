@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.EnrollmentRuleViolation;
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 
 import java.util.List;
 import java.util.stream.Collectors;

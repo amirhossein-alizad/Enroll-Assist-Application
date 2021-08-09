@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.EnrollmentRules;
 
 public class MaxCreditsLimitExceeded extends EnrollmentRuleViolation{
     private int limit;
