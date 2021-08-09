@@ -46,13 +46,28 @@ public class CourseController {
 
     private List<Exception> validateCourseInfo(CourseView courseView) {
         List<Exception> exceptions = new ArrayList<>();
-        if (courseView.getCourseNumber().equals(""))
-            exceptions.add(new CourseNumberEmpty());
+        try {
+            this.validateCourseNumber(courseView.getCourseNumber());
+        }catch (Exception e) {
+            exceptions.add(e);
+        }
         if (courseView.getCourseTitle().equals(""))
             exceptions.add(new CourseTitleEmpty());
         if (courseView.getCourseCredits() < 0)
             exceptions.add(new CourseCreditsNegative());
         return exceptions;
+    }
+
+    private void validateCourseNumber(String courseNumber) throws Exception {
+        if (courseNumber.equals(""))
+            throw new CourseNumberEmpty();
+        try {
+            Integer.parseInt(courseNumber);
+            if (courseNumber.length() != 7)
+                throw new CourseNumberInvalid();
+        }catch (Exception exception) {
+            throw new CourseNumberInvalid();
+        }
     }
 
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
