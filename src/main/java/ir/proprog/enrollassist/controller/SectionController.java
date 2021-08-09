@@ -1,5 +1,8 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.Exception.SectionException.InvalidSectionNumber;
+import ir.proprog.enrollassist.controller.Exception.SectionException.SectionNumberExists;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
@@ -54,19 +57,21 @@ public class SectionController {
     }
 
     @PutMapping("/addSection/{courseId}/{sectionNo}")
-    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) {
+    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) throws ExceptionList {
         Course course = this.courseRepository.findById(courseId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
+        ExceptionList exceptionList = new ExceptionList();
         List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(courseId, sectionNo);
         if (sections.size() != 0)
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "This section is already exists.");
+            exceptionList.addNewException(new SectionNumberExists());
         try {
             Section newSection = new Section(course, sectionNo);
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (IllegalArgumentException illegalArgumentException) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Section number is not valid.");
+            exceptionList.addNewException(new InvalidSectionNumber());
         }
+        throw exceptionList;
     }
 
 }
