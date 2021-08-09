@@ -237,16 +237,16 @@ public class EnrollmentListControllerTest {
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 
-        Section S1 = new Section(new Course("1", "C1", 3), "01");
-        Section S2 = new Section(new Course("2", "C2", 3), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 3), "01");
+        Section S2 = new Section(new Course("2111111", "C2", 3), "02");
+        Section S3 = new Section(new Course("3111111", "C3", 3), "01");
+        Section S4 = new Section(new Course("3111111", "C3", 3), "01");
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
 
         List<String> err = new ArrayList<>();
-        err.add("[3333333] C3 is requested to be taken twice");
+        err.add("[3111111] C3 is requested to be taken twice");
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -267,10 +267,10 @@ public class EnrollmentListControllerTest {
 
         EnrollmentList list = new EnrollmentList("list", std);
 
-        Section S1 = new Section(new Course("1", "C1", 5), "01");
-        Section S2 = new Section(new Course("2", "C2", 5), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 5), "01");
+        Section S2 = new Section(new Course("2111111", "C2", 5), "02");
+        Section S3 = new Section(new Course("3111111", "C3", 3), "01");
+        Section S4 = new Section(new Course("3111111", "C3", 3), "01");
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
@@ -278,7 +278,7 @@ public class EnrollmentListControllerTest {
         when(std.calculateGPA()).thenReturn(11.99F);
         when(std.getTotalTakenCredits()).thenReturn(1);
 
-        List<String> err = new ArrayList<>(List.of("[3333333] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
+        List<String> err = new ArrayList<>(List.of("[3111111] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
