@@ -1,5 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
+import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller.Exception;
+package ir.proprog.enrollassist.Exception;
 
 import ir.proprog.enrollassist.domain.Section;
 import lombok.SneakyThrows;
