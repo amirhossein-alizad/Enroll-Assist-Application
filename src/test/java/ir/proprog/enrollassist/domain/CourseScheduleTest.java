@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
-import ir.proprog.enrollassist.controller.Exception.ExceptionList;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

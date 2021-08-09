@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.controller.Exception.CourseException.*;
-import ir.proprog.enrollassist.controller.Exception.ExceptionList;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import org.springframework.http.HttpStatus;

@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
-import ir.proprog.enrollassist.controller.Exception.ExceptionList;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.EmptyTime;
 import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidDayOfWeek;
 import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidTimeConcept;
@@ -14,9 +14,9 @@ import java.util.Date;
 import java.util.List;
 
 public class CourseSchedule {
-    private List<String> dayOfWeek;
     private Date startTime;
     private Date endTime;
+    private List<String> dayOfWeek;
 
     public CourseSchedule(List<String> dayOfWeek, String startTime, String endTime) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
@@ -58,7 +58,7 @@ public class CourseSchedule {
         return exceptions;
     }
 
-    public boolean hasSameMember(List<String> anotherListOfWeekDay){
+    private boolean hasSameMember(List<String> anotherListOfWeekDay){
         for (String d: anotherListOfWeekDay) {
             if (this.dayOfWeek.contains(d))
                 return true;
