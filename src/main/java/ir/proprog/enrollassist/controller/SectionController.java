@@ -62,8 +62,10 @@ public class SectionController {
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         ExceptionList exceptionList = new ExceptionList();
         List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(courseId, sectionNo);
-        if (sections.size() != 0)
+        if (sections.size() != 0) {
             exceptionList.addNewException(new SectionNumberExists());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+        }
         try {
             Section newSection = new Section(course, sectionNo);
             this.sectionRepository.save(newSection);
@@ -71,7 +73,7 @@ public class SectionController {
         } catch (IllegalArgumentException illegalArgumentException) {
             exceptionList.addNewException(new InvalidSectionNumber());
         }
-        throw exceptionList;
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
     }
 
 }

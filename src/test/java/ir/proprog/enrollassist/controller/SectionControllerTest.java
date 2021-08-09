@@ -164,7 +164,7 @@ public class SectionControllerTest {
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isConflict());
+                .andExpect(status().isBadRequest());
     }
 }
 
