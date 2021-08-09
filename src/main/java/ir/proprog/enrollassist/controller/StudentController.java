@@ -33,6 +33,7 @@ public class StudentController {
     public Iterable<StudentView> all(){
         return StreamSupport.stream(studentRepository.findAll().spliterator(), false).map(StudentView::new).collect(Collectors.toList());
     }
+
     @GetMapping("/{studentNumber}")
     public StudentView one(@PathVariable String studentNumber) {
         Student student = this.studentRepository.findByStudentNumber(studentNumber)
@@ -40,7 +41,7 @@ public class StudentController {
         return new StudentView(student);
     }
 
-    @PostMapping(value ="/addStudent", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public StudentView addStudent(@RequestBody StudentView studentView) {
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
         ExceptionList exceptionList = new ExceptionList();
