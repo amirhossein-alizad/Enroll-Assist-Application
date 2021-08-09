@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
@@ -24,7 +25,7 @@ public class ExamTime {
     private Date start;
     private Date end;
 
-    private List<String> validate() {
+    public List<String> validate() {
         List<String> errors = new ArrayList<>();
         if (this.start.compareTo(this.end) >= 0)
             errors.add("Exam start should be before its end.");
@@ -32,15 +33,20 @@ public class ExamTime {
                 .truncatedTo(ChronoUnit.DAYS);
         Instant instant2 = this.end.toInstant()
                 .truncatedTo(ChronoUnit.DAYS);
-        if (instant1.equals(instant2))
+        if (!instant1.equals(instant2))
             errors.add("Exam cannot take more than one day.");
         return errors;
     }
 
     public ExamTime(String start, String end) throws Exception {
         SimpleDateFormat dataFormat = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss");
-        this.start = dataFormat.parse(start);
-        this.end = dataFormat.parse(end);
+        try {
+            this.start = dataFormat.parse(start);
+            this.end = dataFormat.parse(end);
+        } catch (Exception e) {
+            System.out.println(e);
+            throw new Exception("Dates must be of the format yyyy-MM-dd'T'hh:mm:ss");
+        }
     }
 
     public boolean hasTimeConflict(ExamTime other) {
