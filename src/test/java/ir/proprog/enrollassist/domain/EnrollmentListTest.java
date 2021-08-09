@@ -241,10 +241,10 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_sections_on_the_same_day_and_time(){
+    void Enrollment_list_cannot_have_sections_on_the_same_day_and_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys2 = new Course("9", "PHYS2", 3);
+        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
         math1_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T17:00:00"));
         Section phys2_1 = new Section(phys2, "01");
@@ -257,10 +257,10 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time(){
+    void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys2 = new Course("9", "PHYS2", 3);
+        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
         math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
         Section phys2_1 = new Section(phys2, "01");
@@ -273,10 +273,10 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_may_have_sections_on_the_different_days_and_conflicting_time(){
+    void Enrollment_list_may_have_sections_on_the_different_days_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys2 = new Course("9", "PHYS2", 3);
+        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
         math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
         Section phys2_1 = new Section(phys2, "01");
@@ -289,10 +289,10 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_may_have_sections_intersecting_at_one_time(){
+    void Enrollment_list_may_have_sections_intersecting_at_one_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys2 = new Course("9", "PHYS2", 3);
+        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
         math1_1.setExamTime(new ExamTime("2021-06-21T8:00:00", "2021-06-21T11:00:00"));
         Section phys2_1 = new Section(phys2, "01");
@@ -305,11 +305,11 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections(){
+    void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course ap = new Course("2", "AP", 4);
-        Course phys2 = new Course("3", "PHYS2", 3);
+        Course math1 = new Course("1", "MATH1", 3).setHasExam(true);
+        Course ap = new Course("2", "AP", 4).setHasExam(true);
+        Course phys2 = new Course("3", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01");
         Section phys2_1 = new Section(phys2, "01");
         Section ap1_1 = new Section(ap, "01");

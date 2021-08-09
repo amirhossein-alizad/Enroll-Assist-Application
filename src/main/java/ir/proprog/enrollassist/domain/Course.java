@@ -18,6 +18,7 @@ public class Course {
     private String courseNumber;
     private String title;
     private int credits;
+    private boolean hasExam = false;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
@@ -54,6 +55,13 @@ public class Course {
         this.prerequisites = prerequisites;
     }
 
+    public Course setHasExam(boolean hasExam) {
+        this.hasExam = hasExam;
+        return this;
+    }
+
+    public boolean getHasExam() { return hasExam; }
+
     public List<EnrollmentRuleViolation> canBeTakenBy(Student student) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         Set<Course> prereqs = getPrerequisites();
@@ -63,4 +71,5 @@ public class Course {
         }
         return violations;
     }
+
 }
