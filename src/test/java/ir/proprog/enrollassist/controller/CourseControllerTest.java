@@ -111,7 +111,7 @@ public class CourseControllerTest {
         JSONObject request = new JSONObject();
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","4");
+        request.put("courseNumber","1412121");
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         try {
@@ -126,18 +126,18 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
-                .andExpect(jsonPath("$.courseNumber", is("4")));
+                .andExpect(jsonPath("$.courseNumber", is("1412121")));
     }
 
     @Test
     public void Course_with_duplicate_name_is_not_added_correctly() throws Exception{
         JSONObject request = new JSONObject();
         JSONArray jArray = new JSONArray();
-        request.put("courseNumber","4");
+        request.put("courseNumber","1412121");
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
-        Course course = new Course("4", "C5", 4);
-        given(courseRepository.findCourseByCourseNumber("4")).willReturn(Optional.of(course));
+        Course course = new Course("1412121", "C5", 4);
+        given(courseRepository.findCourseByCourseNumber("1412121")).willReturn(Optional.of(course));
         MvcResult result =  mvc.perform(post("/courses")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -152,7 +152,7 @@ public class CourseControllerTest {
         JSONObject request = new JSONObject();
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","4");
+        request.put("courseNumber","1412121");
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("prerequisites", jArray);
