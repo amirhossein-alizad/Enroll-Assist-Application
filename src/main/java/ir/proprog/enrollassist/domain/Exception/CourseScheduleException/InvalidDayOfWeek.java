@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain.Exception;
+package ir.proprog.enrollassist.domain.Exception.CourseScheduleException;
 
 public class InvalidDayOfWeek extends CourseScheduleException{
     private String day;

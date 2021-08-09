@@ -1,10 +1,10 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.controller.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.Exception.EmptyTime;
-import ir.proprog.enrollassist.domain.Exception.InvalidDayOfWeek;
-import ir.proprog.enrollassist.domain.Exception.InvalidTimeConcept;
-import ir.proprog.enrollassist.domain.Exception.InvalidTimeSyntax;
+import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.EmptyTime;
+import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidDayOfWeek;
+import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidTimeConcept;
+import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidTimeSyntax;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -56,5 +56,16 @@ public class CourseSchedule {
         return exceptions;
     }
 
+    public boolean hasConflict(CourseSchedule anotherCourseSchedule) {
+        List<String> keepDaysOfWeek = this.dayOfWeek;
+        keepDaysOfWeek.removeAll(anotherCourseSchedule.dayOfWeek);
+        if (this.dayOfWeek.size() == keepDaysOfWeek.size())
+            return true;
+
+        if (this.endTime.before(anotherCourseSchedule.startTime) || this.startTime.after(anotherCourseSchedule.endTime))
+            return true;
+
+        return false;
+    }
 
 }

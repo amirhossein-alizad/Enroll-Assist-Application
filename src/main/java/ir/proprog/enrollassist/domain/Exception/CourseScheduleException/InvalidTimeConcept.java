@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain.Exception;
+package ir.proprog.enrollassist.domain.Exception.CourseScheduleException;
 
 public class InvalidTimeConcept extends CourseScheduleException{
     @Override
