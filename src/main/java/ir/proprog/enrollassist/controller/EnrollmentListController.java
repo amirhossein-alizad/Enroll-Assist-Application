@@ -38,32 +38,19 @@ public class EnrollmentListController {
             value="/{studentNo}",
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }
     )
-    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req, HttpServletResponse res) {
+    public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
         Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
-        EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
-        EnrollmentListView result = validateListName(enrollmentList);
-        if (result.getMessage() != null) {
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            return result;
-        }
+        if(req.getEnrollmentListName().equals(""))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EnrollmentList must have a name.");
         List<EnrollmentListView> lists = studentRepository.findAllListsForStudent(studentNo);
         for (EnrollmentListView e: lists)
-            if (e.getEnrollmentListName().equals(req.getEnrollmentListName())) {
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                result.setMessage("Enrollment list name already exists");
-                return result;
-            }
+            if (e.getEnrollmentListName().equals(req.getEnrollmentListName()))
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EnrollmentList withe name " + req.getEnrollmentListName() + " already exists");
+        EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);
     }
 
-    public EnrollmentListView validateListName(EnrollmentList enrollmentList) {
-        String errorMessage = enrollmentList.isValid();
-        EnrollmentListView result = new EnrollmentListView(enrollmentList);
-        if (errorMessage != null)
-            result.setMessage(errorMessage);
-        return result;
-    }
 
     @GetMapping("/{id}")
     public EnrollmentListView one(@PathVariable Long id) {
