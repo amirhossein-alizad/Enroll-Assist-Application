@@ -68,10 +68,10 @@ public class StudentControllerTest {
         request.put("name", "Sara");
         Student student = new Student("81818181", "Mehrnaz");
         given(this.studentRepository.findByStudentNumber("81818181")).willReturn(Optional.of(student));
-        mvc.perform(post("/student/addStudent")
+        mvc.perform(post("/student")
                .content(request.toString())
                .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isConflict());
+               .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -80,7 +80,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         given(this.studentRepository.findByStudentNumber("81818181")).willReturn(Optional.empty());
-        mvc.perform(post("/student/addStudent")
+        mvc.perform(post("/student")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -94,7 +94,7 @@ public class StudentControllerTest {
         request.put("studentNo", "");
         request.put("name", "Sara");
         given(this.studentRepository.findByStudentNumber("")).willReturn(Optional.empty());
-        mvc.perform(post("/student/addStudent")
+        mvc.perform(post("/student")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());

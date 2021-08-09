@@ -1,7 +1,9 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.Exception.StudentException.InvalidStudentNumberOrName;
+import ir.proprog.enrollassist.controller.Exception.StudentException.StudentNumberExists;
 import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +33,7 @@ public class StudentController {
     public Iterable<StudentView> all(){
         return StreamSupport.stream(studentRepository.findAll().spliterator(), false).map(StudentView::new).collect(Collectors.toList());
     }
+
     @GetMapping("/{studentNumber}")
     public StudentView one(@PathVariable String studentNumber) {
         Student student = this.studentRepository.findByStudentNumber(studentNumber)
@@ -39,17 +41,21 @@ public class StudentController {
         return new StudentView(student);
     }
 
-    @PostMapping(value ="/addStudent", consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
+    @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public StudentView addStudent(@RequestBody StudentView studentView) {
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
-        if (student.isPresent())
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "This student already exists.");
+        ExceptionList exceptionList = new ExceptionList();
+        if (student.isPresent()) {
+            exceptionList.addNewException(new StudentNumberExists());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
+        }
         try {
             Student newStudent = new Student(studentView.getStudentNo(), studentView.getName());
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         }catch (IllegalArgumentException illegalArgumentException) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student number or student name is not valid.");
+            exceptionList.addNewException(new InvalidStudentNumberOrName());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
         }
     }
 
