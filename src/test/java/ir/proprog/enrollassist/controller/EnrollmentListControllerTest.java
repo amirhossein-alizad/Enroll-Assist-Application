@@ -119,8 +119,7 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("Enrollment list must have a name")));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -136,8 +135,7 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message", is("Enrollment list name already exists")));
+                .andExpect(status().isBadRequest());
     }
 
     @Test
