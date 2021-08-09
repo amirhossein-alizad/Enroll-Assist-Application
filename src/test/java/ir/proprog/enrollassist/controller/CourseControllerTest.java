@@ -53,11 +53,11 @@ public class CourseControllerTest {
     private Course course1, course2, course3;
     private List<Course> courses = new ArrayList<>();
     @BeforeEach
-    void SetUp(){
-        course1 = new Course("1", "C1", 3);
-        course2 = new Course("2", "C2", 3);
+    void SetUp() throws Exception {
+        course1 = new Course("1111111", "C1", 3);
+        course2 = new Course("2222222", "C2", 3);
         course2.withPre(course1);
-        course3 = new Course("3", "C3", 5);
+        course3 = new Course("3333333", "C3", 5);
         course2.withPre(course1);
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
@@ -70,7 +70,7 @@ public class CourseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].courseNumber", is("1")))
+                .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[1].courseTitle", is("C2")))
                 .andExpect(jsonPath("$[2].courseCredits", is(5)));
     }
@@ -81,7 +81,7 @@ public class CourseControllerTest {
         mvc.perform(get("/courses/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseNumber", is("1")))
+                .andExpect(jsonPath("$.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(0)));
@@ -93,7 +93,7 @@ public class CourseControllerTest {
         mvc.perform(get("/courses/2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseNumber", is("2")))
+                .andExpect(jsonPath("$.courseNumber", is("2222222")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseTitle", is("C2")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(1)));
@@ -191,9 +191,9 @@ public class CourseControllerTest {
                             .andExpect(status().isBadRequest())
                             .andReturn();
         String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"Course number cannot be empty.\"," +
-                                    "\"2\":\"Course must have a name.\"," +
-                                    "\"3\":\"Course credit units cannot be negative.\"," +
-                                    "\"4\":\"mockedCourse1 has made a loop in prerequisites.\"}");
+        assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
+                                    "\"2\":\"Course number cannot be empty.\"," +
+                                    "\"3\":\"Course must have a name.\"," +
+                                    "\"4\":\"Course credit units cannot be negative.\"}");
     }
 }

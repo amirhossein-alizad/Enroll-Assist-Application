@@ -102,7 +102,7 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_are_returned_correctly() throws Exception{
-        Course math1 = new Course("4", "MATH1", 3);
+        Course math1 = new Course("4444444", "MATH1", 3);
         Course math2 = mock(Course.class);
         List<Course> list = List.of(math1, math2);
         Student mockStudent = mock(Student.class);

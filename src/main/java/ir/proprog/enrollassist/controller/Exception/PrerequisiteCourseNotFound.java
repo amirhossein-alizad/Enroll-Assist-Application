@@ -1,4 +1,6 @@
-package ir.proprog.enrollassist.controller.Exception.CourseException;
+package ir.proprog.enrollassist.controller.Exception;
+
+import ir.proprog.enrollassist.Exception.CourseException;
 
 public class PrerequisiteCourseNotFound extends CourseException {
     private Long id;

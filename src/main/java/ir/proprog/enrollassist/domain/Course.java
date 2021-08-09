@@ -1,11 +1,15 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.Exception.CourseException.CourseCreditsNegative;
+import ir.proprog.enrollassist.domain.Exception.CourseException.CourseNumberEmpty;
+import ir.proprog.enrollassist.domain.Exception.CourseException.CourseNumberInvalid;
+import ir.proprog.enrollassist.domain.Exception.CourseException.CourseTitleEmpty;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.*;
@@ -23,10 +27,40 @@ public class Course {
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
-    public Course(@NonNull String courseNumber, @NonNull String title, int credits) {
+    public Course(String courseNumber, String title, int credits) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title, credits));
+        if (exceptionList.hasException())
+            throw exceptionList;
         this.courseNumber = courseNumber;
         this.title = title;
         this.credits = credits;
+    }
+
+    private List<Exception> validateCourseInfo(String courseNumber, String title, int credits) {
+        List<Exception> exceptions = new ArrayList<>();
+        try {
+            this.validateCourseNumber(courseNumber);
+        }catch (Exception e) {
+            exceptions.add(e);
+        }
+        if (title.equals(""))
+            exceptions.add(new CourseTitleEmpty());
+        if (credits < 0)
+            exceptions.add(new CourseCreditsNegative());
+        return exceptions;
+    }
+
+    private void validateCourseNumber(String courseNumber) throws Exception {
+        if (courseNumber.equals(""))
+            throw new CourseNumberEmpty();
+        try {
+            Integer.parseInt(courseNumber);
+            if (courseNumber.length() != 7)
+                throw new CourseNumberInvalid();
+        }catch (Exception exception) {
+            throw new CourseNumberInvalid();
+        }
     }
 
     public Course withPre(Course... pres) {

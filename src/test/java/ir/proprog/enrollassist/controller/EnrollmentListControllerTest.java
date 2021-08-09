@@ -140,21 +140,21 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        this.list1.addSection(new Section(new Course("1", "ap", 3), "01"));
+        this.list1.addSection(new Section(new Course("1111111", "ap", 3), "01"));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
-                .andExpect(jsonPath("$[0].courseNumber", is("1")))
+                .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[0].courseTitle", is("ap")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)));
     }
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        this.list1.addSection(new Section(new Course("1", "ap", 3), "01"));
+        this.list1.addSection(new Section(new Course("1111111", "ap", 3), "01"));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -164,7 +164,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
-        Course ap = new Course("1", "ap", 3);
+        Course ap = new Course("1111111", "ap", 3);
         Section ap_1 = new Section(ap, "01");
         Section ap_2 = new Section(ap, "02");
         ap_1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
@@ -181,7 +181,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_Added_correctly_to_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -199,7 +199,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -210,7 +210,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
@@ -239,10 +239,10 @@ public class EnrollmentListControllerTest {
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 
-        Section S1 = new Section(new Course("1", "C1", 3), "01");
-        Section S2 = new Section(new Course("2", "C2", 3), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 3), "01");
+        Section S2 = new Section(new Course("2222222", "C2", 3), "02");
+        Section S3 = new Section(new Course("3333333", "C3", 3), "01");
+        Section S4 = new Section(new Course("3333333", "C3", 3), "01");
         S1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
         S2.setExamTime(new ExamTime("2021-06-22T14:00:00", "2021-06-22T15:00:00"));
         S3.setExamTime(new ExamTime("2021-06-23T14:00:00", "2021-06-23T15:00:00"));
@@ -252,7 +252,7 @@ public class EnrollmentListControllerTest {
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
 
         List<String> err = new ArrayList<>();
-        err.add("[3] C3 is requested to be taken twice");
+        err.add("[3333333] C3 is requested to be taken twice");
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -273,10 +273,10 @@ public class EnrollmentListControllerTest {
 
         EnrollmentList list = new EnrollmentList("list", std);
 
-        Section S1 = new Section(new Course("1", "C1", 5), "01");
-        Section S2 = new Section(new Course("2", "C2", 5), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 5), "01");
+        Section S2 = new Section(new Course("2222222", "C2", 5), "02");
+        Section S3 = new Section(new Course("3333333", "C3", 3), "01");
+        Section S4 = new Section(new Course("3333333", "C3", 3), "01");
         S1.setExamTime(new ExamTime("2021-06-21T14:00:00", "2021-06-21T15:00:00"));
         S2.setExamTime(new ExamTime("2021-06-22T14:00:00", "2021-06-22T15:00:00"));
         S3.setExamTime(new ExamTime("2021-06-23T14:00:00", "2021-06-23T15:00:00"));
@@ -288,7 +288,7 @@ public class EnrollmentListControllerTest {
         when(std.calculateGPA()).thenReturn(11.99F);
         when(std.getTotalTakenCredits()).thenReturn(1);
 
-        List<String> err = new ArrayList<>(List.of("[3] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
+        List<String> err = new ArrayList<>(List.of("[3333333] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
