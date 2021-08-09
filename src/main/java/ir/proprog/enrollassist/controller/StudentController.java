@@ -1,9 +1,9 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.Exception.StudentException.InvalidStudentNumberOrName;
 import ir.proprog.enrollassist.controller.Exception.StudentException.StudentNumberExists;
 import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,7 +53,8 @@ public class StudentController {
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         }catch (IllegalArgumentException illegalArgumentException) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student number or student name is not valid.");
+            exceptionList.addNewException(new InvalidStudentNumberOrName());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
         }
     }
 
