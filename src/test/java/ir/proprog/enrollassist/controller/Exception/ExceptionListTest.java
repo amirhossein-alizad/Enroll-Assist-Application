@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller.Exception;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
