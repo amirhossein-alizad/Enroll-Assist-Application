@@ -140,7 +140,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        this.list1.addSection(new Section(new Course("1", "ap", 3), "01"));
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        this.list1.addSection(new Section(new Course("1", "ap", 3), "01", exam));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/sections")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -154,7 +155,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        this.list1.addSection(new Section(new Course("1", "ap", 3), "01"));
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        this.list1.addSection(new Section(new Course("1", "ap", 3), "01", exam));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -164,9 +166,10 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course ap = new Course("1", "ap", 3);
-        Section ap_1 = new Section(ap, "01");
-        Section ap_2 = new Section(ap, "02");
+        Section ap_1 = new Section(ap, "01", exam);
+        Section ap_2 = new Section(ap, "02", exam);
         this.list1.addSections(ap_1, ap_2);
         String error = String.format("%s is requested to be taken twice", ap);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
@@ -179,7 +182,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_Added_correctly_to_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section newSec = new Section(new Course("2", "dm", 3), "01", exam);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -197,7 +201,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section newSec = new Section(new Course("2", "dm", 3), "01", exam);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -208,7 +213,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
-        Section newSec = new Section(new Course("2", "dm", 3), "01");
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section newSec = new Section(new Course("2", "dm", 3), "01", exam);
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
@@ -237,10 +243,15 @@ public class EnrollmentListControllerTest {
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 
-        Section S1 = new Section(new Course("1", "C1", 3), "01");
-        Section S2 = new Section(new Course("2", "C2", 3), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        ExamTime exam1 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime exam2 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
+        ExamTime exam3 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
+        ExamTime exam4 = new ExamTime("2021-07-13T09:00", "2021-07-13T11:00");
+
+        Section S1 = new Section(new Course("1", "C1", 3), "01", exam1);
+        Section S2 = new Section(new Course("2", "C2", 3), "02", exam2);
+        Section S3 = new Section(new Course("3", "C3", 3), "01", exam3);
+        Section S4 = new Section(new Course("3", "C3", 3), "01", exam4);
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
@@ -267,10 +278,15 @@ public class EnrollmentListControllerTest {
 
         EnrollmentList list = new EnrollmentList("list", std);
 
-        Section S1 = new Section(new Course("1", "C1", 5), "01");
-        Section S2 = new Section(new Course("2", "C2", 5), "02");
-        Section S3 = new Section(new Course("3", "C3", 3), "01");
-        Section S4 = new Section(new Course("3", "C3", 3), "01");
+        ExamTime exam1 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime exam2 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
+        ExamTime exam3 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
+        ExamTime exam4 = new ExamTime("2021-07-13T09:00", "2021-07-13T11:00");
+
+        Section S1 = new Section(new Course("1", "C1", 5), "01", exam1);
+        Section S2 = new Section(new Course("2", "C2", 5), "02", exam2);
+        Section S3 = new Section(new Course("3", "C3", 3), "01", exam3);
+        Section S4 = new Section(new Course("3", "C3", 3), "01", exam4);
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));

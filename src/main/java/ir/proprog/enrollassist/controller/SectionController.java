@@ -67,7 +67,7 @@ public class SectionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
         try {
-            Section newSection = new Section(course, section.getSectionNo());
+            Section newSection = new Section(course, section.getSectionNo(), section.getExamTime());
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (IllegalArgumentException illegalArgumentException) {

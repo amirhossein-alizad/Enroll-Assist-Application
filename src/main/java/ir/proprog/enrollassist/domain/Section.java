@@ -21,10 +21,11 @@ public class Section {
     @ManyToOne
     private Course course;
 
-    public Section(@NonNull Course course, String sectionNo) {
+    public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
         this.validateSectionNo(sectionNo);
         this.sectionNo = sectionNo;
         this.course = course;
+        this.examTime = examTime;
     }
 
     private void validateSectionNo(String sectionNo) {

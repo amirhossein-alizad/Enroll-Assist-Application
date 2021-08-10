@@ -27,4 +27,14 @@ public class SectionView {
         this.courseCredits = section.getCourse().getCredits();
     }
 
+    public SectionView(Section section, ExamTime examTime) {
+        this.sectionId = section.getId();
+        this.sectionNo = section.getSectionNo();
+        this.examTime = examTime;
+        this.courseId = section.getCourse().getId();
+        this.courseNumber = section.getCourse().getCourseNumber();
+        this.courseTitle = section.getCourse().getTitle();
+        this.courseCredits = section.getCourse().getCredits();
+    }
+
 }
