@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.controller.CourseView;
+import ir.proprog.enrollassist.controller.SectionView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -72,18 +73,18 @@ public class Student {
         return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
-    public List<CourseView> getNotPassedCourses(Iterable<Course> allCourses){
+    private List<Course> getTakeableCourses(Iterable<Course> allCourses){
         List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
             if (sr.getGrade() >= 10)
                 passed.add(sr.getCourse());
-        List<CourseView> takeable  = new ArrayList<>();
+        List<Course> takeable  = new ArrayList<>();
         List<Course> notPassed = new ArrayList<>();
         allCourses.forEach(notPassed::add);
         notPassed.removeAll(passed);
         for(Course c : notPassed)
             if(c.canBeTakenBy(this).isEmpty())
-                takeable.add(new CourseView(c));
+                takeable.add(c);
         return takeable;
     }
 
