@@ -72,7 +72,7 @@ public class Student {
         return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
-    public List<CourseView> getNotPassedCourses(Iterable<Course> allCourses, Student student){
+    public List<CourseView> getNotPassedCourses(Iterable<Course> allCourses){
         List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
             if (sr.getGrade() >= 10)
@@ -82,7 +82,7 @@ public class Student {
         allCourses.forEach(notPassed::add);
         notPassed.removeAll(passed);
         for(Course c : notPassed)
-            if(c.canBeTakenBy(student).isEmpty())
+            if(c.canBeTakenBy(this).isEmpty())
                 takeable.add(new CourseView(c));
         return takeable;
     }
