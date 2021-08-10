@@ -16,7 +16,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sectionNo;
-    @Transient
+    @Embedded
     private ExamTime examTime;
     @ManyToOne
     private Course course;
