@@ -41,6 +41,8 @@ public class StudentControllerTest {
     private StudentRepository studentRepository;
     @MockBean
     private CourseRepository courseRepository;
+    @MockBean
+    private SectionRepository sectionRepository;
 
     @Test
     public void Student_that_doesnt_exist_is_not_found() throws Exception {
@@ -107,7 +109,9 @@ public class StudentControllerTest {
         List<Course> list = List.of(math1, math2);
         Student student = new Student("010101", "ali");
         student.setGrade("t1", math1, 20.0);
+        Section section = new Section(math2, "01");
 
+        given(sectionRepository.findAll()).willReturn(List.of(section));
         given(courseRepository.findAll()).willReturn(list);
         given(studentRepository.findByStudentNumber("1")).willReturn(java.util.Optional.of(student));
 
@@ -122,6 +126,7 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].courseId", is(1)))
+                .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber", is("1")))
                 .andExpect(jsonPath("$[0].courseTitle", is("math2")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)));
