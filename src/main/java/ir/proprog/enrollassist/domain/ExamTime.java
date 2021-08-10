@@ -32,7 +32,7 @@ public class ExamTime {
     }
 
     public ExamTime(String start, String end) throws Exception {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withResolverStyle(ResolverStyle.STRICT);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         try {
             this.start = LocalDateTime.parse(start, dateFormat);
             this.end = LocalDateTime.parse(end, dateFormat);
