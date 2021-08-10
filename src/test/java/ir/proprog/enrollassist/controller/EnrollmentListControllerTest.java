@@ -18,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -119,7 +121,9 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals(HttpStatus.BAD_REQUEST + " \"EnrollmentList must have a name.\"", result.getResolvedException().getMessage()));
     }
 
     @Test
@@ -135,7 +139,9 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals(HttpStatus.BAD_REQUEST + " \"EnrollmentList with name Mahsa's List already exists.\"", result.getResolvedException().getMessage()));
     }
 
     @Test
