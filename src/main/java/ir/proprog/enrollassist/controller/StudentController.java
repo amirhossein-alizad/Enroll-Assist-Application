@@ -61,18 +61,11 @@ public class StudentController {
 
     @GetMapping("/takeableSections/{studentNumber}")
     public Iterable<CourseView> takeableSections(@PathVariable String studentNumber){
-        List<CourseView> takeable  = new ArrayList<>();
-        List<Course> notPassed = new ArrayList<>();
-        courseRepository.findAll().forEach(notPassed::add);
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentNumber);
         if(student.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
         Student std = student.get();
-        notPassed.removeAll(std.getPassedCourses());
-        for(Course c : notPassed)
-            if(c.canBeTakenBy(std).isEmpty())
-                takeable.add(new CourseView(c));
-        return takeable;
+        return std.getNotPassedCourses(courseRepository.findAll(), std);
     }
 
 }
