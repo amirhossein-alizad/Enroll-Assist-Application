@@ -1,8 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.Exception.StudentException.InvalidStudentNumberOrName;
-import ir.proprog.enrollassist.controller.Exception.StudentException.StudentNumberExists;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
@@ -46,7 +44,7 @@ public class StudentController {
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
         ExceptionList exceptionList = new ExceptionList();
         if (student.isPresent()) {
-            exceptionList.addNewException(new StudentNumberExists());
+            exceptionList.addNewException(new Exception("This student already exists."));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
         }
         try {
@@ -54,7 +52,7 @@ public class StudentController {
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         }catch (IllegalArgumentException illegalArgumentException) {
-            exceptionList.addNewException(new InvalidStudentNumberOrName());
+            exceptionList.addNewException(new Exception("Student number or student name is not valid."));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
         }
     }
