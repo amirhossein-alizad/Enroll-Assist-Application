@@ -88,4 +88,15 @@ public class Student {
         return takeable;
     }
 
+    public List<SectionView> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
+        List<Course> takeableCourses = getTakeableCourses(allCourses);
+        List<SectionView> takeableSections = new ArrayList<>();
+        for (Section section: allSections)
+            for(Course course: takeableCourses)
+                if(section.getCourse().equals(course)) {
+                    takeableSections.add(new SectionView(section));
+                    break;
+                }
+        return takeableSections;
+    }
 }
