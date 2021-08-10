@@ -54,4 +54,26 @@ public class ExamTimeTest {
         assertThat(errors).hasSize(1).contains("Exam cannot take more than one day.");
     }
 
+    @Test
+    public void Exam_date_should_be_on_valid_days() throws Exception {
+        String exception = "";
+        try {
+            ExamTime time1 = new ExamTime("2021-06-34 11:00", "2021-06-34 12:00");
+        } catch(Exception e) {
+            exception = e.getMessage();
+        }
+        assertEquals(exception, "Dates must be of the format yyyy-MM-dd HH:mm");
+    }
+
+    @Test
+    public void Exam_date_should_be_on_valid_months() throws Exception {
+        String exception = "";
+        try {
+            ExamTime time1 = new ExamTime("2021-13-11 11:00", "2021-13-11 12:00");
+        } catch(Exception e) {
+            exception = e.getMessage();
+        }
+        assertEquals(exception, "Dates must be of the format yyyy-MM-dd HH:mm");
+    }
+
 }
