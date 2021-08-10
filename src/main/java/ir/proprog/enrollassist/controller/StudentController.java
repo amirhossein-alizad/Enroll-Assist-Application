@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.Exception.StudentException.InvalidStudentNumberOrName;
 import ir.proprog.enrollassist.controller.Exception.StudentException.StudentNumberExists;
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
@@ -68,7 +69,8 @@ public class StudentController {
         if(student.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
         Student std = student.get();
-        return std.getTakeableSections(courseRepository.findAll(), sectionRepository.findAll());
+        Iterable<Section> takeable = std.getTakeableSections(courseRepository.findAll(), sectionRepository.findAll());
+        return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
     }
 
 }

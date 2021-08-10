@@ -90,13 +90,13 @@ public class Student {
         return takeable;
     }
 
-    public List<SectionView> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
+    public List<Section> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
         List<Course> takeableCourses = getTakeableCourses(allCourses);
-        List<SectionView> takeableSections = new ArrayList<>();
+        List<Section> takeableSections = new ArrayList<>();
         for (Section section: allSections)
             for(Course course: takeableCourses)
                 if(section.getCourse().equals(course)) {
-                    takeableSections.add(new SectionView(section));
+                    takeableSections.add(section);
                     break;
                 }
         return takeableSections;
