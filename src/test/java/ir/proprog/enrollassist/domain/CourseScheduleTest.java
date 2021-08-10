@@ -43,44 +43,44 @@ public class CourseScheduleTest {
                                                         "\"6\":\"End time can not be before start time.(4)\"}");
     }
 
-//
-//    @Test
-//    public void Conflict_of_two_CourseSchedule_with_overlap_is_diagnosed_correctly() {
-//        ExceptionList exceptionList = new ExceptionList();
-//        try {
-//            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-//            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Monday"), "09:30", "11:00");
-//            assertTrue(courseSchedule1.hasConflict(courseSchedule2));
-//        } catch (ExceptionList e) {
-//            exceptionList.addExceptions(e.getExceptions());
-//        }
-//        assertFalse(exceptionList.hasException());
-//    }
-//
-//
-//    @Test
-//    public void No_conflict_is_diagnosed_correctly_1() {
-//        ExceptionList exceptionList = new ExceptionList();
-//        try {
-//            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-//            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Tuesday"), "10:30", "12:00");
-//            assertFalse(courseSchedule1.hasConflict(courseSchedule2));
-//        } catch (ExceptionList e) {
-//            exceptionList.addExceptions(e.getExceptions());
-//        }
-//        assertFalse(exceptionList.hasException());
-//    }
-//
-//    @Test
-//    public void No_conflict_is_diagnosed_correctly_2() {
-//        ExceptionList exceptionList = new ExceptionList();
-//        try {
-//            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-//            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Sunday", "Monday"), "12:00", "13:00");
-//            assertFalse(courseSchedule1.hasConflict(courseSchedule2));
-//        } catch (ExceptionList e) {
-//            exceptionList.addExceptions(e.getExceptions());
-//        }
-//        assertFalse(exceptionList.hasException());
-//    }
+
+    @Test
+    public void Conflict_of_two_CourseSchedule_with_overlap_is_diagnosed_correctly() {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), List.of("10:30-12:00", "10:30-12:00"));
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Monday"), List.of("10:30-12:00", "10:00-11:00"));
+            assertTrue(courseSchedule1.hasConflict(courseSchedule2));
+        } catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
+        assertFalse(exceptionList.hasException());
+    }
+
+
+    @Test
+    public void No_conflict_is_diagnosed_correctly_1() {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), List.of("10:30-12:00", "10:30-12:00"));
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Tuesday"), List.of("10:30-12:00", "10:30-12:00"));
+            assertFalse(courseSchedule1.hasConflict(courseSchedule2));
+        } catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
+        assertFalse(exceptionList.hasException());
+    }
+
+    @Test
+    public void No_conflict_is_diagnosed_correctly_2() {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), List.of("10:30-12:00", "10:30-12:00"));
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Sunday", "Monday"), List.of("09:00-10:30", "09:00-10:30"));
+            assertFalse(courseSchedule1.hasConflict(courseSchedule2));
+        } catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
+        assertFalse(exceptionList.hasException());
+    }
 }
