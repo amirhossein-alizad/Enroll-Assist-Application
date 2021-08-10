@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -140,7 +141,11 @@ public class SectionControllerTest {
         Course course = mock(Course.class);
         given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "dm");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -150,20 +155,28 @@ public class SectionControllerTest {
         Course course = new Course("10", "DM", 3);
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "01");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.sectionNo", is("01")))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void Existed_section_is_not_added_correctly() throws Exception{
+    public void Existing_section_is_not_added_correctly() throws Exception{
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = new Course("10", "DM", 3);
         List<Section> findSections = List.of(new Section(course, "01", exam));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "01");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
