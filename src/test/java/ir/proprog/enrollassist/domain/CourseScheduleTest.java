@@ -14,7 +14,7 @@ public class CourseScheduleTest {
         ExceptionList exceptionList = new ExceptionList();
         List<String> days = List.of("Sunday", "Monday");
         try {
-            CourseSchedule courseSchedule = new CourseSchedule(days, "10:30", "12:00");
+            SectionSchedule courseSchedule = new SectionSchedule(days, "10:30", "12:00");
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -27,7 +27,7 @@ public class CourseScheduleTest {
         ExceptionList exceptionList = new ExceptionList();
         List<String> days = List.of("Sunday", "Monday");
         try {
-            CourseSchedule courseSchedule = new CourseSchedule(days, "10:30", "");
+            SectionSchedule courseSchedule = new SectionSchedule(days, "10:30", "");
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -40,7 +40,7 @@ public class CourseScheduleTest {
         ExceptionList exceptionList = new ExceptionList();
         List<String> days = List.of("Sunday", "Monday");
         try {
-            CourseSchedule courseSchedule = new CourseSchedule(days, "10,30", "12");
+            SectionSchedule courseSchedule = new SectionSchedule(days, "10,30", "12");
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -53,7 +53,7 @@ public class CourseScheduleTest {
         ExceptionList exceptionList = new ExceptionList();
         List<String> days = List.of("Sunday", "Monday");
         try {
-            CourseSchedule courseSchedule = new CourseSchedule(days, "10:30", "09:00");
+            SectionSchedule courseSchedule = new SectionSchedule(days, "10:30", "09:00");
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -66,7 +66,7 @@ public class CourseScheduleTest {
         ExceptionList exceptionList = new ExceptionList();
         List<String> days = List.of("Sun", "Mon");
         try {
-            CourseSchedule courseSchedule = new CourseSchedule(days, "10:30", "12:00");
+            SectionSchedule courseSchedule = new SectionSchedule(days, "10:30", "12:00");
 
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -80,8 +80,8 @@ public class CourseScheduleTest {
     public void Conflict_of_two_CourseSchedule_with_overlap_is_diagnosed_correctly() {
         ExceptionList exceptionList = new ExceptionList();
         try {
-            CourseSchedule courseSchedule1 = new CourseSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-            CourseSchedule courseSchedule2 = new CourseSchedule(List.of("Wednesday", "Monday"), "09:30", "11:00");
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Monday"), "09:30", "11:00");
             assertTrue(courseSchedule1.hasConflict(courseSchedule2));
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -94,8 +94,8 @@ public class CourseScheduleTest {
     public void No_conflict_is_diagnosed_correctly_1() {
         ExceptionList exceptionList = new ExceptionList();
         try {
-            CourseSchedule courseSchedule1 = new CourseSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-            CourseSchedule courseSchedule2 = new CourseSchedule(List.of("Wednesday", "Tuesday"), "10:30", "12:00");
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Wednesday", "Tuesday"), "10:30", "12:00");
             assertFalse(courseSchedule1.hasConflict(courseSchedule2));
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -107,8 +107,8 @@ public class CourseScheduleTest {
     public void No_conflict_is_diagnosed_correctly_2() {
         ExceptionList exceptionList = new ExceptionList();
         try {
-            CourseSchedule courseSchedule1 = new CourseSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
-            CourseSchedule courseSchedule2 = new CourseSchedule(List.of("Sunday", "Monday"), "12:00", "13:00");
+            SectionSchedule courseSchedule1 = new SectionSchedule(List.of("Sunday", "Monday"), "10:30", "12:00");
+            SectionSchedule courseSchedule2 = new SectionSchedule(List.of("Sunday", "Monday"), "12:00", "13:00");
             assertFalse(courseSchedule1.hasConflict(courseSchedule2));
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());

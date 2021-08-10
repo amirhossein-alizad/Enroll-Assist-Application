@@ -1,10 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.EmptyTime;
-import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidDayOfWeek;
-import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidTimeConcept;
-import ir.proprog.enrollassist.domain.Exception.CourseScheduleException.InvalidTimeSyntax;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -13,12 +9,12 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class CourseSchedule {
+public class SectionSchedule {
     private Date startTime;
     private Date endTime;
     private List<String> dayOfWeek;
 
-    public CourseSchedule(List<String> dayOfWeek, String startTime, String endTime) throws ExceptionList {
+    public SectionSchedule(List<String> dayOfWeek, String startTime, String endTime) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         exceptionList.addExceptions(this.validateDayOfWeek(dayOfWeek));
         try {
@@ -35,16 +31,16 @@ public class CourseSchedule {
     private void validateTime(String startTime, String endTime) throws Exception {
         SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
         if (startTime.equals("") || endTime.equals(""))
-            throw new EmptyTime();
+            throw new Exception("Time can not be empty.");
         try {
             this.startTime = dataFormat.parse(startTime);
             this.endTime = dataFormat.parse(endTime);
         }
         catch (Exception exception) {
-            throw new InvalidTimeSyntax();
+            throw new Exception("Section time is not valid.");
         }
         if (this.endTime.before(this.startTime))
-            throw new InvalidTimeConcept();
+            throw new Exception("End time can not be before start time.");
     }
 
     private List<Exception> validateDayOfWeek(List<String> dayOfWeek) {
@@ -53,7 +49,7 @@ public class CourseSchedule {
         List<String> week = Arrays.asList(dateFormatSymbols.getWeekdays());
         for (String d: dayOfWeek) {
             if (!week.contains(d))
-               exceptions.add(new InvalidDayOfWeek(d));
+               exceptions.add(new Exception(String.format("%s is not valid week day.", d)));
         }
         return exceptions;
     }
@@ -66,7 +62,7 @@ public class CourseSchedule {
         return false;
     }
 
-    public boolean hasConflict(CourseSchedule anotherCourseSchedule) {
+    public boolean hasConflict(SectionSchedule anotherCourseSchedule) {
         if (!this.hasSameMember(anotherCourseSchedule.dayOfWeek))
             return false;
         else if (this.endTime.before(anotherCourseSchedule.startTime) || this.endTime.equals(anotherCourseSchedule.startTime))

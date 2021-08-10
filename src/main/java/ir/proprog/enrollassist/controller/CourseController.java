@@ -1,10 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.controller.Exception.*;
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.Exception.CourseNumberExists;
-import ir.proprog.enrollassist.controller.Exception.PrerequisiteCourseNotFound;
-import ir.proprog.enrollassist.controller.Exception.PrerequisitesHaveLoop;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import org.springframework.http.HttpStatus;
@@ -35,7 +31,7 @@ public class CourseController {
         Set<Course> prerequisites = new HashSet<>();
         CourseView outputCourse = new CourseView();
         if (courseRepository.findCourseByCourseNumber(courseView.getCourseNumber()).isPresent())
-            exceptionList.addNewException(new CourseNumberExists());
+            exceptionList.addNewException(new Exception("Course number already exists."));
         try {
             prerequisites = this.validatePrerequisites(courseView.getPrerequisites());
         } catch (ExceptionList e) {
@@ -60,7 +56,7 @@ public class CourseController {
         for(Long L : prerequisiteIds){
             Optional<Course> pre = courseRepository.findById(L);
             if(pre.isEmpty())
-                exceptionList.addNewException(new PrerequisiteCourseNotFound(L));
+                exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
             else {
                 try {
                     this.checkLoop(pre.get());
@@ -83,7 +79,7 @@ public class CourseController {
         while(!courseStack.isEmpty()){
             Course c = courseStack.pop();
             if(courseList.contains(c))
-                exceptionList.addNewException(new PrerequisitesHaveLoop(c.getTitle()));
+                exceptionList.addNewException(new Exception(String.format("%s has made a loop in prerequisites.", c.getTitle())));
             else{
                 for(Course p : c.getPrerequisites())
                     courseStack.push(p);
