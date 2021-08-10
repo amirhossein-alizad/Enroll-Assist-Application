@@ -23,7 +23,7 @@ public class EnrollmentListRepositoryTest {
     private SectionRepository sectionRepository;
 
     @BeforeEach
-    public void populate() {
+    public void populate () throws Exception {
         testDataInitializer.populate();
     }
 

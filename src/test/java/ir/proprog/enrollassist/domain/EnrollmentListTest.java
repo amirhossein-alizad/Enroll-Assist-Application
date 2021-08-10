@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
@@ -13,12 +14,12 @@ import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
     @Test
-    void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() {
+    void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course prog = new Course("3", "PROG", 4);
-        Course ap = new Course("3", "AP", 3).withPre(prog);
-        Course math2 = new Course("5", "MATH2", 3).withPre(math1);
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 4);
+        Course ap = new Course("3333333", "AP", 3).withPre(prog);
+        Course math2 = new Course("5555555", "MATH2", 3).withPre(math1);
         Section math2_1 = new Section(math2, "01", null);
         Section ap_1 = new Section(ap, "01", null);
         when(bebe.hasPassed(math1)).thenReturn(true);
@@ -31,9 +32,9 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() {
+    void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
+        Course math1 = new Course("1111111", "MATH1", 3);
         Section math1_1 = new Section(math1, "01", null);
         when(bebe.hasPassed(math1)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
@@ -44,9 +45,9 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_duplicate_courses() {
+    void Enrollment_list_cannot_have_duplicate_courses() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
+        Course math1 = new Course("1111111", "MATH1", 3);
         Section math1_1 = new Section(math1, "01", null);
         Section math1_2 = new Section(math1, "02", null);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
@@ -57,13 +58,13 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_more_than_14_credits_belonging_to_student_with_gpa_less_than_12() {
+    void Enrollment_list_cannot_have_more_than_14_credits_belonging_to_student_with_gpa_less_than_12() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course prog = new Course("2", "PROG", 4);
-        Course eco = new Course("3", "ECO", 3);
-        Course ap = new Course("4", "AP", 3);
-        Course ds = new Course("6", "DS", 3);
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 4);
+        Course eco = new Course("3333333", "ECO", 3);
+        Course ap = new Course("4444444", "AP", 3);
+        Course ds = new Course("5555555", "DS", 3);
         Section math1_1 = new Section(math1, "01", null);
         Section prog_1 = new Section(prog, "01", null);
         Section eco_1 = new Section(eco, "01", null);
@@ -79,12 +80,12 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() {
+    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course prog = new Course("2", "PROG", 4);
-        Course eco = new Course("3", "ECO", 6);
-        Course ap = new Course("4", "AP", 9);
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 4);
+        Course eco = new Course("3333333", "ECO", 6);
+        Course ap = new Course("4444444", "AP", 9);
         Section math1_1 = new Section(math1, "01", null);
         Section prog_1 = new Section(prog, "01", null);
         Section eco_1 = new Section(eco, "01", null);
@@ -99,11 +100,11 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Nobody_can_take_more_than_24_credits() {
+    void Nobody_can_take_more_than_24_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 6);
-        Course prog = new Course("2", "PROG", 8);
-        Course eco = new Course("3", "ECO", 12);
+        Course math1 = new Course("1111111", "MATH1", 6);
+        Course prog = new Course("2222222", "PROG", 8);
+        Course eco = new Course("3333333", "ECO", 12);
         Section math1_1 = new Section(math1, "01", null);
         Section prog_1 = new Section(prog, "01", null);
         Section eco_1 = new Section(eco, "01", null);
@@ -117,13 +118,13 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_duplicate_courses_and_more_than_24_credits() {
+    void Enrollment_list_cannot_have_duplicate_courses_and_more_than_24_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3);
-        Course prog = new Course("2", "PROG", 6);
-        Course math2 = new Course("5", "MATH2", 8).withPre(math1);
-        Course da = new Course("7", "DS", 8);
-        Course dm = new Course("8", "DM", 3);
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 6);
+        Course math2 = new Course("5555555", "MATH2", 8).withPre(math1);
+        Course da = new Course("7777777", "DS", 8);
+        Course dm = new Course("8888888", "DM", 3);
         Section math2_1 = new Section(math2, "01", null);
         Section prog_1 = new Section(prog, "01", null);
         Section da_1 = new Section(da, "01", null);
@@ -144,12 +145,12 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void New_students_cant_take_more_than_twenty_credits(){
+    void New_students_cant_take_more_than_twenty_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course phys1 = new Course("8", "PHYS1", 6);
-        Course prog = new Course("7", "PROG", 8);
-        Course maaref = new Course("5", "MAAREF", 4);
-        Course dm = new Course("3", "DM", 6);
+        Course phys1 = new Course("1111111", "PHYS1", 6);
+        Course prog = new Course("2222222", "PROG", 8);
+        Course maaref = new Course("3333333", "MAAREF", 4);
+        Course dm = new Course("4444444", "DM", 6);
         Section phys1_1 = new Section(phys1, "01", null);
         Section prog1_1 = new Section(prog, "01", null);
         Section dm_1 = new Section(dm, "01", null);
@@ -163,11 +164,11 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Students_with_GPA_more_than_12_can_take_more_than_14_credits(){
+    void Students_with_GPA_more_than_12_can_take_more_than_14_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 6);
-        Course phys1 = new Course("8", "PHYS1", 6);
-        Course prog = new Course("7", "PROG", 7);
+        Course math1 = new Course("1111111", "MATH1", 6);
+        Course phys1 = new Course("2222222", "PHYS1", 6);
+        Course prog = new Course("3333333", "PROG", 7);
         Section phys1_1 = new Section(phys1, "01", null);
         Section prog1_1 = new Section(prog, "01", null);
         Section math1_1 = new Section(math1, "01", null);
@@ -180,12 +181,12 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Students_with_GPA_more_than_17_can_take_more_than_20_credits(){
+    void Students_with_GPA_more_than_17_can_take_more_than_20_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 6);
-        Course phys1 = new Course("8", "PHYS1", 6);
-        Course prog = new Course("7", "PROG", 8);
-        Course maaref = new Course("5", "MAAREF", 4);
+        Course math1 = new Course("1111111", "MATH1", 6);
+        Course phys1 = new Course("2222222", "PHYS1", 6);
+        Course prog = new Course("3333333", "PROG", 8);
+        Course maaref = new Course("4444444", "MAAREF", 4);
 
         Section phys1_1 = new Section(phys1, "01", null);
         Section prog1_1 = new Section(prog, "01", null);
@@ -201,15 +202,15 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules(){
+    void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys1 = new Course("8", "PHYS1", 3);
-        Course prog = new Course("7", "PROG", 4);
-        Course maaref = new Course("5", "MAAREF", 2);
-        Course economy = new Course("1", "ECO", 3);
-        Course akhlagh = new Course("11", "AKHLAGH", 2);
-        Course phys2 = new Course("9", "PHYS2", 3).withPre(math1, phys1);
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course phys1 = new Course("2222222", "PHYS1", 3);
+        Course prog = new Course("3333333", "PROG", 4);
+        Course maaref = new Course("4444444", "MAAREF", 2);
+        Course economy = new Course("5555555", "ECO", 3);
+        Course akhlagh = new Course("6666666", "AKHLAGH", 2);
+        Course phys2 = new Course("7777777", "PHYS2", 3).withPre(math1, phys1);
         Section prog1_1 = new Section(prog, "01", null);
         Section maaref1_1 = new Section(maaref, "01", null);
         Section economy1_1 = new Section(economy, "01", null);
@@ -226,11 +227,11 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Requesting_courses_with_2_prerequisites_when_one_has_been_passed_is_a_violation(){
+    void Requesting_courses_with_2_prerequisites_when_one_has_been_passed_is_a_violation() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3);
-        Course phys1 = new Course("8", "PHYS1", 3);
-        Course phys2 = new Course("9", "PHYS2", 3).withPre(math1, phys1);
+        Course math1 = new Course("1212121", "MATH1", 3);
+        Course phys1 = new Course("1313131", "PHYS1", 3);
+        Course phys2 = new Course("1111111", "PHYS2", 3).withPre(math1, phys1);
         Section phys2_1 = new Section(phys2, "01", null);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys2_1);
@@ -245,8 +246,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_sections_on_the_same_day_and_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
-        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
+        Course math1 = new Course("1234567", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("2345678", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01", null);
         math1_1.setExamTime(new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"));
         Section phys2_1 = new Section(phys2, "01", null);
@@ -261,8 +262,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
-        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"));
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T09:30", "2021-06-21T13:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -275,8 +276,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_may_have_sections_on_the_different_days_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
-        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"));
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-23T09:30", "2021-06-23T13:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -289,8 +290,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_may_have_sections_intersecting_at_one_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("4", "MATH1", 3).setHasExam(true);
-        Course phys2 = new Course("9", "PHYS2", 3).setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
+        Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T13:00"));
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T13:00", "2021-06-21T16:00"));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -303,9 +304,9 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1", "MATH1", 3).setHasExam(true);
-        Course ap = new Course("2", "AP", 4).setHasExam(true);
-        Course phys2 = new Course("3", "PHYS2", 3).setHasExam(true);
+        Course math1 = new Course("1111111", "MATH1", 3).setHasExam(true);
+        Course ap = new Course("2222222", "AP", 4).setHasExam(true);
+        Course phys2 = new Course("3333333", "PHYS2", 3).setHasExam(true);
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"));
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T14:00"));
         Section ap1_1 = new Section(ap, "01", new ExamTime("2021-06-21T13:30", "2021-06-21T16:30"));

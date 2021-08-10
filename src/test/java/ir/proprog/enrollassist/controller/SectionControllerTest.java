@@ -44,9 +44,9 @@ public class SectionControllerTest {
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         List<Section> sections = List.of(
-                new Section(new Course("1", "C1", 3), "01", exam0),
-                new Section(new Course("2", "C2", 3), "02", exam1),
-                new Section(new Course("2", "C2", 3), "01", exam0)
+                new Section(new Course("1111111", "C1", 3), "01", exam0),
+                new Section(new Course("2222222", "C2", 3), "02", exam1),
+                new Section(new Course("3333333", "C3", 3), "01", exam0)
         );
 
         given(sectionRepository.findAll()).willReturn(sections);
@@ -55,20 +55,20 @@ public class SectionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(sections.size())))
                 .andExpect(jsonPath("$[0].courseTitle", anyOf(is("C1"), is("C2"))))
-                .andExpect(jsonPath("$[0].courseNumber", anyOf(is("1"), is("2"))))
+                .andExpect(jsonPath("$[0].courseNumber", anyOf(is("1111111"), is("2"))))
                 .andExpect(jsonPath("$[0].sectionNo", anyOf(is("01"), is("02"))));
     }
 
     @Test
     public void Requested_section_is_returned_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1", "ap", 3), "01", exam);
+        Section section = new Section(new Course("1111111", "ap", 3), "01", exam);
         given(sectionRepository.findById(1L)).willReturn(Optional.of(section));
         mvc.perform(get("/sections/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("ap")))
-                .andExpect(jsonPath("$.courseNumber", is("1")))
+                .andExpect(jsonPath("$.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
 
     }
@@ -78,13 +78,13 @@ public class SectionControllerTest {
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         ExamTime exam2 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
-        Section s1 = new Section(new Course("1", "C1", 3), "01", exam0);
+        Section s1 = new Section(new Course("1111111", "C1", 3), "01", exam0);
         SectionView c1 = new SectionView(s1);
         SectionDemandView sd_1 = new SectionDemandView(c1, 50);
-        Section s2 = new Section(new Course("2", "C2", 3), "01", exam1);
+        Section s2 = new Section(new Course("2222222", "C2", 3), "01", exam1);
         SectionView c2 = new SectionView(s2);
         SectionDemandView sd_2 = new SectionDemandView(c2, 72);
-        Section s3 = new Section(new Course("3", "C3", 3), "01", exam2);
+        Section s3 = new Section(new Course("3333333", "C3", 3), "01", exam2);
         SectionView c3 = new SectionView(s3);
         SectionDemandView sd_3 = new SectionDemandView(c3, 25);
 
@@ -115,7 +115,7 @@ public class SectionControllerTest {
     @Test
     public void One_section_is_returned_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1", "C1", 3), "01", exam);
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam);
 
         given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
 
@@ -123,7 +123,7 @@ public class SectionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
-                .andExpect(jsonPath("$.courseNumber", is("1")))
+                .andExpect(jsonPath("$.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
     }
 
@@ -152,7 +152,7 @@ public class SectionControllerTest {
 
     @Test
     public void Valid_section_is_added_correctly() throws Exception {
-        Course course = new Course("10", "DM", 3);
+        Course course = new Course("1010101", "DM", 3);
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
@@ -168,7 +168,7 @@ public class SectionControllerTest {
     @Test
     public void Existing_section_is_not_added_correctly() throws Exception{
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Course course = new Course("10", "DM", 3);
+        Course course = new Course("1010101", "DM", 3);
         List<Section> findSections = List.of(new Section(course, "01", exam));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);

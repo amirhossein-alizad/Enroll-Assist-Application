@@ -1,7 +1,10 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.controller.Exception.CourseException.*;
+import ir.proprog.enrollassist.controller.Exception.*;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.Exception.CourseNumberExists;
+import ir.proprog.enrollassist.controller.Exception.PrerequisiteCourseNotFound;
+import ir.proprog.enrollassist.controller.Exception.PrerequisitesHaveLoop;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import org.springframework.http.HttpStatus;
@@ -29,45 +32,26 @@ public class CourseController {
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@RequestBody CourseView courseView){
         ExceptionList exceptionList = new ExceptionList();
-        Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
+        Set<Course> prerequisites = new HashSet<>();
+        CourseView outputCourse = new CourseView();
         if (courseRepository.findCourseByCourseNumber(courseView.getCourseNumber()).isPresent())
             exceptionList.addNewException(new CourseNumberExists());
-        exceptionList.addExceptions(this.validateCourseInfo(courseView));
         try {
-            Set<Course> prerequisites = this.validatePrerequisites(courseView.getPrerequisites());
-            newCourse.setPrerequisites(prerequisites);
+            prerequisites = this.validatePrerequisites(courseView.getPrerequisites());
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
+        try {
+            Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
+            newCourse.setPrerequisites(prerequisites);
+            outputCourse = new CourseView(newCourse);
+        } catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
+
         if (exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        return new CourseView(newCourse);
-    }
-
-    private List<Exception> validateCourseInfo(CourseView courseView) {
-        List<Exception> exceptions = new ArrayList<>();
-        try {
-            this.validateCourseNumber(courseView.getCourseNumber());
-        }catch (Exception e) {
-            exceptions.add(e);
-        }
-        if (courseView.getCourseTitle().equals(""))
-            exceptions.add(new CourseTitleEmpty());
-        if (courseView.getCourseCredits() < 0)
-            exceptions.add(new CourseCreditsNegative());
-        return exceptions;
-    }
-
-    private void validateCourseNumber(String courseNumber) throws Exception {
-        if (courseNumber.equals(""))
-            throw new CourseNumberEmpty();
-        try {
-            Integer.parseInt(courseNumber);
-            if (courseNumber.length() != 7)
-                throw new CourseNumberInvalid();
-        }catch (Exception exception) {
-            throw new CourseNumberInvalid();
-        }
+        return outputCourse;
     }
 
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {

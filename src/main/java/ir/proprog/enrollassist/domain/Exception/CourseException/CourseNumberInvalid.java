@@ -1,4 +1,6 @@
-package ir.proprog.enrollassist.controller.Exception.CourseException;
+package ir.proprog.enrollassist.domain.Exception.CourseException;
+
+import ir.proprog.enrollassist.Exception.CourseException;
 
 public class CourseNumberInvalid extends CourseException {
     public CourseNumberInvalid(){}
