@@ -71,6 +71,16 @@ public class Section {
             this.schedule = parsedSchedule;
     }
 
+    public boolean hasConflict(Section otherSection) {
+        for (SectionSchedule thisSectionSchedule: this.schedule) {
+            for (SectionSchedule otherSectionSchedule: otherSection.schedule) {
+                if (thisSectionSchedule.hasConflict(otherSectionSchedule))
+                    return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -69,6 +69,7 @@ public class EnrollmentList {
         violations.addAll(checkNoCourseHasRequestedTwice());
         violations.addAll(checkValidGPALimit(owner));
         violations.addAll(checkExamTimeConflicts());
+        violations.addAll(checkSectionScheduleConflicts());
         return violations;
     }
 
@@ -131,6 +132,19 @@ public class EnrollmentList {
                     continue;
                 if (s1 != s2 && s1.getExamTime().hasTimeConflict(s2.getExamTime()))
                     violations.add(new ExamTimeCollision(s1, s2));
+            }
+        }
+        return violations;
+    }
+
+    List<EnrollmentRuleViolation> checkSectionScheduleConflicts() {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        for (int i=0; i<this.sections.size(); i++) {
+            for (int j=i+1; j<this.sections.size(); j++) {
+                if (this.sections.get(i).equals(this.sections.get(j)))
+                    continue;
+                if (this.sections.get(i).hasConflict(this.sections.get(j)))
+                    violations.add(new ConflictOfClassSchedule(this.sections.get(i).getCourse(), this.sections.get(j).getCourse()));
             }
         }
         return violations;
