@@ -2,8 +2,10 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
+import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,10 +23,12 @@ import java.util.stream.StreamSupport;
 public class StudentController {
     private StudentRepository studentRepository;
     private CourseRepository courseRepository;
+    private SectionRepository sectionRepository;
 
-    public StudentController(StudentRepository studentRepository, CourseRepository courseRepository) {
+    public StudentController(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
+        this.sectionRepository = sectionRepository;
     }
 
     @GetMapping("/all")
@@ -58,19 +62,13 @@ public class StudentController {
     }
 
     @GetMapping("/takeableSections/{studentNumber}")
-    public Iterable<CourseView> takeableSections(@PathVariable String studentNumber){
-        List<CourseView> takeable  = new ArrayList<>();
-        List<Course> notPassed = new ArrayList<>();
-        courseRepository.findAll().forEach(notPassed::add);
+    public Iterable<SectionView> takeableSections(@PathVariable String studentNumber){
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentNumber);
         if(student.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
         Student std = student.get();
-        notPassed.removeAll(std.getPassedCourses());
-        for(Course c : notPassed)
-            if(c.canBeTakenBy(std).isEmpty())
-                takeable.add(new CourseView(c));
-        return takeable;
+        Iterable<Section> takeable = std.getTakeableSections(courseRepository.findAll(), sectionRepository.findAll());
+        return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
     }
 
 }

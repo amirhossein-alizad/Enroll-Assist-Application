@@ -1,6 +1,10 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.controller.SectionView;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -72,4 +76,126 @@ public class StudentTest {
                 .isEqualTo(18.25F);
     }
 
+    @Test
+    void Student_returns_takeable_courses_with_no_prerequisites_correctly() throws Exception{
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(math1, prog, andishe);
+    }
+
+
+    @Test
+    void Student_does_not_return_passed_courses_as_takeable() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        bebe.setGrade("t1", math1, 20);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+                .isNotEmpty()
+                .hasSize(2)
+                .containsExactlyInAnyOrder(prog, andishe);
+    }
+
+    @Test
+    void Student_returns_courses_with_passed_prerequisites_as_takeable_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        bebe.setGrade("t1", math1, 20);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(prog, andishe, math2);
+    }
+
+    @Test
+    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(prog, andishe, math1);
+    }
+
+    @Test
+    void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Section math1_1 = new Section(math1, "01", null);
+        Section math1_2 = new Section(math1, "02", null);
+        Section prog1_1 = new Section(prog, "01", null);
+        Section andishe1_1 = new Section(andishe, "01", null);
+        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(4)
+                .containsExactlyInAnyOrder(math1_1, math1_2, prog1_1, andishe1_1);
+    }
+
+    @Test
+    void Student_does_not_return_sections_which_their_courses_are_passed_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        bebe.setGrade("t1", math1, 20);
+        Section math1_1 = new Section(math1, "01", null);
+        Section math1_2 = new Section(math1, "02", null);
+        Section prog1_1 = new Section(prog, "01", null);
+        Section andishe1_1 = new Section(andishe, "01", null);
+        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(2)
+                .containsExactlyInAnyOrder(prog1_1, andishe1_1);
+    }
+
+    @Test
+    void Student_returns_sections_which_prerequisites_for_their_courses_have_been_passed_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        Section math1_1 = new Section(math1, "01", null);
+        Section prog1_1 = new Section(prog, "01", null);
+        Section andishe1_1 = new Section(andishe, "01", null);
+        Section math2_1 = new Section(math2, "01", null);
+        Section math2_2 = new Section(math2, "02", null);
+        bebe.setGrade("t1", math1, 20);
+        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(4)
+                .containsExactlyInAnyOrder(math2_2, math2_1, prog1_1, andishe1_1);
+    }
+
+    @Test
+    void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        Section math1_1 = new Section(math1, "01", null);
+        Section prog1_1 = new Section(prog, "01", null);
+        Section andishe1_1 = new Section(andishe, "01", null);
+        Section math2_1 = new Section(math2, "01", null);
+        Section math2_2 = new Section(math2, "02", null);
+        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
+    }
 }

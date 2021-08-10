@@ -45,7 +45,7 @@ public class EnrollmentListController {
         List<EnrollmentListView> lists = studentRepository.findAllListsForStudent(studentNo);
         for (EnrollmentListView e: lists)
             if (e.getEnrollmentListName().equals(req.getEnrollmentListName()))
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EnrollmentList withe name " + req.getEnrollmentListName() + " already exists");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EnrollmentList with name " + req.getEnrollmentListName() + " already exists.");
         EnrollmentList enrollmentList = new EnrollmentList(req.getEnrollmentListName(), student);
         enrollmentListRepository.save(enrollmentList);
         return new EnrollmentListView(enrollmentList);

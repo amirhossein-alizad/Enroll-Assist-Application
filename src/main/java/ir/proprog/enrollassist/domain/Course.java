@@ -1,10 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.Exception.CourseException.CourseCreditsNegative;
-import ir.proprog.enrollassist.domain.Exception.CourseException.CourseNumberEmpty;
-import ir.proprog.enrollassist.domain.Exception.CourseException.CourseNumberInvalid;
-import ir.proprog.enrollassist.domain.Exception.CourseException.CourseTitleEmpty;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import lombok.AccessLevel;
@@ -46,21 +42,21 @@ public class Course {
             exceptions.add(e);
         }
         if (title.equals(""))
-            exceptions.add(new CourseTitleEmpty());
+            exceptions.add(new Exception("Course must have a name."));
         if (credits < 0)
-            exceptions.add(new CourseCreditsNegative());
+            exceptions.add(new Exception("Course credit units cannot be negative."));
         return exceptions;
     }
 
     private void validateCourseNumber(String courseNumber) throws Exception {
         if (courseNumber.equals(""))
-            throw new CourseNumberEmpty();
+            throw new Exception("Course number cannot be empty.");
         try {
             Integer.parseInt(courseNumber);
             if (courseNumber.length() != 7)
-                throw new CourseNumberInvalid();
+                throw new Exception("Course number must contain 7 numbers.");
         }catch (Exception exception) {
-            throw new CourseNumberInvalid();
+            throw new Exception("Course number must contain 7 numbers.");
         }
     }
 

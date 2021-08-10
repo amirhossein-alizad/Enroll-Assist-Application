@@ -317,4 +317,14 @@ public class EnrollmentListTest {
                 .hasSize(2);
     }
 
+    @Test
+    void Students_cant_take_less_than_twelve_credits() throws Exception {
+        Course testCourse = new Course("1111111", "Test", 11).setHasExam(false);
+        Student testStudent = new Student("1", "ali");
+        EnrollmentList list1 = new EnrollmentList("list", testStudent);
+        list1.addSections(new Section(testCourse, "01", null));
+        assertThat(list1.checkValidGPALimit(testStudent))
+                .isNotEmpty()
+                .hasSize(1);
+    }
 }

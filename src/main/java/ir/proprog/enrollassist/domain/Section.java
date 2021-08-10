@@ -1,12 +1,15 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.util.*;
+
+import static org.hibernate.query.criteria.internal.ValueHandlerFactory.isNumeric;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
@@ -20,6 +23,9 @@ public class Section {
     private ExamTime examTime;
     @ManyToOne
     private Course course;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<PresentationSchedule> presentationSchedule = new HashSet<>();
+
 
     public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
         this.validateSectionNo(sectionNo);
@@ -40,6 +46,39 @@ public class Section {
 
     public void setExamTime(ExamTime examTime) {
         this.examTime = examTime;
+    }
+
+
+    public void setPresentationSchedule(List<String> schedule) throws ExceptionList {
+        Set<PresentationSchedule> parsedPresentationSchedule = new HashSet<>();
+        ExceptionList exceptionList = new ExceptionList();
+        for (String s: schedule) {
+            List<String> scheduleString = Arrays.asList(s.split(","));
+            if (scheduleString.size() != 2)
+                exceptionList.addNewException(new Exception(String.format("Schedule format is not valid.(%s)", s)));
+            else {
+                try {
+                    PresentationSchedule sectionSchedule = new PresentationSchedule(scheduleString.get(0), scheduleString.get(1));
+                    parsedPresentationSchedule.add(sectionSchedule);
+                } catch (ExceptionList list) {
+                    exceptionList.addExceptions(list.getExceptions());
+                }
+            }
+        }
+        if (exceptionList.hasException())
+            throw exceptionList;
+        else
+            this.presentationSchedule = parsedPresentationSchedule;
+    }
+
+    public boolean hasConflict(Section otherSection) {
+        for (PresentationSchedule thisSectionSchedule: this.presentationSchedule) {
+            for (PresentationSchedule otherSectionSchedule: otherSection.presentationSchedule) {
+                if (thisSectionSchedule.hasConflict(otherSectionSchedule))
+                    return true;
+            }
+        }
+        return false;
     }
 
     @Override

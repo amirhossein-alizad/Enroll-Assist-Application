@@ -18,6 +18,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -119,7 +121,9 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals(HttpStatus.BAD_REQUEST + " \"EnrollmentList must have a name.\"", result.getResolvedException().getMessage()));
     }
 
     @Test
@@ -135,7 +139,9 @@ public class EnrollmentListControllerTest {
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(result -> assertEquals(HttpStatus.BAD_REQUEST + " \"EnrollmentList with name Mahsa's List already exists.\"", result.getResolvedException().getMessage()));
     }
 
     @Test
@@ -156,7 +162,7 @@ public class EnrollmentListControllerTest {
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        this.list1.addSection(new Section(new Course("1111111", "ap", 3), "01", exam));
+        this.list1.addSection(new Section(new Course("1111111", "ap", 12), "01", exam));
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -167,7 +173,7 @@ public class EnrollmentListControllerTest {
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Course ap = new Course("1111111", "ap", 3);
+        Course ap = new Course("1111111", "ap", 7);
         Section ap_1 = new Section(ap, "01", exam);
         Section ap_2 = new Section(ap, "02", exam);
         this.list1.addSections(ap_1, ap_2);

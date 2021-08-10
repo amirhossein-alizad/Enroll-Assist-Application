@@ -1,5 +1,8 @@
 package ir.proprog.enrollassist.domain;
 
+import com.google.common.annotations.VisibleForTesting;
+import ir.proprog.enrollassist.controller.CourseView;
+import ir.proprog.enrollassist.controller.SectionView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -71,12 +74,31 @@ public class Student {
         return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
-    public List<Course> getPassedCourses(){
-        List<Course> list = new ArrayList<>();
+    @VisibleForTesting
+    List<Course> getTakeableCourses(Iterable<Course> allCourses){
+        List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
             if (sr.getGrade() >= 10)
-                list.add(sr.getCourse());
-        return list;
+                passed.add(sr.getCourse());
+        List<Course> takeable  = new ArrayList<>();
+        List<Course> notPassed = new ArrayList<>();
+        allCourses.forEach(notPassed::add);
+        notPassed.removeAll(passed);
+        for(Course c : notPassed)
+            if(c.canBeTakenBy(this).isEmpty())
+                takeable.add(c);
+        return takeable;
     }
 
+    public List<Section> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
+        List<Course> takeableCourses = getTakeableCourses(allCourses);
+        List<Section> takeableSections = new ArrayList<>();
+        for (Section section: allSections)
+            for(Course course: takeableCourses)
+                if(section.getCourse().equals(course)) {
+                    takeableSections.add(section);
+                    break;
+                }
+        return takeableSections;
+    }
 }
