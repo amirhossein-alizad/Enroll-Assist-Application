@@ -25,11 +25,11 @@ public class SectionTest {
 
 
     @Test
-    public void SectionSchedule_can_not_set_in_section_with_incorrect_input() {
+    public void SectionSchedule_can_not_set_in_section_with_incorrect_input() throws Exception {
         ExceptionList exceptionList = new ExceptionList();
         Course course = mock(Course.class);
         try {
-            Section section = new Section(course, "01");
+            Section section = new Section(course, "01", new ExamTime("2021-08-01T13:00", "2021-08-01T17:00"));
             List<String> schedule = new ArrayList<>();
             schedule.add("Monday,");
             schedule.add("Fri,10:30,12:00");
@@ -48,11 +48,11 @@ public class SectionTest {
     }
 
     @Test
-    public void SectionSchedule_can_set_in_section_with_correct_input() {
+    public void SectionSchedule_can_set_in_section_with_correct_input()  throws Exception {
         ExceptionList exceptionList = new ExceptionList();
         Course course = mock(Course.class);
         try {
-            Section section = new Section(course, "01");
+            Section section = new Section(course, "01", new ExamTime("2021-08-01T13:00", "2021-08-01T17:00"));
             List<String> schedule = new ArrayList<>();
             schedule.add("Sunday,10:30-12:00");
             schedule.add("Monday,10:30-12:00");
