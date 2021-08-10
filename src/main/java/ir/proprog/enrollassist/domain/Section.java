@@ -1,14 +1,14 @@
 package ir.proprog.enrollassist.domain;
 
 import antlr.StringUtils;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import javax.persistence.*;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 import static org.hibernate.query.criteria.internal.ValueHandlerFactory.isNumeric;
 
@@ -24,6 +24,9 @@ public class Section {
     private ExamTime examTime;
     @ManyToOne
     private Course course;
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<SectionSchedule> schedule = new HashSet<>();
+
 
     public Section(@NonNull Course course, String sectionNo) {
         this.validateSectionNo(sectionNo);
@@ -43,6 +46,29 @@ public class Section {
 
     public void setExamTime(ExamTime examTime) {
         this.examTime = examTime;
+    }
+
+
+    public void setSectionSchedule(List<String> schedule) throws ExceptionList {
+        Set<SectionSchedule> parsedSchedule = new HashSet<>();
+        ExceptionList exceptionList = new ExceptionList();
+        for (String s: schedule) {
+            List<String> scheduleString = Arrays.asList(s.split(","));
+            if (scheduleString.size() != 2)
+                exceptionList.addNewException(new Exception(String.format("Schedule format is not valid.(%s)", s)));
+            else {
+                try {
+                    SectionSchedule sectionSchedule = new SectionSchedule(scheduleString.get(0), scheduleString.get(1));
+                    parsedSchedule.add(sectionSchedule);
+                } catch (ExceptionList list) {
+                    exceptionList.addExceptions(list.getExceptions());
+                }
+            }
+        }
+        if (exceptionList.hasException())
+            throw exceptionList;
+        else
+            this.schedule = parsedSchedule;
     }
 
     @Override

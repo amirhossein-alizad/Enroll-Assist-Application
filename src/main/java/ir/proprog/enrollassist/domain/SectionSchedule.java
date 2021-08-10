@@ -1,7 +1,14 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.ManyToOne;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -9,88 +16,74 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
+@Getter
 public class SectionSchedule {
-    List<String> dayOfWeek;
-    List<Date> startTime = new ArrayList<>();
-    List<Date> endTime = new ArrayList<>();
+    @javax.persistence.Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long Id;
+    private String dayOfWeek;
+    private Date startTime = new Date();
+    private Date endTime = new Date();
+    @ManyToOne
+    private Section section;
 
-    public SectionSchedule(List<String> dayOfWeek, List<String> time) throws ExceptionList {
+    public SectionSchedule(String dayOfWeek, String time) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        if (dayOfWeek.size() != time.size())
-            exceptionList.addNewException(new Exception("Every day should have time schedule."));
-        exceptionList.addExceptions(this.validateDayOfWeek(dayOfWeek));
+        try {
+            this.validateDayOfWeek(dayOfWeek);
+        } catch (Exception exception) {
+            exceptionList.addNewException(exception);
+        }
         try {
             this.validateTime(time);
-        } catch (ExceptionList e) {
-            exceptionList.addExceptions(e.getExceptions());
+        } catch (Exception e) {
+            exceptionList.addNewException(e);
         }
         if (exceptionList.hasException())
             throw exceptionList;
 
+    }
+
+    private void validateTime(String time) throws Exception {
+        if (time.equals(""))
+            throw new Exception("Time can not be empty");
+        else {
+            List<String> timeString = Arrays.asList(time.split("-"));
+            if (timeString.size() != 2)
+                throw new Exception(String.format("%s is not valid time.", time));
+            else {
+                SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
+                try {
+                    this.startTime = dataFormat.parse(timeString.get(0));
+                    this.endTime = dataFormat.parse(timeString.get(1));
+                }
+                catch (Exception exception) {
+                    throw new Exception(String.format("%s is not valid time.", time));
+                }
+                if (this.endTime.before(this.startTime))
+                    throw new Exception(String.format("End time can not be before start time.(%s)", time));
+            }
+        }
+    }
+
+
+    private void validateDayOfWeek(String dayOfWeek) throws Exception {
+        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
+        List<String> week = Arrays.asList(dateFormatSymbols.getWeekdays());
+        if (!week.contains(dayOfWeek))
+            throw new Exception(String.format("%s is not valid week day.", dayOfWeek));
         this.dayOfWeek = dayOfWeek;
     }
 
-    private void validateTime(List<String> time) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
-        for (int i=0; i<time.size(); i++) {
-            if (time.get(i).equals(""))
-                exceptionList.addNewException(new Exception(String.format("Time can not be empty.(%d)", i+1)));
-            else {
-                List<String> timeString = Arrays.asList(time.get(i).split("-"));
-                if (timeString.size() != 2)
-                    exceptionList.addNewException(new Exception(String.format("%s is not valid time.", time.get(i))));
-                else {
-                    SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
-                    try {
-                        Date st = dataFormat.parse(timeString.get(0));
-                        Date et = dataFormat.parse(timeString.get(1));
-
-                        if (et.before(st))
-                            exceptionList.addNewException(new Exception(String.format("End time can not be before start time.(%d)", i+1)));
-                        else {
-                            this.startTime.add(st);
-                            this.endTime.add(et);
-                        }
-                    }
-                    catch (Exception exception) {
-                        exceptionList.addNewException(new Exception(String.format("%s is not valid time.", time.get(i))));
-                    }
-                }
-            }
-        }
-        if (exceptionList.hasException())
-            throw exceptionList;
+    public boolean hasConflict(SectionSchedule otherSectionSchedule) {
+        if (this.dayOfWeek != otherSectionSchedule.dayOfWeek)
+            return false;
+        else if (otherSectionSchedule.startTime.after(this.endTime) || otherSectionSchedule.startTime.equals(this.endTime))
+            return false;
+        else if (otherSectionSchedule.endTime.before(this.startTime) || otherSectionSchedule.endTime.equals(this.startTime))
+            return false;
+        return true;
     }
-
-
-    private List<Exception> validateDayOfWeek(List<String> dayOfWeek) {
-        List<Exception> exceptions = new ArrayList<>();
-        DateFormatSymbols dateFormatSymbols = new DateFormatSymbols();
-        List<String> week = Arrays.asList(dateFormatSymbols.getWeekdays());
-        for (String d: dayOfWeek) {
-            if (!week.contains(d))
-               exceptions.add(new Exception(String.format("%s is not valid week day.", d)));
-        }
-        return exceptions;
-    }
-
-    public boolean hasConflict(SectionSchedule anotherCourseSchedule) {
-        for(int i=0; i<this.dayOfWeek.size(); i++) {
-            boolean result = true;
-            int index = anotherCourseSchedule.dayOfWeek.indexOf(this.dayOfWeek.get(i));
-            if (index != -1) {
-                if (anotherCourseSchedule.startTime.get(index).after(this.endTime.get(i)) || anotherCourseSchedule.startTime.get(index).equals(this.endTime.get(i)))
-                    result = false;
-                if (anotherCourseSchedule.endTime.get(index).before(this.startTime.get(i)) || anotherCourseSchedule.endTime.get(index).equals(this.startTime.get(i)))
-                    result = false;
-            }
-            else
-                result = false;
-            if (result)
-                return true;
-        }
-
-        return false;
-    }
-
 }
