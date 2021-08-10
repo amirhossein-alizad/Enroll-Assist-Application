@@ -35,7 +35,7 @@ public class SectionTest {
             schedule.add("Fri,10:30,12:00");
             schedule.add("Fri,10-12");
             schedule.add("Sunday,13:30-12:00");
-            section.setSectionSchedule(schedule);
+            section.setPresentationSchedule(schedule);
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
@@ -57,7 +57,7 @@ public class SectionTest {
             schedule.add("Sunday,10:30-12:00");
             schedule.add("Monday,10:30-12:00");
             schedule.add("Tuesday,10:30-12:00");
-            section.setSectionSchedule(schedule);
+            section.setPresentationSchedule(schedule);
 
         }catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());

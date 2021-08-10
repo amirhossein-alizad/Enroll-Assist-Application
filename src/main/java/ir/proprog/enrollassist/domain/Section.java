@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.domain;
 
-import antlr.StringUtils;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -25,7 +24,7 @@ public class Section {
     @ManyToOne
     private Course course;
     @OneToMany(cascade = CascadeType.ALL)
-    private Set<SectionSchedule> schedule = new HashSet<>();
+    private Set<PresentationSchedule> presentationSchedule = new HashSet<>();
 
 
     public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
@@ -50,8 +49,8 @@ public class Section {
     }
 
 
-    public void setSectionSchedule(List<String> schedule) throws ExceptionList {
-        Set<SectionSchedule> parsedSchedule = new HashSet<>();
+    public void setPresentationSchedule(List<String> schedule) throws ExceptionList {
+        Set<PresentationSchedule> parsedPresentationSchedule = new HashSet<>();
         ExceptionList exceptionList = new ExceptionList();
         for (String s: schedule) {
             List<String> scheduleString = Arrays.asList(s.split(","));
@@ -59,8 +58,8 @@ public class Section {
                 exceptionList.addNewException(new Exception(String.format("Schedule format is not valid.(%s)", s)));
             else {
                 try {
-                    SectionSchedule sectionSchedule = new SectionSchedule(scheduleString.get(0), scheduleString.get(1));
-                    parsedSchedule.add(sectionSchedule);
+                    PresentationSchedule sectionSchedule = new PresentationSchedule(scheduleString.get(0), scheduleString.get(1));
+                    parsedPresentationSchedule.add(sectionSchedule);
                 } catch (ExceptionList list) {
                     exceptionList.addExceptions(list.getExceptions());
                 }
@@ -69,12 +68,12 @@ public class Section {
         if (exceptionList.hasException())
             throw exceptionList;
         else
-            this.schedule = parsedSchedule;
+            this.presentationSchedule = parsedPresentationSchedule;
     }
 
     public boolean hasConflict(Section otherSection) {
-        for (SectionSchedule thisSectionSchedule: this.schedule) {
-            for (SectionSchedule otherSectionSchedule: otherSection.schedule) {
+        for (PresentationSchedule thisSectionSchedule: this.presentationSchedule) {
+            for (PresentationSchedule otherSectionSchedule: otherSection.presentationSchedule) {
                 if (thisSectionSchedule.hasConflict(otherSectionSchedule))
                     return true;
             }

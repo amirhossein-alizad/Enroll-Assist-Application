@@ -11,7 +11,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.ManyToOne;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +18,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
 @Getter
-public class SectionSchedule {
+public class PresentationSchedule {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
@@ -29,7 +28,7 @@ public class SectionSchedule {
     @ManyToOne
     private Section section;
 
-    public SectionSchedule(String dayOfWeek, String time) throws ExceptionList {
+    public PresentationSchedule(String dayOfWeek, String time) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.validateDayOfWeek(dayOfWeek);
@@ -77,12 +76,12 @@ public class SectionSchedule {
         this.dayOfWeek = dayOfWeek;
     }
 
-    public boolean hasConflict(SectionSchedule otherSectionSchedule) {
-        if (this.dayOfWeek != otherSectionSchedule.dayOfWeek)
+    public boolean hasConflict(PresentationSchedule otherPresentationSchedule) {
+        if (this.dayOfWeek != otherPresentationSchedule.dayOfWeek)
             return false;
-        else if (otherSectionSchedule.startTime.after(this.endTime) || otherSectionSchedule.startTime.equals(this.endTime))
+        else if (otherPresentationSchedule.startTime.after(this.endTime) || otherPresentationSchedule.startTime.equals(this.endTime))
             return false;
-        else if (otherSectionSchedule.endTime.before(this.startTime) || otherSectionSchedule.endTime.equals(this.startTime))
+        else if (otherPresentationSchedule.endTime.before(this.startTime) || otherPresentationSchedule.endTime.equals(this.startTime))
             return false;
         return true;
     }
