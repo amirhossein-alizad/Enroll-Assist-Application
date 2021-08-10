@@ -1,10 +1,12 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -39,10 +41,12 @@ public class SectionControllerTest {
 
     @Test
     public void All_sections_are_returned_correctly() throws Exception {
+        ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         List<Section> sections = List.of(
-                new Section(new Course("1111111", "C1", 3), "01"),
-                new Section(new Course("2222222", "C2", 3), "02"),
-                new Section(new Course("2222222", "C2", 3), "01")
+                new Section(new Course("1111111", "C1", 3), "01", exam0),
+                new Section(new Course("2222222", "C2", 3), "02", exam1),
+                new Section(new Course("3333333", "C3", 3), "01", exam0)
         );
 
         given(sectionRepository.findAll()).willReturn(sections);
@@ -57,7 +61,8 @@ public class SectionControllerTest {
 
     @Test
     public void Requested_section_is_returned_correctly() throws Exception {
-        Section section = new Section(new Course("1111111", "ap", 3), "01");
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section section = new Section(new Course("1111111", "ap", 3), "01", exam);
         given(sectionRepository.findById(1L)).willReturn(Optional.of(section));
         mvc.perform(get("/sections/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -70,13 +75,16 @@ public class SectionControllerTest {
 
     @Test
     public void All_section_demands_are_returned_correctly() throws Exception {
-        Section s1 = new Section(new Course("1111111", "C1", 3), "01");
+        ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
+        ExamTime exam2 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
+        Section s1 = new Section(new Course("1111111", "C1", 3), "01", exam0);
         SectionView c1 = new SectionView(s1);
         SectionDemandView sd_1 = new SectionDemandView(c1, 50);
-        Section s2 = new Section(new Course("2222222", "C2", 3), "01");
+        Section s2 = new Section(new Course("2222222", "C2", 3), "01", exam1);
         SectionView c2 = new SectionView(s2);
         SectionDemandView sd_2 = new SectionDemandView(c2, 72);
-        Section s3 = new Section(new Course("3333333", "C3", 3), "01");
+        Section s3 = new Section(new Course("3333333", "C3", 3), "01", exam2);
         SectionView c3 = new SectionView(s3);
         SectionDemandView sd_3 = new SectionDemandView(c3, 25);
 
@@ -106,7 +114,8 @@ public class SectionControllerTest {
 
     @Test
     public void One_section_is_returned_correctly() throws Exception {
-        Section section = new Section(new Course("1111111", "C1", 3), "01");
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam);
 
         given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
 
@@ -132,7 +141,11 @@ public class SectionControllerTest {
         Course course = mock(Course.class);
         given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/dm")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "dm");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
@@ -142,19 +155,28 @@ public class SectionControllerTest {
         Course course = new Course("1010101", "DM", 3);
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "01");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.sectionNo", is("01")))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void Existed_section_is_not_added_correctly() throws Exception{
+    public void Existing_section_is_not_added_correctly() throws Exception{
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = new Course("1010101", "DM", 3);
-        List<Section> findSections = List.of(new Section(course, "01"));
+        List<Section> findSections = List.of(new Section(course, "01", exam));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);
-        mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/01")
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "01");
+        req.put("courseId", "1");
+        mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }

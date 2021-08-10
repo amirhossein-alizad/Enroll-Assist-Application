@@ -20,7 +20,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sectionNo;
-    @ManyToOne
+    @Embedded
     private ExamTime examTime;
     @ManyToOne
     private Course course;
@@ -28,10 +28,11 @@ public class Section {
     private Set<SectionSchedule> schedule = new HashSet<>();
 
 
-    public Section(@NonNull Course course, String sectionNo) {
+    public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
         this.validateSectionNo(sectionNo);
         this.sectionNo = sectionNo;
         this.course = course;
+        this.examTime = examTime;
     }
 
     private void validateSectionNo(String sectionNo) {

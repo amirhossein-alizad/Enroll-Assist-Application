@@ -41,6 +41,8 @@ public class StudentControllerTest {
     private StudentRepository studentRepository;
     @MockBean
     private CourseRepository courseRepository;
+    @MockBean
+    private SectionRepository sectionRepository;
 
     @Test
     public void Student_that_doesnt_exist_is_not_found() throws Exception {
@@ -105,26 +107,26 @@ public class StudentControllerTest {
         Course math1 = new Course("4444444", "MATH1", 3);
         Course math2 = mock(Course.class);
         List<Course> list = List.of(math1, math2);
-        Student mockStudent = mock(Student.class);
+        Student student = new Student("010101", "ali");
+        student.setGrade("t1", math1, 20.0);
+        Section section = new Section(math2, "01", null);
 
+        given(sectionRepository.findAll()).willReturn(List.of(section));
         given(courseRepository.findAll()).willReturn(list);
-        given(studentRepository.findByStudentNumber("1")).willReturn(java.util.Optional.of(mockStudent));
-
-        when(mockStudent.getPassedCourses()).thenReturn(List.of(math1));
-        when(mockStudent.hasPassed(math2)).thenReturn(false);
-        when(mockStudent.hasPassed(math1)).thenReturn(true);
+        given(studentRepository.findByStudentNumber("1")).willReturn(java.util.Optional.of(student));
 
         when(math2.getId()).thenReturn(1L);
         when(math2.getCredits()).thenReturn(3);
         when(math2.getTitle()).thenReturn("math2");
         when(math2.getCourseNumber()).thenReturn("1");
-        when(math2.canBeTakenBy(mockStudent)).thenReturn(new ArrayList<>());
+        when(math2.canBeTakenBy(student)).thenReturn(new ArrayList<>());
 
         mvc.perform(get("/student/takeableSections/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].courseId", is(1)))
+                .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber", is("1")))
                 .andExpect(jsonPath("$[0].courseTitle", is("math2")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)));

@@ -56,18 +56,18 @@ public class SectionController {
         return demands;
     }
 
-    @PutMapping("/addSection/{courseId}/{sectionNo}")
-    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) throws ExceptionList {
-        Course course = this.courseRepository.findById(courseId)
+    @PostMapping
+    public SectionView addNewSection(@RequestBody SectionView section) {
+        Course course = this.courseRepository.findById(section.getCourseId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         ExceptionList exceptionList = new ExceptionList();
-        List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(courseId, sectionNo);
+        List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(section.getCourseId(), section.getSectionNo());
         if (sections.size() != 0) {
             exceptionList.addNewException(new SectionNumberExists());
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
         try {
-            Section newSection = new Section(course, sectionNo);
+            Section newSection = new Section(course, section.getSectionNo(), section.getExamTime());
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (IllegalArgumentException illegalArgumentException) {
