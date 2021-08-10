@@ -56,8 +56,8 @@ public class SectionController {
         return demands;
     }
 
-    @PutMapping("/addSection/{courseId}/{sectionNo}")
-    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) throws ExceptionList {
+    @PostMapping("/{sectionNo}/{courseId}")
+    public SectionView addNewSection(@PathVariable Long courseId, @PathVariable String sectionNo) {
         Course course = this.courseRepository.findById(courseId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         ExceptionList exceptionList = new ExceptionList();
