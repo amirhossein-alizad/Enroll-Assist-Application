@@ -24,7 +24,7 @@ public class ApplicationConfiguration implements WebMvcConfigurer {
     @Primary
     public ObjectMapper objectMapper() {
         JavaTimeModule module = new JavaTimeModule();
-        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
+        module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setVisibility(mapper.getSerializationConfig().getDefaultVisibilityChecker()
