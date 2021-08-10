@@ -1,6 +1,9 @@
 package ir.proprog.enrollassist.domain;
 
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -70,6 +73,59 @@ public class StudentTest {
         bebe.setGrade("3900", andishe, 19);
         assertThat(bebe.calculateGPA())
                 .isEqualTo(18.25F);
+    }
+
+    @Test
+    void Student_returns_takeable_courses_with_no_prerequisites_correctly() throws Exception{
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(math1, prog, andishe);
+    }
+
+
+    @Test
+    void Student_does_not_return_passed_courses_as_takeable() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        bebe.setGrade("t1", math1, 20);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+                .isNotEmpty()
+                .hasSize(2)
+                .containsExactlyInAnyOrder(prog, andishe);
+    }
+
+    @Test
+    void Student_returns_courses_with_passed_prerequisites_as_takeable_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        bebe.setGrade("t1", math1, 20);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(prog, andishe, math2);
+    }
+
+    @Test
+    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Course math1 = new Course("1111111", "MATH1", 3);
+        Course prog = new Course("2222222", "PROG", 3);
+        Course andishe = new Course("3333333", "ANDISHE", 2);
+        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+                .isNotEmpty()
+                .hasSize(3)
+                .containsExactlyInAnyOrder(prog, andishe, math1);
     }
 
 }

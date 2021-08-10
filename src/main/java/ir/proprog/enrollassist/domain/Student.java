@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.controller.CourseView;
 import ir.proprog.enrollassist.controller.SectionView;
 import lombok.AccessLevel;
@@ -73,7 +74,8 @@ public class Student {
         return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
-    private List<Course> getTakeableCourses(Iterable<Course> allCourses){
+    @VisibleForTesting
+    List<Course> getTakeableCourses(Iterable<Course> allCourses){
         List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
             if (sr.getGrade() >= 10)
