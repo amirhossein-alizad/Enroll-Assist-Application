@@ -20,13 +20,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ExamTime {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
     private LocalDateTime start;
     private LocalDateTime end;
 

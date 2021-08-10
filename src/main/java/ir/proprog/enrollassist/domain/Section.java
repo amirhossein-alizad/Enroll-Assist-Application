@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.domain;
 
-import antlr.StringUtils;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +7,6 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.Objects;
-import java.util.Optional;
-
-import static org.hibernate.query.criteria.internal.ValueHandlerFactory.isNumeric;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
@@ -20,7 +16,7 @@ public class Section {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String sectionNo;
-    @ManyToOne
+    @Transient
     private ExamTime examTime;
     @ManyToOne
     private Course course;
