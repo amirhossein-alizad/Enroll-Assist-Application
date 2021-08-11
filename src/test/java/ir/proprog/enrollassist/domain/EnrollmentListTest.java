@@ -75,7 +75,7 @@ public class EnrollmentListTest {
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1, ap_1, ds_1);
-        assertThat(list.checkValidGPALimit(bebe))
+        assertThat(list.checkValidGPALimit())
                 .isNotNull()
                 .hasSize(1);
     }
@@ -95,7 +95,7 @@ public class EnrollmentListTest {
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1, ap_1);
-        assertThat(list.checkValidGPALimit(bebe))
+        assertThat(list.checkValidGPALimit())
                 .isNotNull()
                 .hasSize(1);
     }
@@ -113,7 +113,7 @@ public class EnrollmentListTest {
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1);
-        assertThat(list.checkValidGPALimit(bebe))
+        assertThat(list.checkValidGPALimit())
                 .isNotNull()
                 .hasSize(1);
     }
@@ -159,7 +159,7 @@ public class EnrollmentListTest {
         when(bebe.calculateGPA()).thenReturn(0.0F);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog1_1, dm_1, maaref1_1);
-        assertThat(list1.checkValidGPALimit(bebe))
+        assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .hasSize(1);
     }
@@ -176,7 +176,7 @@ public class EnrollmentListTest {
         when(bebe.calculateGPA()).thenReturn(12.0F);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog1_1, math1_1);
-        assertThat(list1.checkValidGPALimit(bebe))
+        assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .isEmpty();
     }
@@ -197,7 +197,7 @@ public class EnrollmentListTest {
         when(bebe.calculateGPA()).thenReturn(17.01F);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog1_1, maaref1_1);
-        assertThat(list1.checkValidGPALimit(bebe))
+        assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .isEmpty();
     }
@@ -322,7 +322,7 @@ public class EnrollmentListTest {
         Student testStudent = new Student("1", "ali");
         EnrollmentList list1 = new EnrollmentList("list", testStudent);
         list1.addSections(new Section(testCourse, "01"));
-        assertThat(list1.checkValidGPALimit(testStudent))
+        assertThat(list1.checkValidGPALimit())
                 .isNotEmpty()
                 .hasSize(1);
     }
