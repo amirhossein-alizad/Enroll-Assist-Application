@@ -26,6 +26,11 @@ public class Section {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<PresentationSchedule> presentationSchedule = new HashSet<>();
 
+    public Section(@NonNull Course course, String sectionNo) {
+        this.validateSectionNo(sectionNo);
+        this.sectionNo = sectionNo;
+        this.course = course;
+    }
 
     public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
         this.validateSectionNo(sectionNo);
