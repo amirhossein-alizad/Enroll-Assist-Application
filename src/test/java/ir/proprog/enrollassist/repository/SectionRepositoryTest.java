@@ -38,12 +38,5 @@ public class SectionRepositoryTest {
         List<Section> findSections =  sectionRepository.findSectionsBySectionNumber(20L, "01");
         assertEquals(findSections.size(), 0);
     }
-//
-//    @Test
-//    public void Section_find_correctly() {
-//        List<Section> findSections =  sectionRepository.findSectionsBySectionNumber(2L, "01");
-//        assertEquals(findSections.size(), 1);
-//        assertEquals(findSections.get(0).getSectionNo(), "01");
-//        assertEquals(findSections.get(0).getCourse().getId(), 1L);
-//    }
+
 }

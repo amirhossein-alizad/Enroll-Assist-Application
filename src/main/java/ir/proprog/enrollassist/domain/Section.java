@@ -23,7 +23,7 @@ public class Section {
     private ExamTime examTime;
     @ManyToOne
     private Course course;
-    @OneToMany(cascade = CascadeType.ALL)
+    @ElementCollection
     private Set<PresentationSchedule> presentationSchedule = new HashSet<>();
 
 

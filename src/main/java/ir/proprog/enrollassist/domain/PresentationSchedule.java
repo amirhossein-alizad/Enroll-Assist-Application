@@ -5,28 +5,20 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@Entity
-@NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Embeddable
 public class PresentationSchedule {
-    @javax.persistence.Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long Id;
     private String dayOfWeek;
     private Date startTime = new Date();
     private Date endTime = new Date();
-    @ManyToOne
-    private Section section;
 
     public PresentationSchedule(String dayOfWeek, String time) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
@@ -77,7 +69,7 @@ public class PresentationSchedule {
     }
 
     public boolean hasConflict(PresentationSchedule otherPresentationSchedule) {
-        if (this.dayOfWeek != otherPresentationSchedule.dayOfWeek)
+        if (!this.dayOfWeek.equals(otherPresentationSchedule.dayOfWeek))
             return false;
         else if (otherPresentationSchedule.startTime.after(this.endTime) || otherPresentationSchedule.startTime.equals(this.endTime))
             return false;
