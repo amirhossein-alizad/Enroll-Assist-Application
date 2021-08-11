@@ -1,8 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.Exception.SectionException.InvalidSectionNumber;
-import ir.proprog.enrollassist.controller.Exception.SectionException.SectionNumberExists;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
@@ -12,13 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.swing.*;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import static org.checkerframework.checker.nullness.Opt.orElseThrow;
 
 
 @RestController
@@ -63,7 +57,7 @@ public class SectionController {
         ExceptionList exceptionList = new ExceptionList();
         List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(section.getCourseId(), section.getSectionNo());
         if (sections.size() != 0) {
-            exceptionList.addNewException(new SectionNumberExists());
+            exceptionList.addNewException(new Exception("This section already exists."));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
         try {
@@ -71,7 +65,7 @@ public class SectionController {
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (IllegalArgumentException illegalArgumentException) {
-            exceptionList.addNewException(new InvalidSectionNumber());
+            exceptionList.addNewException(new Exception("Section number is not valid."));
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
     }
