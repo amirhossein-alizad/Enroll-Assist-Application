@@ -94,6 +94,8 @@ public class Section {
         return course.equals(section.course) && sectionNo.equals(section.sectionNo);
     }
 
+    public boolean courseIsEqualTo(Course that) { return course.equals(that); }
+
     @Override
     public int hashCode() {
         return Objects.hash(course, sectionNo);
