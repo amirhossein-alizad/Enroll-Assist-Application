@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -93,6 +94,8 @@ public class Section {
         Section section = (Section) o;
         return course.equals(section.course) && sectionNo.equals(section.sectionNo);
     }
+
+    public List<EnrollmentRuleViolation> courseCanBeTakenBy(Student student){ return course.canBeTakenBy(student); }
 
     public boolean courseIsEqualTo(Course that) { return course.equals(that); }
 
