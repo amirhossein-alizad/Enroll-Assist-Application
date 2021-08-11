@@ -57,16 +57,16 @@ public class TestDataInitializer {
                 .setGrade("t1", akhlagh, 16);
         studentRepository.save(changiz);
 
-        Section math1_1 = new Section(math1, "01", null); sectionRepository.save(math1_1);
-        Section phys1_1 = new Section(phys1, "01", null); sectionRepository.save(phys1_1);
-        Section math2_1 = new Section(math2, "01", null); sectionRepository.save(math2_1);
-        Section math2_2 = new Section(math2, "02", null); sectionRepository.save(math2_2);
-        Section phys2_1 = new Section(phys2, "01", null); sectionRepository.save(phys2_1);
-        Section phys2_2 = new Section(phys2, "02", null); sectionRepository.save(phys2_2);
-        Section ap_1 = new Section(ap, "01", null); sectionRepository.save(ap_1);
-        Section dm_1 = new Section(dm, "01", null); sectionRepository.save(dm_1);
-        Section akhlagh_1 = new Section(akhlagh, "01", null); sectionRepository.save(akhlagh_1);
-        Section english_1 = new Section(english, "01", null); sectionRepository.save(english_1);
+        Section math1_1 = new Section(math1, "01"); sectionRepository.save(math1_1);
+        Section phys1_1 = new Section(phys1, "01"); sectionRepository.save(phys1_1);
+        Section math2_1 = new Section(math2, "01"); sectionRepository.save(math2_1);
+        Section math2_2 = new Section(math2, "02"); sectionRepository.save(math2_2);
+        Section phys2_1 = new Section(phys2, "01"); sectionRepository.save(phys2_1);
+        Section phys2_2 = new Section(phys2, "02"); sectionRepository.save(phys2_2);
+        Section ap_1 = new Section(ap, "01"); sectionRepository.save(ap_1);
+        Section dm_1 = new Section(dm, "01"); sectionRepository.save(dm_1);
+        Section akhlagh_1 = new Section(akhlagh, "01"); sectionRepository.save(akhlagh_1);
+        Section english_1 = new Section(english, "01"); sectionRepository.save(english_1);
 
         EnrollmentList mahsaList = new EnrollmentList("Mahsa's List", mahsa);
         mahsaList.addSections(math2_1, phys2_2, ap_1, dm_1);

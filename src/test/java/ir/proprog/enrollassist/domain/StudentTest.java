@@ -135,10 +135,10 @@ public class StudentTest {
         Course math1 = new Course("1111111", "MATH1", 3);
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
-        Section math1_1 = new Section(math1, "01", null);
-        Section math1_2 = new Section(math1, "02", null);
-        Section prog1_1 = new Section(prog, "01", null);
-        Section andishe1_1 = new Section(andishe, "01", null);
+        Section math1_1 = new Section(math1, "01");
+        Section math1_2 = new Section(math1, "02");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
         assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -152,10 +152,10 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         bebe.setGrade("t1", math1, 20);
-        Section math1_1 = new Section(math1, "01", null);
-        Section math1_2 = new Section(math1, "02", null);
-        Section prog1_1 = new Section(prog, "01", null);
-        Section andishe1_1 = new Section(andishe, "01", null);
+        Section math1_1 = new Section(math1, "01");
+        Section math1_2 = new Section(math1, "02");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
         assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(2)
@@ -169,11 +169,11 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        Section math1_1 = new Section(math1, "01", null);
-        Section prog1_1 = new Section(prog, "01", null);
-        Section andishe1_1 = new Section(andishe, "01", null);
-        Section math2_1 = new Section(math2, "01", null);
-        Section math2_2 = new Section(math2, "02", null);
+        Section math1_1 = new Section(math1, "01");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
+        Section math2_1 = new Section(math2, "01");
+        Section math2_2 = new Section(math2, "02");
         bebe.setGrade("t1", math1, 20);
         assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
@@ -188,11 +188,11 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        Section math1_1 = new Section(math1, "01", null);
-        Section prog1_1 = new Section(prog, "01", null);
-        Section andishe1_1 = new Section(andishe, "01", null);
-        Section math2_1 = new Section(math2, "01", null);
-        Section math2_2 = new Section(math2, "02", null);
+        Section math1_1 = new Section(math1, "01");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
+        Section math2_1 = new Section(math2, "01");
+        Section math2_2 = new Section(math2, "02");
         assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)

@@ -16,7 +16,7 @@ public class SectionTest {
         Course course = mock(Course.class);
         String exception = "";
         try {
-            Section section = new Section(course, "e34", new ExamTime("2021-08-01T13:00", "2021-08-01T17:00"));
+            Section section = new Section(course, "e34");
         } catch (IllegalArgumentException illegalArgumentException) {
             exception = illegalArgumentException.getMessage();
         }
@@ -29,7 +29,7 @@ public class SectionTest {
         ExceptionList exceptionList = new ExceptionList();
         Course course = mock(Course.class);
         try {
-            Section section = new Section(course, "01", new ExamTime("2021-08-01T13:00", "2021-08-01T17:00"));
+            Section section = new Section(course, "01");
             List<String> schedule = new ArrayList<>();
             schedule.add("Monday,");
             schedule.add("Fri,10:30,12:00");
@@ -52,7 +52,7 @@ public class SectionTest {
         ExceptionList exceptionList = new ExceptionList();
         Course course = mock(Course.class);
         try {
-            Section section = new Section(course, "01", new ExamTime("2021-08-01T13:00", "2021-08-01T17:00"));
+            Section section = new Section(course, "01");
             List<String> schedule = new ArrayList<>();
             schedule.add("Sunday,10:30-12:00");
             schedule.add("Monday,10:30-12:00");
