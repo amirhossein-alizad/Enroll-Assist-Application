@@ -11,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
 @RestController
 @RequestMapping("/courses")
 public class CourseController {

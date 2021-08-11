@@ -35,7 +35,7 @@ public class SectionRepositoryTest {
 
     @Test
     public void Unreal_section_not_found() {
-        List<Section> findSections =  sectionRepository.findSectionsBySectionNumber(20L, "01");
+        List<Section> findSections =  sectionRepository.findOneSectionOfSpecialCourse(20L, "01");
         assertEquals(findSections.size(), 0);
     }
 

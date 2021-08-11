@@ -146,7 +146,7 @@ public class EnrollmentList {
                 if (this.sections.get(i).equals(this.sections.get(j)))
                     continue;
                 if (this.sections.get(i).hasConflict(this.sections.get(j)))
-                    violations.add(new ConflictOfClassSchedule(this.sections.get(i).getCourse(), this.sections.get(j).getCourse()));
+                    violations.add(new ConflictOfClassSchedule(this.sections.get(i), this.sections.get(j)));
             }
         }
         return violations;

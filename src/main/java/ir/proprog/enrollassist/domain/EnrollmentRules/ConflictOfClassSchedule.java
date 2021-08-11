@@ -1,12 +1,13 @@
 package ir.proprog.enrollassist.domain.EnrollmentRules;
 
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.Section;
 
 public class ConflictOfClassSchedule extends EnrollmentRuleViolation{
-    private Course firstCourseTitle;
-    private Course secondCourseTitle;
+    private Section firstCourseTitle;
+    private Section secondCourseTitle;
 
-    public ConflictOfClassSchedule(Course firstCourseTitle, Course secondCourseTitle) {
+    public ConflictOfClassSchedule(Section firstCourseTitle, Section secondCourseTitle) {
         this.firstCourseTitle = firstCourseTitle;
         this.secondCourseTitle = secondCourseTitle;
     }

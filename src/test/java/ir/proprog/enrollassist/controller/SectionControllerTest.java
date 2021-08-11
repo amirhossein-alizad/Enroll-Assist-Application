@@ -130,7 +130,7 @@ public class SectionControllerTest {
     @Test
     public void Section_of_unreal_course_is_not_added_correctly() throws Exception {
         given(this.courseRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
-        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
+        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
         mvc.perform(MockMvcRequestBuilders.put("/sections/addSection/1/5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -140,7 +140,7 @@ public class SectionControllerTest {
     public void Section_with_invalid_section_number_is_not_added_correctly() throws Exception {
         Course course = mock(Course.class);
         given(this.courseRepository.findById(1L)).willReturn(Optional.ofNullable(course));
-        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
+        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
         req.put("sectionNo", "dm");
         req.put("courseId", "1");
@@ -154,7 +154,7 @@ public class SectionControllerTest {
     public void Valid_section_is_added_correctly() throws Exception {
         Course course = new Course("1010101", "DM", 3);
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
-        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(Collections.emptyList());
+        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
         req.put("sectionNo", "01");
         req.put("courseId", "1");
@@ -171,7 +171,7 @@ public class SectionControllerTest {
         Course course = new Course("1010101", "DM", 3);
         List<Section> findSections = List.of(new Section(course, "01", exam));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
-        given(this.sectionRepository.findSectionsBySectionNumber(1L, "01")).willReturn(findSections);
+        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(findSections);
         JSONObject req = new JSONObject();
         req.put("sectionNo", "01");
         req.put("courseId", "1");

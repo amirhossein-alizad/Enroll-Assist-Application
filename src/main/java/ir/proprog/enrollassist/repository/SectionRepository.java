@@ -11,5 +11,5 @@ import java.util.List;
 
 public interface SectionRepository extends CrudRepository<Section, Long> {
     @Query(value = "select sec from Section sec where (sec.course.id = ?1) and (sec.sectionNo = ?2)")
-    List<Section> findSectionsBySectionNumber(Long courseId, String sectionNo);
+    List<Section> findOneSectionOfSpecialCourse(Long courseId, String sectionNo);
 }

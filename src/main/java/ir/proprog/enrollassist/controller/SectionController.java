@@ -55,7 +55,7 @@ public class SectionController {
         Course course = this.courseRepository.findById(section.getCourseId())
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Course not found"));
         ExceptionList exceptionList = new ExceptionList();
-        List<Section> sections = this.sectionRepository.findSectionsBySectionNumber(section.getCourseId(), section.getSectionNo());
+        List<Section> sections = this.sectionRepository.findOneSectionOfSpecialCourse(section.getCourseId(), section.getSectionNo());
         if (sections.size() != 0) {
             exceptionList.addNewException(new Exception("This section already exists."));
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
