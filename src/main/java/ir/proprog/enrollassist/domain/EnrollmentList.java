@@ -75,12 +75,12 @@ public class EnrollmentList {
 
     List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        Set<Course> Courses = new HashSet<>();
+        Set<Course> courses = new HashSet<>();
         for (Section section : sections)
-            if (Courses.contains(section.getCourse()))
+            if (courses.contains(section.getCourse()))
                 violations.add(new CourseRequestedTwice(section.getCourse()));
             else
-                Courses.add(section.getCourse());
+                courses.add(section.getCourse());
 
         return violations;
     }
