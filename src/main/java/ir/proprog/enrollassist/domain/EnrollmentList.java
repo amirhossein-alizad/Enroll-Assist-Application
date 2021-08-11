@@ -64,8 +64,8 @@ public class EnrollmentList {
 
     public List<EnrollmentRuleViolation> checkEnrollmentRules() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        violations.addAll(checkHasPassedAllPrerequisites(owner));
-        violations.addAll(checkHasNotAlreadyPassedCourses(owner));
+        violations.addAll(checkHasPassedAllPrerequisites());
+        violations.addAll(checkHasNotAlreadyPassedCourses());
         violations.addAll(checkNoCourseHasRequestedTwice());
         violations.addAll(checkValidGPALimit());
         violations.addAll(checkExamTimeConflicts());
@@ -86,18 +86,18 @@ public class EnrollmentList {
     }
 
 
-    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
+    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section sec : sections)
-            if (sec.studentHasPassedCourse(s))
+            if (sec.studentHasPassedCourse(owner))
                 violations.add(new RequestedCourseAlreadyPassed(sec.getCourse()));
         return violations;
     }
 
-    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
+    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section sec : sections)
-            violations.addAll(sec.courseCanBeTakenBy(s));
+            violations.addAll(sec.courseCanBeTakenBy(owner));
         return violations;
     }
 
