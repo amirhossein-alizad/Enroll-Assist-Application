@@ -7,6 +7,7 @@ import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -326,5 +327,41 @@ public class EnrollmentListTest {
         assertThat(list1.checkValidGPALimit(testStudent))
                 .isNotEmpty()
                 .hasSize(1);
+    }
+
+    @Test
+    void Enrollment_list_cannot_have_conflict_in_section_schedules() throws Exception {
+        Student bebe = mock(Student.class);
+        Course math1 = new Course("1111111", "MATH1", 3).setHasExam(true);
+        Course ap = new Course("2222222", "AP", 4).setHasExam(true);
+        Course phys2 = new Course("3333333", "PHYS2", 3).setHasExam(true);
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"));
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"));
+        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"));
+        math1_1.setPresentationSchedule(List.of("Monday,10:30-12:00", "Wednesday,10:30-12:00"));
+        phys2_1.setPresentationSchedule(List.of("Monday,10:30-12:00", "Tuesday,10:30-12:00"));
+        ap1_1.setPresentationSchedule(List.of("Tuesday,12:00-14:00", "Wednesday,11:00-12:30"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(math1_1, ap1_1, phys2_1);
+        assertThat(list1.checkSectionScheduleConflicts())
+                .isNotNull()
+                .hasSize(2);
+    }
+
+
+    @Test
+    void Enrollment_list_cannot_with_no_violation_is_created_correctly() throws Exception {
+        Student bebe = mock(Student.class);
+        Course ap = new Course("2222222", "AP", 6).setHasExam(true);
+        Course phys2 = new Course("3333333", "PHYS2", 6).setHasExam(true);
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"));
+        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"));
+        phys2_1.setPresentationSchedule(List.of("Monday,10:30-12:00", "Tuesday,10:30-12:00"));
+        phys2_1.setPresentationSchedule(List.of("Monday,12:00-14:00", "Tuesday,12:30-14:00"));
+        EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
+        list1.addSections(ap1_1, phys2_1);
+        assertThat(list1.checkEnrollmentRules())
+                .isNotNull()
+                .hasSize(0);
     }
 }
