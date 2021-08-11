@@ -27,7 +27,7 @@ public class EnrollmentListTest {
         when(bebe.hasPassed(prog)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, ap_1);
-        assertThat(list.checkHasPassedAllPrerequisites(bebe))
+        assertThat(list.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .isEmpty();
     }
@@ -40,7 +40,7 @@ public class EnrollmentListTest {
         when(bebe.hasPassed(math1)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1);
-        assertThat(list.checkHasNotAlreadyPassedCourses(bebe))
+        assertThat(list.checkHasNotAlreadyPassedCourses())
                 .isNotNull()
                 .hasSize(1);
     }
@@ -222,7 +222,7 @@ public class EnrollmentListTest {
         when(bebe.calculateGPA()).thenReturn(15F);
         when(bebe.hasPassed(math1)).thenReturn(false);
         when(bebe.hasPassed(phys1)).thenReturn(false);
-        assertThat(list1.checkHasPassedAllPrerequisites(bebe))
+        assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(2);
     }
@@ -239,7 +239,7 @@ public class EnrollmentListTest {
         when(bebe.calculateGPA()).thenReturn(15F);
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.hasPassed(phys1)).thenReturn(false);
-        assertThat(list1.checkHasPassedAllPrerequisites(bebe))
+        assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(1);
     }
