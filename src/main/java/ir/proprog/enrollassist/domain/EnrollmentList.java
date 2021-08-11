@@ -88,9 +88,9 @@ public class EnrollmentList {
 
     List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Section o : sections)
-            if (s.hasPassed(o.getCourse()))
-                violations.add(new RequestedCourseAlreadyPassed(o.getCourse()));
+        for (Section sec : sections)
+            if (sec.studentHasPassedCourse(s))
+                violations.add(new RequestedCourseAlreadyPassed(sec.getCourse()));
         return violations;
     }
 

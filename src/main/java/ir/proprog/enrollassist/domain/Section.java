@@ -97,6 +97,8 @@ public class Section {
 
     public List<EnrollmentRuleViolation> courseCanBeTakenBy(Student student){ return course.canBeTakenBy(student); }
 
+    public boolean studentHasPassedCourse(Student s){ return s.hasPassed(course); }
+
     public boolean courseIsEqualTo(Course that) { return course.equals(that); }
 
     @Override
