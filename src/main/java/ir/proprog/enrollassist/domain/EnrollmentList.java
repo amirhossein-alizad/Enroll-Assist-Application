@@ -67,7 +67,7 @@ public class EnrollmentList {
         violations.addAll(checkHasPassedAllPrerequisites(owner));
         violations.addAll(checkHasNotAlreadyPassedCourses(owner));
         violations.addAll(checkNoCourseHasRequestedTwice());
-        violations.addAll(checkValidGPALimit(owner));
+        violations.addAll(checkValidGPALimit());
         violations.addAll(checkExamTimeConflicts());
         violations.addAll(checkSectionScheduleConflicts());
         return violations;
@@ -101,17 +101,17 @@ public class EnrollmentList {
         return violations;
     }
 
-    List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
-        double GPA = s.calculateGPA();
+    List<EnrollmentRuleViolation> checkValidGPALimit() {
+        double GPA = owner.calculateGPA();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         if(credits < 12)
             violations.add(new MinCreditsRequiredNotMet(12));
-        if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
+        if(GPA == 0 && owner.getTotalTakenCredits() == 0){
             if (credits > 20)
                 violations.add(new MaxCreditsLimitExceeded(20));
         }
-        else if(s.getTotalTakenCredits() > 0) {
+        else if(owner.getTotalTakenCredits() > 0) {
             if (credits > 14 && GPA < 12)
                 violations.add(new MaxCreditsLimitExceeded(14));
             else if (credits > 20 && GPA < 17)
