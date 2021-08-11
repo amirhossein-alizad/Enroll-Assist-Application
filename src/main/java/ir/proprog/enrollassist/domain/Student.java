@@ -95,7 +95,7 @@ public class Student {
         List<Section> takeableSections = new ArrayList<>();
         for (Section section: allSections)
             for(Course course: takeableCourses)
-                if(section.getCourse().equals(course)) {
+                if(section.courseIsEqualTo(course)) {
                     takeableSections.add(section);
                     break;
                 }
