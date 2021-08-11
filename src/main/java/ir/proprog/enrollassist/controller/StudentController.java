@@ -46,18 +46,14 @@ public class StudentController {
     @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public StudentView addStudent(@RequestBody StudentView studentView) {
         Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
-        ExceptionList exceptionList = new ExceptionList();
-        if (student.isPresent()) {
-            exceptionList.addNewException(new Exception("This student already exists."));
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
-        }
+        if (student.isPresent())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         try {
             Student newStudent = new Student(studentView.getStudentNo(), studentView.getName());
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         }catch (IllegalArgumentException illegalArgumentException) {
-            exceptionList.addNewException(new Exception("Student number or student name is not valid."));
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,exceptionList.toString());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student number or student name is not valid.");
         }
     }
 

@@ -64,10 +64,10 @@ public class EnrollmentList {
 
     public List<EnrollmentRuleViolation> checkEnrollmentRules() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        violations.addAll(checkHasPassedAllPrerequisites(owner));
-        violations.addAll(checkHasNotAlreadyPassedCourses(owner));
+        violations.addAll(checkHasPassedAllPrerequisites());
+        violations.addAll(checkHasNotAlreadyPassedCourses());
         violations.addAll(checkNoCourseHasRequestedTwice());
-        violations.addAll(checkValidGPALimit(owner));
+        violations.addAll(checkValidGPALimit());
         violations.addAll(checkExamTimeConflicts());
         violations.addAll(checkSectionScheduleConflicts());
         return violations;
@@ -75,43 +75,43 @@ public class EnrollmentList {
 
     List<EnrollmentRuleViolation> checkNoCourseHasRequestedTwice() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        Set<Course> Courses = new HashSet<>();
+        Set<Course> courses = new HashSet<>();
         for (Section section : sections)
-            if (Courses.contains(section.getCourse()))
+            if (courses.contains(section.getCourse()))
                 violations.add(new CourseRequestedTwice(section.getCourse()));
             else
-                Courses.add(section.getCourse());
+                courses.add(section.getCourse());
 
         return violations;
     }
 
 
-    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses(Student s) {
+    List<EnrollmentRuleViolation> checkHasNotAlreadyPassedCourses() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Section o : sections)
-            if (s.hasPassed(o.getCourse()))
-                violations.add(new RequestedCourseAlreadyPassed(o.getCourse()));
+        for (Section sec : sections)
+            if (sec.studentHasPassedCourse(owner))
+                violations.add(new RequestedCourseAlreadyPassed(sec.getCourse()));
         return violations;
     }
 
-    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites(Student s) {
+    List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Section o : sections)
-            violations.addAll(o.getCourse().canBeTakenBy(s));
+        for (Section sec : sections)
+            violations.addAll(sec.courseCanBeTakenBy(owner));
         return violations;
     }
 
-    List<EnrollmentRuleViolation> checkValidGPALimit(Student s) {
-        double GPA = s.calculateGPA();
+    List<EnrollmentRuleViolation> checkValidGPALimit() {
+        double GPA = owner.calculateGPA();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         if(credits < 12)
             violations.add(new MinCreditsRequiredNotMet(12));
-        if(s.calculateGPA() == 0 && s.getTotalTakenCredits() == 0){
+        if(GPA == 0 && owner.getTotalTakenCredits() == 0){
             if (credits > 20)
                 violations.add(new MaxCreditsLimitExceeded(20));
         }
-        else if(s.getTotalTakenCredits() > 0) {
+        else if(owner.getTotalTakenCredits() > 0) {
             if (credits > 14 && GPA < 12)
                 violations.add(new MaxCreditsLimitExceeded(14));
             else if (credits > 20 && GPA < 17)
