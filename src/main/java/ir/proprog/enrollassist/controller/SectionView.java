@@ -4,6 +4,9 @@ import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.Section;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 public class SectionView {
     private Long sectionId;
@@ -13,6 +16,7 @@ public class SectionView {
     private String courseNumber;
     private String courseTitle;
     private int courseCredits;
+    List<String> schedule = new ArrayList<>();
 
     public SectionView() {
     }
@@ -27,10 +31,11 @@ public class SectionView {
         this.courseCredits = section.getCourse().getCredits();
     }
 
-    public SectionView(Section section, ExamTime examTime) {
+    public SectionView(Section section, ExamTime examTime, List<String> schedule) {
         this.sectionId = section.getId();
         this.sectionNo = section.getSectionNo();
         this.examTime = examTime;
+        this.schedule = schedule;
         this.courseId = section.getCourse().getId();
         this.courseNumber = section.getCourse().getCourseNumber();
         this.courseTitle = section.getCourse().getTitle();

@@ -61,11 +61,11 @@ public class SectionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
         try {
-            Section newSection = new Section(course, section.getSectionNo(), section.getExamTime());
+            Section newSection = new Section(course, section.getSectionNo(), section.getExamTime(), section.getSchedule());
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            exceptionList.addNewException(new Exception("Section number is not valid."));
+        } catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
     }

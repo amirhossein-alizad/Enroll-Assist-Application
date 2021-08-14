@@ -33,8 +33,21 @@ public class Section {
         this.course = course;
     }
 
-    public Section(@NonNull Course course, String sectionNo, ExamTime examTime) {
-        this.validateSectionNo(sectionNo);
+    public Section(@NonNull Course course, String sectionNo, ExamTime examTime, List<String> schedule) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            this.validateSectionNo(sectionNo);
+        }catch (IllegalArgumentException e) {
+            exceptionList.addNewException(e);
+        }
+        try {
+            this.presentationSchedule = this.validatePresentationSchedule(schedule);
+        }catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
+        if (exceptionList.hasException())
+            throw exceptionList;
+
         this.sectionNo = sectionNo;
         this.course = course;
         this.examTime = examTime;
@@ -55,8 +68,8 @@ public class Section {
     }
 
 
-    public void setPresentationSchedule(List<String> schedule) throws ExceptionList {
-        Set<PresentationSchedule> parsedPresentationSchedule = new HashSet<>();
+    private Set<PresentationSchedule> validatePresentationSchedule(List<String> schedule) throws ExceptionList {
+        Set<PresentationSchedule> classSchedule = new HashSet<>();
         ExceptionList exceptionList = new ExceptionList();
         for (String s: schedule) {
             List<String> scheduleString = Arrays.asList(s.split(","));
@@ -65,7 +78,7 @@ public class Section {
             else {
                 try {
                     PresentationSchedule sectionSchedule = new PresentationSchedule(scheduleString.get(0), scheduleString.get(1));
-                    parsedPresentationSchedule.add(sectionSchedule);
+                    classSchedule.add(sectionSchedule);
                 } catch (ExceptionList list) {
                     exceptionList.addExceptions(list.getExceptions());
                 }
@@ -73,8 +86,12 @@ public class Section {
         }
         if (exceptionList.hasException())
             throw exceptionList;
-        else
-            this.presentationSchedule = parsedPresentationSchedule;
+
+        return classSchedule;
+    }
+
+    public void setPresentationSchedule(List<String> schedule) throws ExceptionList {
+        this.presentationSchedule = this.validatePresentationSchedule(schedule);
     }
 
     public boolean hasConflict(Section otherSection) {
