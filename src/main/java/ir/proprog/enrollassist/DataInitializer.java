@@ -66,16 +66,16 @@ public class DataInitializer {
         ExamTime exam6 = new ExamTime("2021-07-16T09:00", "2021-07-16T11:00");
         ExamTime exam7 = new ExamTime("2021-07-17T09:00", "2021-07-17T11:00");
 
-        Section math1_1 = new Section(math1, "01", exam0); sectionRepository.save(math1_1);
-        Section phys1_1 = new Section(phys1, "01", exam1); sectionRepository.save(phys1_1);
-        Section math2_1 = new Section(math2, "01", exam2); sectionRepository.save(math2_1);
-        Section math2_2 = new Section(math2, "02", exam3); sectionRepository.save(math2_2);
-        Section phys2_1 = new Section(phys2, "01", exam4); sectionRepository.save(phys2_1);
-        Section phys2_2 = new Section(phys2, "02", exam5); sectionRepository.save(phys2_2);
-        Section ap_1 = new Section(ap, "01", exam6); sectionRepository.save(ap_1);
-        Section dm_1 = new Section(dm, "01", exam7); sectionRepository.save(dm_1);
-        Section akhlagh_1 = new Section(akhlagh, "01" ,exam0); sectionRepository.save(akhlagh_1);
-        Section english_1 = new Section(english, "01", exam1); sectionRepository.save(english_1);
+        Section math1_1 = new Section(math1, "01", exam0, List.of("Sunday,12:00-14:00")); sectionRepository.save(math1_1);
+        Section phys1_1 = new Section(phys1, "01", exam1, List.of("Monday,12:00-14:00")); sectionRepository.save(phys1_1);
+        Section math2_1 = new Section(math2, "01", exam2, List.of("Tuesday,12:00-14:00")); sectionRepository.save(math2_1);
+        Section math2_2 = new Section(math2, "02", exam3, List.of("Wednesday,12:00-14:00")); sectionRepository.save(math2_2);
+        Section phys2_1 = new Section(phys2, "01", exam4, List.of("Sunday,14:00-16:00")); sectionRepository.save(phys2_1);
+        Section phys2_2 = new Section(phys2, "02", exam5, List.of("Monday,14:00-16:00")); sectionRepository.save(phys2_2);
+        Section ap_1 = new Section(ap, "01", exam6, List.of("Tuesday,14:00-16:00")); sectionRepository.save(ap_1);
+        Section dm_1 = new Section(dm, "01", exam7, List.of("Wednesday,14:00-16:00")); sectionRepository.save(dm_1);
+        Section akhlagh_1 = new Section(akhlagh, "01" ,exam0, List.of("Sunday,16:00-18:00")); sectionRepository.save(akhlagh_1);
+        Section english_1 = new Section(english, "01", exam1, List.of("Monday,16:00-18:00")); sectionRepository.save(english_1);
         // Section buggy = new Section(null, "01"); //sectionRepository.save(buggy);
 
         EnrollmentList mahsaList = new EnrollmentList("Mahsa's List", mahsa);
