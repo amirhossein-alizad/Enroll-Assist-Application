@@ -7,7 +7,6 @@ import lombok.Getter;
 public class EnrollmentListView {
     private Long enrollmentListId;
     private String enrollmentListName;
-    private String message;
 
     public EnrollmentListView() {
     }
@@ -17,7 +16,4 @@ public class EnrollmentListView {
         this.enrollmentListName = enrollmentList.getListName();
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
 }
