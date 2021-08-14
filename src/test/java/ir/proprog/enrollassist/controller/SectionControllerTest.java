@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,9 +25,11 @@ import java.util.Optional;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SectionController.class)
@@ -180,5 +184,27 @@ public class SectionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    public void Section_with_incorrect_schedule_format_is_not_added_correctly() throws Exception{
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Course course = new Course("1010101", "DM", 3);
+        given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
+        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
+        JSONObject req = new JSONObject();
+        req.put("sectionNo", "01");
+        req.put("courseId", "1");
+        JSONArray arr = new JSONArray(List.of("Monday,12:00-14"));
+        req.put("schedule", arr);
+
+        MvcResult result =  mvc.perform(MockMvcRequestBuilders.post("/sections")
+                .content(req.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"12:00-14 is not valid time.\"}");
+    }
+
 }
 
