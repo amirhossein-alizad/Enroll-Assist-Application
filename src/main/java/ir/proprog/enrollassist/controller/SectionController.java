@@ -99,7 +99,7 @@ public class SectionController {
         return examTime;
     }
 
-    @PutMapping("/{id}/setExamTime")
+    @PutMapping("/{id}/setSchedule")
     public SectionView setSchedule(@RequestBody List<String> schedule, @PathVariable Long id){
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found."));
