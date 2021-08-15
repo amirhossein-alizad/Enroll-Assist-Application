@@ -263,6 +263,14 @@ public class SectionControllerTest {
         assertEquals(content, "{\"1\":\"Exam start should be before its end.\"}");
     }
 
+    @Test
+    public void Schedule_is_not_set_if_section_is_not_found() throws Exception {
+        given(sectionRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not Found."));
+        mvc.perform(put("/sections/1/setSchedule")
+                .contentType(MediaType.APPLICATION_JSON)
+                        .content("[\n{\n\"dayOfWeek\": \"Sunday\",\n\"endTime\": \"10:00\",\n\"startTime\": \"12:00\"\n}\n]"))
+                .andExpect(status().isNotFound());
+    }
 
 }
 
