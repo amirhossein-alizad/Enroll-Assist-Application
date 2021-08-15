@@ -17,8 +17,8 @@ public class SectionTest {
         String exception = "";
         try {
             Section section = new Section(course, "e34");
-        } catch (IllegalArgumentException illegalArgumentException) {
-            exception = illegalArgumentException.getMessage();
+        } catch (ExceptionList exceptionList) {
+            exception = exceptionList.getExceptions().get(0).getMessage();
         }
         assertEquals(exception, "Section number must be number");
     }

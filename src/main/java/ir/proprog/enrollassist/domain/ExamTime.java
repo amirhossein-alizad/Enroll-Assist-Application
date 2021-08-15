@@ -41,8 +41,6 @@ public class ExamTime {
             System.out.println(e);
             throw new Exception("Dates must be of the format yyyy-MM-ddTHH:mm");
         }
-        ExceptionList exceptionList = new ExceptionList();
-        exceptionList.addExceptions(this.validate());
     }
 
     public boolean hasTimeConflict(ExamTime other) {

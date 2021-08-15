@@ -61,7 +61,11 @@ public class SectionController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
         try {
-            Section newSection = new Section(course, section.getSectionNo(), section.getExamTime(), section.getSchedule());
+            Section newSection;
+            if (section.getExamTime() == null)
+                newSection = new Section(course, section.getSectionNo());
+            else
+                newSection = new Section(course, section.getSectionNo(), section.getExamTime(), section.getSchedule());
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (ExceptionList e) {

@@ -187,13 +187,16 @@ public class SectionControllerTest {
 
     @Test
     public void Section_with_incorrect_schedule_format_is_not_added_correctly() throws Exception{
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = new Course("1010101", "DM", 3);
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
+        JSONObject exam = new JSONObject();
+        exam.put("start", "2021-07-10T09:00");
+        exam.put("end", "2021-07-10T11:00");
         req.put("sectionNo", "01");
         req.put("courseId", "1");
+        req.put("examTime", exam);
         JSONArray arr = new JSONArray(List.of("Monday,12:00-14"));
         req.put("schedule", arr);
 

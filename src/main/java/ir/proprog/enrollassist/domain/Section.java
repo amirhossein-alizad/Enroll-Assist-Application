@@ -27,19 +27,27 @@ public class Section {
     @ElementCollection
     private Set<PresentationSchedule> presentationSchedule = new HashSet<>();
 
-    public Section(@NonNull Course course, String sectionNo) {
-        this.validateSectionNo(sectionNo);
+    public Section(@NonNull Course course, String sectionNo) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            this.validateSectionNo(sectionNo);
+        } catch (IllegalArgumentException e) {
+            exceptionList.addNewException(e);
+        }
+        if (exceptionList.hasException())
+            throw exceptionList;
         this.sectionNo = sectionNo;
         this.course = course;
     }
 
-    public Section(@NonNull Course course, String sectionNo, ExamTime examTime, List<String> schedule) throws ExceptionList {
+    public Section(@NonNull Course course, String sectionNo, @NonNull ExamTime examTime, List<String> schedule) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.validateSectionNo(sectionNo);
         }catch (IllegalArgumentException e) {
             exceptionList.addNewException(e);
         }
+        exceptionList.addExceptions(examTime.validate());
         try {
             this.presentationSchedule = this.validatePresentationSchedule(schedule);
         }catch (ExceptionList e) {
