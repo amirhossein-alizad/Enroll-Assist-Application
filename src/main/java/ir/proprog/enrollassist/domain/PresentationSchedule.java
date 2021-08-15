@@ -19,46 +19,35 @@ public class PresentationSchedule {
     private String dayOfWeek;
     private Date startTime = new Date();
     private Date endTime = new Date();
-    private String stringFormat;
 
-    public PresentationSchedule(String dayOfWeek, String time) throws ExceptionList {
+    public PresentationSchedule(String dayOfWeek, String start, String end) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.validateDayOfWeek(dayOfWeek);
+            this.dayOfWeek = dayOfWeek;
         } catch (Exception exception) {
             exceptionList.addNewException(exception);
         }
         try {
-            this.validateTime(time);
-        } catch (Exception e) {
+            validateTime(start, end);
+        }catch (Exception e) {
             exceptionList.addNewException(e);
         }
         if (exceptionList.hasException())
             throw exceptionList;
-
     }
 
-    private void validateTime(String time) throws Exception {
-        if (time.equals(""))
-            throw new Exception("Time can not be empty");
-        else {
-            List<String> timeString = Arrays.asList(time.split("-"));
-            if (timeString.size() != 2)
-                throw new Exception(String.format("%s is not valid time.", time));
-            else {
-                SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
-                try {
-                    this.startTime = dataFormat.parse(timeString.get(0));
-                    this.endTime = dataFormat.parse(timeString.get(1));
-                }
-                catch (Exception exception) {
-                    throw new Exception(String.format("%s is not valid time.", time));
-                }
-                if (this.endTime.before(this.startTime))
-                    throw new Exception(String.format("End time can not be before start time.(%s)", time));
-            }
-            stringFormat = dayOfWeek + " " + timeString.get(0) + " - " + timeString.get(1);
+    private void validateTime(String start, String end) throws Exception {
+        try {
+            SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
+            this.startTime = dataFormat.parse(start);
+            this.endTime = dataFormat.parse(end);
         }
+        catch (Exception exception) {
+            throw new Exception("Time format is not valid");
+        }
+        if (this.endTime.before(this.startTime))
+            throw new Exception("End time can not be before start time.");
     }
 
 
@@ -67,7 +56,6 @@ public class PresentationSchedule {
         List<String> week = Arrays.asList(dateFormatSymbols.getWeekdays());
         if (!week.contains(dayOfWeek))
             throw new Exception(String.format("%s is not valid week day.", dayOfWeek));
-        this.dayOfWeek = dayOfWeek;
     }
 
     public boolean hasConflict(PresentationSchedule otherPresentationSchedule) {
@@ -79,7 +67,4 @@ public class PresentationSchedule {
             return false;
         return true;
     }
-
-    @Override
-    public String toString() { return stringFormat;}
 }

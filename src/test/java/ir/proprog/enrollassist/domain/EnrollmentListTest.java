@@ -6,8 +6,7 @@ import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -249,8 +248,8 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1234567", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("2345678", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"), List.of("Monday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"), List.of("Monday,12:00-14:00"));
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"),  Collections.emptySet());
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -263,8 +262,8 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"), List.of("Monday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T09:30", "2021-06-21T13:00"), List.of("Monday,12:00-14:00"));
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"),  Collections.emptySet());
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T09:30", "2021-06-21T13:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -277,8 +276,8 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"), List.of("Monday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-23T09:30", "2021-06-23T13:00"), List.of("Monday,12:00-14:00"));
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"),  Collections.emptySet());
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-23T09:30", "2021-06-23T13:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -291,8 +290,8 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1231231", "MATH1", 3).setHasExam(true);
         Course phys2 = new Course("3453456", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T13:00"), List.of("Monday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T13:00", "2021-06-21T16:00"), List.of("Monday,12:00-14:00"));
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T13:00"),  Collections.emptySet());
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T13:00", "2021-06-21T16:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -306,9 +305,9 @@ public class EnrollmentListTest {
         Course math1 = new Course("1111111", "MATH1", 3).setHasExam(true);
         Course ap = new Course("2222222", "AP", 4).setHasExam(true);
         Course phys2 = new Course("3333333", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"), List.of("Monday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T14:00"), List.of("Monday,12:00-14:00"));
-        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-06-21T13:30", "2021-06-21T16:30"), List.of("Monday,14:00-16:00"));
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"), Collections.emptySet());
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T14:00"),  Collections.emptySet());
+        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-06-21T13:30", "2021-06-21T16:30"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, ap1_1, phys2_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -331,16 +330,18 @@ public class EnrollmentListTest {
     void Enrollment_list_cannot_have_conflict_in_section_schedules() throws Exception {
         Student bebe = mock(Student.class);
         Course math1 = new Course("1111111", "MATH1", 3).setHasExam(true);
-        Course ap = new Course("2222222", "AP", 4).setHasExam(true);
         Course phys2 = new Course("3333333", "PHYS2", 3).setHasExam(true);
-        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"), List.of("Monday,10:30-12:00", "Wednesday,10:30-12:00"));
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), List.of("Monday,10:30-12:00", "Tuesday,10:30-12:00"));
-        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"), List.of("Tuesday,12:00-14:00", "Wednesday,11:00-12:30"));
+        PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
+        PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
+        PresentationSchedule p3 = new PresentationSchedule("Monday", "11:00", "13:00");
+        PresentationSchedule p4 = new PresentationSchedule("Tuesday", "10:30", "12:00");
+        Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"), Set.of(p1, p2));
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), Set.of(p3, p4));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(math1_1, ap1_1, phys2_1);
+        list1.addSections(math1_1, phys2_1);
         assertThat(list1.checkSectionScheduleConflicts())
                 .isNotNull()
-                .hasSize(2);
+                .hasSize(1);
     }
 
 
@@ -349,8 +350,10 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         Course ap = new Course("2222222", "AP", 6).setHasExam(true);
         Course phys2 = new Course("3333333", "PHYS2", 6).setHasExam(true);
-        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), List.of("Monday,10:30-12:00", "Tuesday,10:30-12:00"));
-        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"), List.of("Monday,12:00-14:00", "Tuesday,12:30-14:00"));
+        PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
+        PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
+        Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), Set.of(p1));
+        Section ap1_1 = new Section(ap, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"), Set.of(p2));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(ap1_1, phys2_1);
         assertThat(list1.checkEnrollmentRules())

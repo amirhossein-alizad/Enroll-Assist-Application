@@ -1,11 +1,15 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.ExamTime;
+import ir.proprog.enrollassist.domain.PresentationSchedule;
 import ir.proprog.enrollassist.domain.Section;
 import lombok.Getter;
+import org.checkerframework.checker.optional.qual.Present;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Getter
 public class SectionView {
@@ -16,7 +20,7 @@ public class SectionView {
     private String courseNumber;
     private String courseTitle;
     private int courseCredits;
-    List<String> schedule = new ArrayList<>();
+    Set<PresentationSchedule> schedule = new HashSet<>();
 
     public SectionView() {
     }
@@ -29,10 +33,10 @@ public class SectionView {
         this.courseNumber = section.getCourse().getCourseNumber();
         this.courseTitle = section.getCourse().getTitle();
         this.courseCredits = section.getCourse().getCredits();
-        schedule = section.presentationScheduleToString();
+        this.schedule = section.getPresentationSchedule();
     }
 
-    public SectionView(Section section, ExamTime examTime, List<String> schedule) {
+    public SectionView(Section section, ExamTime examTime, Set<PresentationSchedule> schedule) {
         this.sectionId = section.getId();
         this.sectionNo = section.getSectionNo();
         this.examTime = examTime;
