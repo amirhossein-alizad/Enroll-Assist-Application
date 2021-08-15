@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.util.List;
 
-//@Component
+@Component
 public class DataInitializer {
     StudentRepository studentRepository;
     CourseRepository courseRepository;

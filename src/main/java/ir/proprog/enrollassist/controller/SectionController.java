@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -37,6 +38,18 @@ public class SectionController {
     public SectionView one(@PathVariable Long id) {
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        return new SectionView(section);
+    }
+
+    @DeleteMapping("/{id}")
+    public SectionView removeOne(@PathVariable Long id) {
+        Section section = sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        enrollmentListRepository.findEnrollmentListContainingSection(id).forEach(list -> {
+            list.removeSection(section);
+            enrollmentListRepository.save(list);
+        });
+        sectionRepository.delete(section);
         return new SectionView(section);
     }
 
