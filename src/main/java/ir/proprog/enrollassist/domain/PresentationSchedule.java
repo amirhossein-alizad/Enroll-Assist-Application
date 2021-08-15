@@ -27,13 +27,17 @@ public class PresentationSchedule {
         this.endTime = end;
         ExceptionList exceptionList = new ExceptionList();
         try {
-           this.validateFields();
+            this.validateDayOfWeek(dayOfWeek);
         } catch (Exception exception) {
             exceptionList.addNewException(exception);
         }
+        try {
+            validateTime(start, end);
+        }catch (Exception e) {
+            exceptionList.addNewException(e);
+        }
         if (exceptionList.hasException())
             throw exceptionList;
-
 
     }
 
@@ -46,7 +50,7 @@ public class PresentationSchedule {
         catch (Exception exception) {
             throw new Exception("Time format is not valid");
         }
-        if (dataFormat.parse(start).before(dataFormat.parse(end)))
+        if (dataFormat.parse(end).before(dataFormat.parse(start)))
             throw new Exception("End time can not be before start time.");
     }
 
