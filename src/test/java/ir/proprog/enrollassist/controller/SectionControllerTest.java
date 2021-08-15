@@ -135,7 +135,7 @@ public class SectionControllerTest {
     @Test
     public void Section_is_removed_from_lists_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1111111", "C1", 3), "01", exam, List.of("Monday,12:00-14:00"));
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam, Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("SampleList1", mock(Student.class));
         EnrollmentList list2 = new EnrollmentList("SampleList2", mock(Student.class));
         list1.addSections(section);
