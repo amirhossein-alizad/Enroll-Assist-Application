@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -41,18 +41,6 @@ public class SectionController {
         return new SectionView(section);
     }
 
-    @DeleteMapping("/{id}")
-    public SectionView removeOne(@PathVariable Long id) {
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
-        enrollmentListRepository.findEnrollmentListContainingSection(id).forEach(list -> {
-            list.removeSection(section);
-            enrollmentListRepository.save(list);
-        });
-        sectionRepository.delete(section);
-        return new SectionView(section);
-    }
-
     @GetMapping("/demands")
     public Iterable<SectionDemandView> allDemands() {
 //        return enrollmentListRepository.findDemandForAllSections().forEach((SectionDemandView s) -> s.setSectionView(sectionRepository.findById(s.getSectionId()).orElseThrow()));
@@ -85,6 +73,19 @@ public class SectionController {
             exceptionList.addExceptions(e.getExceptions());
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+    }
+
+    @PostMapping("/{id}")
+    public ExamTime changeExamTime(@RequestBody ExamTime examTime, @PathVariable Long id) {
+        Section section = this.sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        try {
+            section.setExamTime(examTime);
+            this.sectionRepository.save(section);
+        }catch (ExceptionList exceptionList) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+        }
+        return examTime;
     }
 
 }

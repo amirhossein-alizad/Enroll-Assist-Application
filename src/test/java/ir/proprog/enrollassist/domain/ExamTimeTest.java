@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -43,19 +44,29 @@ public class ExamTimeTest {
     @Test
     public void Exams_start_date_cannot_be_after_end_date() throws Exception {
         ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-21T10:00");
-        List<Exception> errors = time1.validate();
-        assertEquals(errors.get(0).getMessage(),"Exam start should be before its end.");
+        String exception = "";
+        try {
+            time1.validate();
+        }catch (ExceptionList e) {
+            exception = e.toString();
+        }
+        assertEquals(exception,"{\"1\":\"Exam start should be before its end.\"}");
     }
 
     @Test
     public void Exams_start_and_finish_date_cannot_be_on_different_days() throws Exception {
         ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-22T12:00");
-        List<Exception> errors = time1.validate();
-        assertEquals(errors.get(0).getMessage(),"Exam cannot take more than one day.");
+        String exception = "";
+        try {
+            time1.validate();
+        }catch (ExceptionList e) {
+            exception = e.toString();
+        }
+        assertEquals(exception,"{\"1\":\"Exam cannot take more than one day.\"}");
     }
 
     @Test
-    public void Exam_date_should_be_on_valid_days() throws Exception {
+    public void Exam_date_should_be_on_valid_days(){
         String exception = "";
         try {
             ExamTime time1 = new ExamTime("2021-06-34T11:00", "2021-06-34T12:00");
@@ -66,7 +77,7 @@ public class ExamTimeTest {
     }
 
     @Test
-    public void Exam_date_should_be_on_valid_months() throws Exception {
+    public void Exam_date_should_be_on_valid_months(){
         String exception = "";
         try {
             ExamTime time1 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
