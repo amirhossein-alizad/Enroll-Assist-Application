@@ -1,8 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.ExamTime;
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
@@ -23,14 +21,15 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(SectionController.class)
@@ -130,6 +129,38 @@ public class SectionControllerTest {
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
+    }
+
+    @Test
+    public void Section_is_removed_from_lists_correctly() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam, List.of("Monday,12:00-14:00"));
+        EnrollmentList list1 = new EnrollmentList("SampleList1", mock(Student.class));
+        EnrollmentList list2 = new EnrollmentList("SampleList2", mock(Student.class));
+        list1.addSections(section);
+        list2.addSections(section);
+
+        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
+
+        mvc.perform(delete("/sections/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.courseTitle", is("C1")))
+                .andExpect(jsonPath("$.courseNumber", is("1111111")))
+                .andExpect(jsonPath("$.sectionNo", is("01")))
+                .andReturn();
+
+        assertThat(enrollmentListRepository.findEnrollmentListContainingSection(1L)).isEmpty();
+    }
+
+    @Test
+    public void Section_cannot_be_removed_if_id_is_not_found() throws Exception {
+        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.empty());
+
+        mvc.perform(delete("/sections/1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
     }
 
     @Test

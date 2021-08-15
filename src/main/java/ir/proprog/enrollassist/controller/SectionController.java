@@ -41,6 +41,18 @@ public class SectionController {
         return new SectionView(section);
     }
 
+    @DeleteMapping("/{id}")
+    public SectionView removeOne(@PathVariable Long id) {
+        Section section = sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        enrollmentListRepository.findEnrollmentListContainingSection(id).forEach(list -> {
+            list.removeSection(section);
+            enrollmentListRepository.save(list);
+        });
+        sectionRepository.delete(section);
+        return new SectionView(section);
+    }
+
     @GetMapping("/demands")
     public Iterable<SectionDemandView> allDemands() {
         List<SectionDemandView> demands = enrollmentListRepository.findDemandForAllSections();
