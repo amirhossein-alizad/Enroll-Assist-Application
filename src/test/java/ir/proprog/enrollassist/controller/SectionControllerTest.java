@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -49,9 +50,9 @@ public class SectionControllerTest {
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         List<Section> sections = List.of(
-                new Section(new Course("1111111", "C1", 3), "01", exam0, List.of("Monday,12:00-14:00")),
-                new Section(new Course("2222222", "C2", 3), "02", exam1, List.of("Monday,14:00-15:00")),
-                new Section(new Course("3333333", "C3", 3), "01", exam0, List.of("Monday,16:00-17:00"))
+                new Section(new Course("1111111", "C1", 3), "01", exam0, Collections.emptySet()),
+                new Section(new Course("2222222", "C2", 3), "02", exam1, Collections.emptySet()),
+                new Section(new Course("3333333", "C3", 3), "01", exam0, Collections.emptySet())
         );
 
         given(sectionRepository.findAll()).willReturn(sections);
@@ -67,7 +68,7 @@ public class SectionControllerTest {
     @Test
     public void Requested_section_is_returned_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1111111", "ap", 3), "01", exam, List.of("Monday,12:00-14:00"));
+        Section section = new Section(new Course("1111111", "ap", 3), "01", exam, Collections.emptySet());
         given(sectionRepository.findById(1L)).willReturn(Optional.of(section));
         mvc.perform(get("/sections/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -83,13 +84,13 @@ public class SectionControllerTest {
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         ExamTime exam2 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
-        Section s1 = new Section(new Course("1111111", "C1", 3), "01", exam0, List.of("Monday,12:00-14:00"));
+        Section s1 = new Section(new Course("1111111", "C1", 3), "01", exam0, Collections.emptySet());
         SectionView c1 = new SectionView(s1);
         SectionDemandView sd_1 = new SectionDemandView(c1, 50);
-        Section s2 = new Section(new Course("2222222", "C2", 3), "01", exam1, List.of("Monday,14:00-16:00"));
+        Section s2 = new Section(new Course("2222222", "C2", 3), "01", exam1, Collections.emptySet());
         SectionView c2 = new SectionView(s2);
         SectionDemandView sd_2 = new SectionDemandView(c2, 72);
-        Section s3 = new Section(new Course("3333333", "C3", 3), "01", exam2, List.of("Monday,16:00-18:00"));
+        Section s3 = new Section(new Course("3333333", "C3", 3), "01", exam2, Collections.emptySet());
         SectionView c3 = new SectionView(s3);
         SectionDemandView sd_3 = new SectionDemandView(c3, 25);
 
@@ -120,7 +121,7 @@ public class SectionControllerTest {
     @Test
     public void One_section_is_returned_correctly() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1111111", "C1", 3), "01", exam, List.of("Monday,12:00-14:00"));
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam, Collections.emptySet());
 
         given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
 
@@ -174,7 +175,7 @@ public class SectionControllerTest {
     public void Existing_section_is_not_added_correctly() throws Exception{
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = new Course("1010101", "DM", 3);
-        List<Section> findSections = List.of(new Section(course, "01", exam, List.of("Monday,12:00-14:00")));
+        List<Section> findSections = List.of(new Section(course, "01", exam, Collections.emptySet()));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(findSections);
         JSONObject req = new JSONObject();
@@ -186,35 +187,12 @@ public class SectionControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    public void Section_with_incorrect_schedule_format_is_not_added_correctly() throws Exception{
-        Course course = new Course("1010101", "DM", 3);
-        given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
-        given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(Collections.emptyList());
-        JSONObject req = new JSONObject();
-        JSONObject exam = new JSONObject();
-        exam.put("start", "2021-07-10T09:00");
-        exam.put("end", "2021-07-10T11:00");
-        req.put("sectionNo", "01");
-        req.put("courseId", "1");
-        req.put("examTime", exam);
-        JSONArray arr = new JSONArray(List.of("Monday,12:00-14"));
-        req.put("schedule", arr);
-
-        MvcResult result =  mvc.perform(MockMvcRequestBuilders.post("/sections")
-                .content(req.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"12:00-14 is not valid time.\"}");
-    }
 
     @Test
     public void ExamTime_can_be_changed_by_valid_another_ExamTime() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptyList());
+        Section section = new Section(course,"01", exam, Collections.emptySet());
         when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2020-08-10T09:00");
@@ -240,7 +218,7 @@ public class SectionControllerTest {
     public void ExamTime_cant_be_changed_by_invalid_another_ExamTime() throws Exception {
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptyList());
+        Section section = new Section(course,"01", exam, Collections.emptySet());
         when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2021-08-10T13:00");
