@@ -19,6 +19,7 @@ public class PresentationSchedule {
     private String dayOfWeek;
     private Date startTime = new Date();
     private Date endTime = new Date();
+    private String stringFormat;
 
     public PresentationSchedule(String dayOfWeek, String time) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
@@ -56,6 +57,7 @@ public class PresentationSchedule {
                 if (this.endTime.before(this.startTime))
                     throw new Exception(String.format("End time can not be before start time.(%s)", time));
             }
+            stringFormat = dayOfWeek + " " + timeString.get(0) + " - " + timeString.get(1);
         }
     }
 
@@ -77,4 +79,7 @@ public class PresentationSchedule {
             return false;
         return true;
     }
+
+    @Override
+    public String toString() { return stringFormat;}
 }
