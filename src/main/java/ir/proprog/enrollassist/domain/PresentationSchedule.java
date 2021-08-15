@@ -19,6 +19,7 @@ public class PresentationSchedule {
     private String dayOfWeek;
     private Date startTime = new Date();
     private Date endTime = new Date();
+    private String stringFormat;
 
     public PresentationSchedule(String dayOfWeek, String start, String end) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
@@ -35,6 +36,8 @@ public class PresentationSchedule {
         }
         if (exceptionList.hasException())
             throw exceptionList;
+        stringFormat = dayOfWeek + " " + start + " - " + end;
+
     }
 
     private void validateTime(String start, String end) throws Exception {
@@ -63,8 +66,9 @@ public class PresentationSchedule {
             return false;
         else if (otherPresentationSchedule.startTime.after(this.endTime) || otherPresentationSchedule.startTime.equals(this.endTime))
             return false;
-        else if (otherPresentationSchedule.endTime.before(this.startTime) || otherPresentationSchedule.endTime.equals(this.startTime))
-            return false;
-        return true;
+        else return !otherPresentationSchedule.endTime.before(this.startTime) && !otherPresentationSchedule.endTime.equals(this.startTime);
     }
+
+    @Override
+    public String toString() { return stringFormat; }
 }
