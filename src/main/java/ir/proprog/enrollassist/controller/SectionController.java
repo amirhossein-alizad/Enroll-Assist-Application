@@ -43,7 +43,6 @@ public class SectionController {
 
     @GetMapping("/demands")
     public Iterable<SectionDemandView> allDemands() {
-//        return enrollmentListRepository.findDemandForAllSections().forEach((SectionDemandView s) -> s.setSectionView(sectionRepository.findById(s.getSectionId()).orElseThrow()));
         List<SectionDemandView> demands = enrollmentListRepository.findDemandForAllSections();
         for (SectionDemandView demand : demands) {
             demand.setSectionView(sectionRepository.findById(demand.getSectionId()).orElseThrow());
@@ -87,6 +86,20 @@ public class SectionController {
         }
         return examTime;
     }
+
+    @PutMapping("/{id}/setExamTime")
+    public SectionView setSchedule(@RequestBody List<String> schedule, @PathVariable Long id){
+        Section section = sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found."));
+        try {
+            section.setPresentationSchedule(schedule);
+            sectionRepository.save(section);
+            return new SectionView(section);
+        } catch(ExceptionList e){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
+        }
+    }
+
 
 }
 
