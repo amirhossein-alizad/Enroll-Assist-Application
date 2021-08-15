@@ -99,6 +99,12 @@ public class Section {
         return course.equals(section.course) && sectionNo.equals(section.sectionNo);
     }
 
+    public List<String> scheduleToString(){
+        List<String> list = new ArrayList<>();
+        for(PresentationSchedule ps: presentationSchedule)
+            list.add(ps.toString());
+        return list;
+    }
     public List<EnrollmentRuleViolation> courseCanBeTakenBy(Student student){ return course.canBeTakenBy(student); }
 
     public boolean studentHasPassedCourse(Student s){ return s.hasPassed(course); }
