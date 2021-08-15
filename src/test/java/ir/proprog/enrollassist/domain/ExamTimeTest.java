@@ -43,15 +43,15 @@ public class ExamTimeTest {
     @Test
     public void Exams_start_date_cannot_be_after_end_date() throws Exception {
         ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-21T10:00");
-        List<String> errors = time1.validate();
-        assertThat(errors).hasSize(1).contains("Exam start should be before its end.");
+        List<Exception> errors = time1.validate();
+        assertEquals(errors.get(0).getMessage(),"Exam start should be before its end.");
     }
 
     @Test
     public void Exams_start_and_finish_date_cannot_be_on_different_days() throws Exception {
         ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-22T12:00");
-        List<String> errors = time1.validate();
-        assertThat(errors).hasSize(1).contains("Exam cannot take more than one day.");
+        List<Exception> errors = time1.validate();
+        assertEquals(errors.get(0).getMessage(),"Exam cannot take more than one day.");
     }
 
     @Test

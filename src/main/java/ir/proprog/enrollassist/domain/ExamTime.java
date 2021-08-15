@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +21,13 @@ public class ExamTime {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    public List<String> validate() {
-        List<String> errors = new ArrayList<>();
+    public List<Exception> validate() {
+        List<Exception> errors = new ArrayList<>();
         if (this.start.compareTo(this.end) >= 0)
-            errors.add("Exam start should be before its end.");
+            errors.add(new Exception("Exam start should be before its end."));
 
         if (!this.start.toLocalDate().equals(this.end.toLocalDate()))
-            errors.add("Exam cannot take more than one day.");
+            errors.add(new Exception("Exam cannot take more than one day."));
 
         return errors;
     }
@@ -40,6 +41,8 @@ public class ExamTime {
             System.out.println(e);
             throw new Exception("Dates must be of the format yyyy-MM-ddTHH:mm");
         }
+        ExceptionList exceptionList = new ExceptionList();
+        exceptionList.addExceptions(this.validate());
     }
 
     public boolean hasTimeConflict(ExamTime other) {
