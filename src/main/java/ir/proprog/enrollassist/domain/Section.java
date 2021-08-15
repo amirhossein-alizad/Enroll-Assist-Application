@@ -47,7 +47,11 @@ public class Section {
         }catch (IllegalArgumentException e) {
             exceptionList.addNewException(e);
         }
-        exceptionList.addExceptions(examTime.validate());
+        try {
+            examTime.validate();
+        }catch (ExceptionList e) {
+            exceptionList.addExceptions(e.getExceptions());
+        }
         try {
             this.presentationSchedule = this.validatePresentationSchedule(schedule);
         }catch (ExceptionList e) {
@@ -71,7 +75,8 @@ public class Section {
         }
     }
 
-    public void setExamTime(ExamTime examTime) {
+    public void setExamTime(ExamTime examTime) throws ExceptionList {
+        examTime.validate();
         this.examTime = examTime;
     }
 

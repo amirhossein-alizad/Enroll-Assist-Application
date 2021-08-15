@@ -21,15 +21,14 @@ public class ExamTime {
     private LocalDateTime start;
     private LocalDateTime end;
 
-    public List<Exception> validate() {
-        List<Exception> errors = new ArrayList<>();
+    public void validate() throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
         if (this.start.compareTo(this.end) >= 0)
-            errors.add(new Exception("Exam start should be before its end."));
-
+            exceptionList.addNewException(new Exception("Exam start should be before its end."));
         if (!this.start.toLocalDate().equals(this.end.toLocalDate()))
-            errors.add(new Exception("Exam cannot take more than one day."));
-
-        return errors;
+            exceptionList.addNewException(new Exception("Exam cannot take more than one day."));
+        if(exceptionList.hasException())
+            throw exceptionList;
     }
 
     public ExamTime(String start, String end) throws Exception {
