@@ -9,13 +9,11 @@ import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -103,26 +101,21 @@ public class SectionController {
         return examTime;
     }
 
-    @PutMapping("/{id}/setSchedule")
-    public SectionView setSchedule(@RequestBody List<String> schedule, @PathVariable Long id){
-        Section section = sectionRepository.findById(id)
+    @PutMapping(value = "/{id}/setSchedule")
+    public SectionView setSchedule(@RequestBody List<PresentationSchedule> schedule, @PathVariable Long id){
+        Section section = this.sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found."));
         ExceptionList exceptionList = new ExceptionList();
-        Set<PresentationSchedule> presentationScheduleSet = new HashSet<>();
-        for(String s: schedule){
-            List<String> parsed = Arrays.asList(s.split(" "));
-            if(parsed.size() != 3){
-                exceptionList.addNewException(new Exception("Wrong schedule format."));
-                continue;
-            }
-            try{
-                presentationScheduleSet.add(new PresentationSchedule(parsed.get(0), parsed.get(1), parsed.get(2)));
-            } catch (ExceptionList e){
-                exceptionList.addExceptions(e.getExceptions());
+        for(PresentationSchedule ps: schedule){
+            try {
+                ps.validateFields();
+            }catch (ExceptionList exception){
+                exceptionList.addExceptions(exception.getExceptions());
             }
         }
         if(exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+        Set<PresentationSchedule> presentationScheduleSet = new HashSet<>(schedule);
         section.setPresentationSchedule(presentationScheduleSet);
         sectionRepository.save(section);
         return new SectionView(section);
