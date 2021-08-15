@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.ExamTime;
+import ir.proprog.enrollassist.domain.PresentationSchedule;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -11,7 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -100,16 +103,23 @@ public class SectionController {
     }
 
     @PutMapping("/{id}/setSchedule")
-    public SectionView setSchedule(@RequestBody List<String> schedule, @PathVariable Long id){
+    public SectionView setSchedule(@RequestBody List<Triple> schedule, @PathVariable Long id){
         Section section = sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found."));
-        try {
-            section.setPresentationSchedule(schedule);
-            sectionRepository.save(section);
-            return new SectionView(section);
-        } catch(ExceptionList e){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
+        ExceptionList exceptionList = new ExceptionList();
+        Set<PresentationSchedule> presentationScheduleSet = new HashSet<>();
+        for(Triple t: schedule){
+            try{
+                presentationScheduleSet.add(new PresentationSchedule(t.getFirst(), t.getSecond(), t.getThird()));
+            } catch (ExceptionList e){
+                exceptionList.addExceptions(e.getExceptions());
+            }
         }
+        if(exceptionList.hasException())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+        section.setPresentationSchedule(presentationScheduleSet);
+        sectionRepository.save(section);
+        return new SectionView(section);
     }
 
 
