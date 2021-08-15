@@ -90,8 +90,7 @@ public class Section {
                 exceptionList.addNewException(new Exception(String.format("Schedule format is not valid.(%s)", s)));
             else {
                 try {
-                    PresentationSchedule sectionSchedule = new PresentationSchedule(scheduleString.get(0), scheduleString.get(1));
-                    classSchedule.add(sectionSchedule);
+                    classSchedule.add(new PresentationSchedule(scheduleString.get(0), scheduleString.get(1)));
                 } catch (ExceptionList list) {
                     exceptionList.addExceptions(list.getExceptions());
                 }
@@ -126,6 +125,13 @@ public class Section {
     }
 
     public List<EnrollmentRuleViolation> courseCanBeTakenBy(Student student){ return course.canBeTakenBy(student); }
+
+    public List<String> presentationScheduleToString(){
+        List<String> list = new ArrayList<>();
+        for(PresentationSchedule ps : presentationSchedule)
+            list.add(ps.toString());
+        return list;
+    }
 
     public boolean studentHasPassedCourse(Student s){ return s.hasPassed(course); }
 
