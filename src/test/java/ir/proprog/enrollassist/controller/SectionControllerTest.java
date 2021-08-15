@@ -7,6 +7,7 @@ import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -208,6 +209,51 @@ public class SectionControllerTest {
         String content = result.getResponse().getErrorMessage();
         assertEquals(content, "{\"1\":\"12:00-14 is not valid time.\"}");
     }
+
+    @Test
+    public void ExamTime_can_be_changed_by_valid_another_ExamTime() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Course course = mock(Course.class);
+        Section section = new Section(course,"01", exam, Collections.emptyList());
+        when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
+        JSONObject jsonExam = new JSONObject();
+        jsonExam.put("start", "2020-08-10T09:00");
+        jsonExam.put("end", "2020-08-10T11:00");
+        mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+                .content(jsonExam.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void ExamTime_of_unreal_section_cant_be_changed() throws Exception {
+        JSONObject jsonExam = new JSONObject();
+        jsonExam.put("start", "2020-08-10T09:00");
+        jsonExam.put("end", "2020-08-10T11:00");
+        mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+                .content(jsonExam.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void ExamTime_cant_be_changed_by_invalid_another_ExamTime() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Course course = mock(Course.class);
+        Section section = new Section(course,"01", exam, Collections.emptyList());
+        when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
+        JSONObject jsonExam = new JSONObject();
+        jsonExam.put("start", "2021-08-10T13:00");
+        jsonExam.put("end", "2021-08-10T11:00");
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+                .content(jsonExam.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Exam start should be before its end.\"}");
+    }
+
 
 }
 

@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -72,6 +73,19 @@ public class SectionController {
             exceptionList.addExceptions(e.getExceptions());
         }
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+    }
+
+    @PostMapping("/{id}")
+    public ExamTime changeExamTime(@RequestBody ExamTime examTime, @PathVariable Long id) {
+        Section section = this.sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        try {
+            section.setExamTime(examTime);
+            this.sectionRepository.save(section);
+        }catch (ExceptionList exceptionList) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+        }
+        return examTime;
     }
 
 }
