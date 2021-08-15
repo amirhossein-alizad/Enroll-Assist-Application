@@ -29,6 +29,7 @@ public class SectionView {
         this.courseNumber = section.getCourse().getCourseNumber();
         this.courseTitle = section.getCourse().getTitle();
         this.courseCredits = section.getCourse().getCredits();
+        schedule = section.presentationScheduleToString();
     }
 
     public SectionView(Section section, ExamTime examTime, List<String> schedule) {
