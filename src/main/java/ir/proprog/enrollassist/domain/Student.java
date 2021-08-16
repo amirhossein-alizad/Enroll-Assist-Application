@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
 import com.google.common.annotations.VisibleForTesting;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.CourseView;
 import ir.proprog.enrollassist.controller.SectionView;
 import lombok.AccessLevel;
@@ -53,7 +54,7 @@ public class Student {
         return false;
     }
 
-    public Student setGrade(String term, Course course, double grade) {
+    public Student setGrade(String term, Course course, double grade) throws ExceptionList {
         grades.add(new StudyRecord(term, course, grade));
         return this;
     }

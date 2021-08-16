@@ -1,8 +1,19 @@
 package ir.proprog.enrollassist.domain;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Embeddable;
+
+@Getter
+@Embeddable
 public class Grade {
     private final double grade;
+
+    public Grade() {
+        this.grade = 0.0;
+    }
 
     public Grade(double grade) throws Exception {
         if (grade < 0 || grade > 20)
@@ -13,6 +24,4 @@ public class Grade {
                 throw new Exception("There should be at most 2 decimal places in grade.");
         this.grade = grade;
     }
-
-    public double getGrade() { return grade; }
 }

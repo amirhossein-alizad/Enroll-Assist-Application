@@ -1,8 +1,10 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -19,13 +21,22 @@ public class StudyRecord {
     private Course course;
     @ManyToOne
     private Student student;    // required by JPA, as the "opposite side" relation :(
-    private double grade;
+    @Embedded
+    private Grade grade;
 
-    public StudyRecord(String term, Course course, double grade) {
+    public StudyRecord(String term, Course course, double grade) throws ExceptionList {
         this.term = term;
         this.course = course;
-        this.grade = grade;
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            this.grade = new Grade(grade);
+        } catch (Exception e) {
+            exceptionList.addNewException(e);
+            throw exceptionList;
+        }
     }
+
+    public double getGrade() { return this.grade.getGrade(); }
 
     @Override
     public boolean equals(Object o) {
