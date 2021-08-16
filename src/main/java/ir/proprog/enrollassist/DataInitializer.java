@@ -43,9 +43,11 @@ public class DataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3);
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
-        Major cs = new Major("8101", "CS");
-        cs.addCourse(math1, math2, phys1, phys2);
-        majorRepository.save(cs);
+        Major ce = new Major("8101", "CE");
+        ce.addCourse(math1, math2, phys1, phys2);
+        Major ee = new Major("8101", "EE");
+        ee.addCourse(math1, math2, phys1, phys2);
+        majorRepository.saveAll(List.of(ce, ee));
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
                 .setGrade("t1", math1, 10)
@@ -53,7 +55,7 @@ public class DataInitializer {
                 .setGrade("t1", prog, 16.3)
                 .setGrade("t1", farsi, 18.5)
                 .setGrade("t1", akhlagh, 15);
-        mahsa.setMajor(cs);
+        mahsa.setMajor(ce);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
                 .setGrade("t1", math1, 13.2)
@@ -61,6 +63,7 @@ public class DataInitializer {
                 .setGrade("t1", prog, 10.5)
                 .setGrade("t1", english, 11)
                 .setGrade("t1", akhlagh, 16);
+        changiz.setMajor(ee);
         studentRepository.save(changiz);
 
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
