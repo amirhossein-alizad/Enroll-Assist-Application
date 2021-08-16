@@ -3,6 +3,8 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
+import ir.proprog.enrollassist.repository.FacultyRepository;
+import ir.proprog.enrollassist.repository.MajorRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,9 +18,13 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
+    private FacultyRepository facultyRepository;
+    private MajorRepository majorRepository;
 
-    public CourseController(CourseRepository courseRepository) {
+    public CourseController(CourseRepository courseRepository, FacultyRepository facultyRepository, MajorRepository majorRepository) {
         this.courseRepository = courseRepository;
+        this.facultyRepository = facultyRepository;
+        this.majorRepository = majorRepository;
     }
 
     @GetMapping
@@ -30,9 +36,8 @@ public class CourseController {
             value = "/{facultyId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView course) {
-        // TODO: check if faculty id exists
+        facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
         CourseView courseView = course.getCourse();
-        // TODO: check if each major id exists in faculty
         ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
         CourseView outputCourse = new CourseView();
