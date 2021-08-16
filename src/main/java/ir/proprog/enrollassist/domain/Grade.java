@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
+import java.util.Objects;
 
 @Getter
 @Embeddable
@@ -23,5 +24,15 @@ public class Grade {
             if (number[1].length() > 2)
                 throw new Exception("There should be at most 2 decimal places in grade.");
         this.grade = grade;
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(grade); }
+
+    @Override
+    public boolean equals(Object o){
+        Grade other = (Grade) o;
+        if (o == null || getClass() != o.getClass()) return false;
+        return this.getGrade() == other.getGrade();
     }
 }
