@@ -26,8 +26,10 @@ public class CourseController {
         return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
     }
 
-    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@RequestBody CourseView courseView){
+    @PostMapping(
+            value = "/{facultyId}",
+            consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public CourseView addNewCourse(@PathVariable String facultyId, @RequestBody CourseView courseView){
         ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
         CourseView outputCourse = new CourseView();
