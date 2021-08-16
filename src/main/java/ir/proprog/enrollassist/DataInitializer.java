@@ -17,13 +17,15 @@ public class DataInitializer {
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
     MajorRepository majorRepository;
+    FacultyRepository facultyRepository;
     public DataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository,
-                           MajorRepository majorRepository) {
+                           MajorRepository majorRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
         this.enrollmentListRepository = enrollmentListRepository;
         this.majorRepository = majorRepository;
+        this.facultyRepository = facultyRepository;
     }
 
     @PostConstruct
@@ -48,6 +50,10 @@ public class DataInitializer {
         Major ee = new Major("8101", "EE");
         ee.addCourse(math1, math2, phys1, phys2);
         majorRepository.saveAll(List.of(ce, ee));
+
+        Faculty ece = new Faculty("ECE");
+        ece.addMajor(ee, ce);
+        facultyRepository.save(ece);
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
                 .setGrade("t1", math1, 10)

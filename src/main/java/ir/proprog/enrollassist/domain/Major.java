@@ -21,8 +21,8 @@ public class Major {
     private String majorName;
     @ManyToMany
     Set<Course> courses = new HashSet<>();
-//    @ManyToOne
-//    Faculty faculty;
+    @ManyToOne
+    Faculty faculty;
 
     public Major(String majorNumber, String majorName) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
