@@ -57,7 +57,10 @@ public class CourseController {
             newCourse.setPrerequisites(prerequisites);
             outputCourse = new CourseView(newCourse);
             courseRepository.save(newCourse);
-            course.getMajors().forEach(m -> {
+            Set<Long> requestedMajors = course.getMajors();
+            if (requestedMajors.isEmpty())
+                requestedMajors = majors;
+            requestedMajors.forEach(m -> {
                 Major major = majorRepository.findById(m).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
                 major.addCourse(newCourse);
             });

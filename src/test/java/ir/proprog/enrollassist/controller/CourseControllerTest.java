@@ -1,13 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.Section;
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.EnrollmentList;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.EnrollmentListRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.repository.*;
 import org.apache.coyote.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -50,8 +44,13 @@ public class CourseControllerTest {
     private MockMvc mvc;
     @MockBean
     private CourseRepository courseRepository;
+    @MockBean
+    private FacultyRepository facultyRepository;
+    @MockBean
+    private MajorRepository majorRepository;
     private Course course1, course2, course3;
     private List<Course> courses = new ArrayList<>();
+
     @BeforeEach
     void SetUp() throws Exception {
         course1 = new Course("1111111", "C1", 3);
@@ -108,19 +107,39 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_added_and_returned_correctly() throws Exception{
+        Major m1 = mock(Major.class);
+        Major m2 = mock(Major.class);
+        Faculty f1 = mock(Faculty.class);
+
         JSONObject request = new JSONObject();
+        JSONObject course = new JSONObject();
+
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","1412121");
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        try {
-            request.put("prerequisites", jArray);
-        } catch(JSONException e) {
-            e.printStackTrace();
-        }
+        course.put("courseNumber","1412121");
+        course.put("courseCredits", 3);
+        course.put("courseTitle", "C4");
+        course.put("prerequisites", jArray);
+
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+        majors.put(11);
+
+        request.put("course", course);
+        request.put("majors", majors);
+
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
-        mvc.perform(post("/courses")
+
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+        given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(m2));
+
+        given(m1.getId()).willReturn(10L);
+        given(m2.getId()).willReturn(11L);
+        given(f1.getMajors()).willReturn(Set.of(m1, m2));
+
+        mvc.perform(post("/courses/1")
                         .content(request.toString())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -131,14 +150,32 @@ public class CourseControllerTest {
 
     @Test
     public void Course_with_duplicate_name_is_not_added_correctly() throws Exception{
+        Major m1 = mock(Major.class);
+        Faculty f1 = mock(Faculty.class);
+
         JSONObject request = new JSONObject();
-        JSONArray jArray = new JSONArray();
-        request.put("courseNumber","1412121");
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
+        JSONObject courseJson = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
+
+        courseJson.put("courseNumber","1412121");
+        courseJson.put("courseCredits", 3);
+        courseJson.put("courseTitle", "C4");
+
+        request.put("course", courseJson);
+        request.put("majors", majors);
+
         Course course = new Course("1412121", "C5", 4);
+
         given(courseRepository.findCourseByCourseNumber("1412121")).willReturn(Optional.of(course));
-        MvcResult result =  mvc.perform(post("/courses")
+
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+
+        given(m1.getId()).willReturn(10L);
+        given(f1.getMajors()).willReturn(Set.of(m1));
+        MvcResult result =  mvc.perform(post("/courses/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -149,15 +186,30 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
+        Major m1 = mock(Major.class);
+        Faculty f1 = mock(Faculty.class);
+
         JSONObject request = new JSONObject();
+        JSONObject courseJson = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","1412121");
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        request.put("prerequisites", jArray);
+        courseJson.put("courseNumber","1412121");
+        courseJson.put("courseCredits", 3);
+        courseJson.put("courseTitle", "C4");
+        courseJson.put("prerequisites", jArray);
 
-        MvcResult result =  mvc.perform(post("/courses")
+        request.put("course", courseJson);
+        request.put("majors", majors);
+
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(m1.getId()).willReturn(10L);
+        given(f1.getMajors()).willReturn(Set.of(m1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+
+        MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
@@ -168,24 +220,39 @@ public class CourseControllerTest {
 
     @Test
     public void New_courses_with_violation_are_returned_correctly() throws Exception{
+        Major m1 = mock(Major.class);
+        Faculty f1 = mock(Faculty.class);
+
         JSONObject request = new JSONObject();
+        JSONObject courseJson = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","");
-        request.put("courseCredits", -1);
-        request.put("courseTitle", "");
-        request.put("prerequisites", jArray);
+        courseJson.put("courseNumber","");
+        courseJson.put("courseCredits", -1);
+        courseJson.put("courseTitle", "");
+        courseJson.put("prerequisites", jArray);
+
+        request.put("course", courseJson);
+        request.put("majors", majors);
+
         Course mockedCourse1 = mock(Course.class);
         Course mockedCourse2 = mock(Course.class);
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
         given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(m1.getId()).willReturn(10L);
+        given(f1.getMajors()).willReturn(Set.of(m1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
         Set<Course> set1 = Set.of(mockedCourse1);
         Set<Course> set2 = Set.of(mockedCourse2);
         when(mockedCourse1.getPrerequisites()).thenReturn(set2);
         when(mockedCourse2.getPrerequisites()).thenReturn(set1);
         when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
-        MvcResult result =  mvc.perform(post("/courses")
+        MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
