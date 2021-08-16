@@ -148,6 +148,44 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$.courseNumber", is("1412121")));
     }
 
+
+    @Test
+    public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
+        JSONObject request = new JSONObject();
+        JSONObject course = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
+        request.put("course", course);
+        request.put("majors", majors);
+
+        mvc.perform(post("/courses/1")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Faculty not found"));
+    }
+
+    @Test
+    public void Course_cannot_be_added_if_major_does_not_belong_to_faculty() throws Exception {
+        JSONObject request = new JSONObject();
+        JSONObject course = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
+        request.put("course", course);
+        request.put("majors", majors);
+
+        Faculty f1 = mock(Faculty.class);
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+
+        mvc.perform(post("/courses/1")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Not all majors belong to this faculty."));
+    }
+
     @Test
     public void Course_with_duplicate_name_is_not_added_correctly() throws Exception{
         Major m1 = mock(Major.class);
