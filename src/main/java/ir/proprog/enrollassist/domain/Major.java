@@ -23,7 +23,7 @@ public class Major {
 //    @ManyToOne
 //    Faculty faculty;
 
-    public Major(@NotNull String majorNumber, String majorName){
+    public Major(@NotNull String majorNumber, @NotNull String majorName){
         this.majorName = majorName;
         this.majorNumber = majorNumber;
     }
@@ -37,7 +37,7 @@ public class Major {
     }
 
     @Override
-    public int hashCode() { return Objects.hash(majorNumber); }
+    public int hashCode() { return Objects.hash(majorNumber, majorName); }
 
     public void addCourse(Course ... course){
         this.courses.addAll(Arrays.asList(course));
