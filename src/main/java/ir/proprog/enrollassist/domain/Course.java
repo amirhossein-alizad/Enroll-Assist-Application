@@ -19,22 +19,30 @@ public class Course {
     private Long id;
     private String courseNumber;
     private String title;
-    private int credits;
+    @Embedded
+    private Credit credits;
     private boolean hasExam = false;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
     public Course(String courseNumber, String title, int credits) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title, credits));
+        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title));
         if (exceptionList.hasException())
             throw exceptionList;
         this.courseNumber = courseNumber;
         this.title = title;
-        this.credits = credits;
+        try {
+            this.credits = new Credit(credits);
+        } catch (Exception e) {
+            exceptionList.addNewException(e);
+            throw exceptionList;
+        }
     }
 
-    private List<Exception> validateCourseInfo(String courseNumber, String title, int credits) {
+    public int getCredits() { return credits.getCredit(); }
+
+    private List<Exception> validateCourseInfo(String courseNumber, String title) {
         List<Exception> exceptions = new ArrayList<>();
         try {
             this.validateCourseNumber(courseNumber);
@@ -43,8 +51,6 @@ public class Course {
         }
         if (title.equals(""))
             exceptions.add(new Exception("Course must have a name."));
-        if (credits < 0)
-            exceptions.add(new Exception("Course credit units cannot be negative."));
         return exceptions;
     }
 

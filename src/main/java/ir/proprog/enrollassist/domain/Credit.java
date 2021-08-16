@@ -27,6 +27,6 @@ public class Credit {
     public boolean equals(Object o){
         Credit other = (Credit) o;
         if (o == null || getClass() != o.getClass()) return false;
-        return this.credit == other.getGrade();
+        return this.credit == other.getCredit();
     }
 }
