@@ -27,8 +27,6 @@ public class MajorTest {
             exceptionList.addExceptions(e.getExceptions());
         }
         assertEquals(exceptionList.getExceptions().size(), 2);
-        assertThat(exceptionList.getExceptions())
-                .hasSize(2);
     }
 
     @Test
