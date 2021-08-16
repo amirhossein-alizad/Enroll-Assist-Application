@@ -33,6 +33,6 @@ public class Grade {
     public boolean equals(Object o){
         Grade other = (Grade) o;
         if (o == null || getClass() != o.getClass()) return false;
-        return this.getGrade() == other.getGrade();
+        return this.grade == other.getGrade();
     }
 }
