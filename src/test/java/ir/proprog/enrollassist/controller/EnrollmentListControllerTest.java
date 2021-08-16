@@ -146,12 +146,15 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        this.list1.addSection(new Section(new Course("1111111", "ap", 3), "01"));
+        Section ap_1 = new Section(new Course("1111111", "ap", 3), "01");
+        Section ds_1 = new Section(new Course("2222222", "ds", 3), "01");
+        Section da_1 = new Section(new Course("3333333", "da", 3), "01");
+        this.list1.addSections(ap_1, ds_1, da_1);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[0].courseTitle", is("ap")))
@@ -160,7 +163,10 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        this.list1.addSection(new Section(new Course("1111111", "ap", 12), "01"));
+        Section ap_1 = new Section(new Course("1111111", "ap", 4), "01");
+        Section ds_1 = new Section(new Course("2222222", "ds", 4), "01");
+        Section da_1 = new Section(new Course("3333333", "da", 4), "01");
+        this.list1.addSections(ap_1, ds_1, da_1);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -170,10 +176,12 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
-        Course ap = new Course("1111111", "ap", 7);
+        Course ap = new Course("1111111", "ap", 4);
+        Course dm = new Course("2222222", "dm", 4);
         Section ap_1 = new Section(ap, "01");
         Section ap_2 = new Section(ap, "02");
-        this.list1.addSections(ap_1, ap_2);
+        Section dm_1 = new Section(dm, "01");
+        this.list1.addSections(ap_1, ap_2, dm_1);
         String error = String.format("%s is requested to be taken twice", ap);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
@@ -273,9 +281,9 @@ public class EnrollmentListControllerTest {
 
         EnrollmentList list = new EnrollmentList("list", std);
 
-        Section S1 = new Section(new Course("1111111", "C1", 5), "01");
-        Section S2 = new Section(new Course("2222222", "C2", 5), "02");
-        Section S3 = new Section(new Course("3333333", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 4), "01");
+        Section S2 = new Section(new Course("2222222", "C2", 4), "02");
+        Section S3 = new Section(new Course("3333333", "C3", 4), "01");
         Section S4 = new Section(new Course("3333333", "C3", 3), "01");
         list.addSections(S1, S2, S3, S4);
 

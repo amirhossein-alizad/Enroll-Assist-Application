@@ -27,17 +27,16 @@ public class Course {
 
     public Course(String courseNumber, String title, int credits) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title));
-        if (exceptionList.hasException())
-            throw exceptionList;
         this.courseNumber = courseNumber;
         this.title = title;
         try {
             this.credits = new Credit(credits);
         } catch (Exception e) {
             exceptionList.addNewException(e);
-            throw exceptionList;
         }
+        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title));
+        if (exceptionList.hasException())
+            throw exceptionList;
     }
 
     public int getCredits() { return credits.getCredit(); }

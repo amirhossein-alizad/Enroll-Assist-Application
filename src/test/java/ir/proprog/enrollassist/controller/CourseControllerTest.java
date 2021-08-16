@@ -45,7 +45,7 @@ public class CourseControllerTest {
         course1 = new Course("1111111", "C1", 3);
         course2 = new Course("2222222", "C2", 3);
         course2.withPre(course1);
-        course3 = new Course("3333333", "C3", 5);
+        course3 = new Course("3333333", "C3", 4);
         course2.withPre(course1);
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
@@ -60,7 +60,7 @@ public class CourseControllerTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[1].courseTitle", is("C2")))
-                .andExpect(jsonPath("$[2].courseCredits", is(5)));
+                .andExpect(jsonPath("$[2].courseCredits", is(4)));
     }
 
     @Test
@@ -286,8 +286,8 @@ public class CourseControllerTest {
                             .andReturn();
         String content = result.getResponse().getErrorMessage();
         assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
-                                    "\"2\":\"Course number cannot be empty.\"," +
-                                    "\"3\":\"Course must have a name.\"," +
-                                    "\"4\":\"Course credit units cannot be negative.\"}");
+                                    "\"2\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"," +
+                                    "\"3\":\"Course number cannot be empty.\"," +
+                                    "\"4\":\"Course must have a name.\"}");
     }
 }

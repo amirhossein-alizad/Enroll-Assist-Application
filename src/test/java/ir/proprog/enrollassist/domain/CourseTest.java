@@ -30,8 +30,9 @@ public class CourseTest {
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
-        assertEquals(exceptionList.toString(), "{\"1\":\"Course number must contain 7 numbers.\"," +
-                "\"2\":\"Course credit units cannot be negative.\"}");
+        assertEquals(exceptionList.toString(),
+                "{\"1\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\","
+                + "\"2\":\"Course number must contain 7 numbers.\"}");
     }
 
     @Test
