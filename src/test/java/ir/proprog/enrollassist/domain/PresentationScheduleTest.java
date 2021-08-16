@@ -89,4 +89,14 @@ public class PresentationScheduleTest {
         }
         assertFalse(exceptionList.hasException());
     }
+
+    @Test
+    public void Equals_method_works_correctly_for_two_identical_instances_of_PresentationSchedule_class() {
+        try {
+            PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
+            PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Sunday", "10:00", "12:00");
+            assertEquals(coursePresentationSchedule1, coursePresentationSchedule2);
+        } catch (ExceptionList ignored) {
+        }
+    }
 }
