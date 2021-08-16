@@ -36,7 +36,11 @@ public class CourseController {
             value = "/{facultyId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView course) {
-        facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+        Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+        Set<Long> majors = faculty.getMajors().stream().map(Major::getId).collect(Collectors.toSet());
+        if (!majors.containsAll(course.getMajors()))
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not all majors belong to this faculty.");
+
         CourseView courseView = course.getCourse();
         ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
@@ -52,6 +56,11 @@ public class CourseController {
             Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
             newCourse.setPrerequisites(prerequisites);
             outputCourse = new CourseView(newCourse);
+            courseRepository.save(newCourse);
+            course.getMajors().forEach(m -> {
+                Major major = majorRepository.findById(m).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
+                major.addCourse(newCourse);
+            });
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
