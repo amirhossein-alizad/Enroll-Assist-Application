@@ -10,7 +10,6 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.*;
 
-import static org.hibernate.query.criteria.internal.ValueHandlerFactory.isNumeric;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)  // as required by JPA, don't use it in your code
