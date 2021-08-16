@@ -2,10 +2,7 @@ package ir.proprog.enrollassist;
 
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.EnrollmentListRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.repository.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,12 +16,16 @@ public class DataInitializer {
     CourseRepository courseRepository;
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
-
-    public DataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
+    MajorRepository majorRepository;
+    FacultyRepository facultyRepository;
+    public DataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository,
+                           MajorRepository majorRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
         this.enrollmentListRepository = enrollmentListRepository;
+        this.majorRepository = majorRepository;
+        this.facultyRepository = facultyRepository;
     }
 
     @PostConstruct
@@ -44,12 +45,23 @@ public class DataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3);
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
+        Major ce = new Major("8101", "CE");
+        ce.addCourse(math1, math2, phys1, phys2);
+        Major ee = new Major("8101", "EE");
+        ee.addCourse(math1, math2, phys1, phys2);
+        majorRepository.saveAll(List.of(ce, ee));
+
+        Faculty ece = new Faculty("ECE");
+        ece.addMajor(ee, ce);
+        facultyRepository.save(ece);
+
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
                 .setGrade("t1", math1, 10)
                 .setGrade("t1", phys1, 12)
                 .setGrade("t1", prog, 16.3)
                 .setGrade("t1", farsi, 18.5)
                 .setGrade("t1", akhlagh, 15);
+        mahsa.setMajor(ce);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
                 .setGrade("t1", math1, 13.2)
@@ -57,6 +69,7 @@ public class DataInitializer {
                 .setGrade("t1", prog, 10.5)
                 .setGrade("t1", english, 11)
                 .setGrade("t1", akhlagh, 16);
+        changiz.setMajor(ee);
         studentRepository.save(changiz);
 
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");

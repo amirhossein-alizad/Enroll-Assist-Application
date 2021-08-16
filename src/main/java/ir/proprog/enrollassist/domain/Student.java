@@ -23,6 +23,8 @@ public class Student {
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
+    @ManyToOne
+    Major major;
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
         if (studentNumber.equals(""))
@@ -101,5 +103,9 @@ public class Student {
                     break;
                 }
         return takeableSections;
+    }
+
+    public void setMajor(Major major) {
+        this.major = major;
     }
 }
