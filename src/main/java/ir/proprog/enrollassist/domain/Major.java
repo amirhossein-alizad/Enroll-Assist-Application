@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.domain;
 
 
 import com.sun.istack.NotNull;
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +24,14 @@ public class Major {
 //    @ManyToOne
 //    Faculty faculty;
 
-    public Major(@NotNull String majorNumber, @NotNull String majorName){
+    public Major(String majorNumber, String majorName) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        if(majorName.equals(""))
+            exceptionList.addNewException(new Exception("Major name can not be empty."));
+        if(majorNumber.equals(""))
+            exceptionList.addNewException(new Exception("Major number can not be empty"));
+        if(exceptionList.hasException())
+            throw exceptionList;
         this.majorName = majorName;
         this.majorNumber = majorNumber;
     }
