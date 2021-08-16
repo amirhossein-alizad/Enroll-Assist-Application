@@ -29,7 +29,10 @@ public class CourseController {
     @PostMapping(
             value = "/{facultyId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@PathVariable String facultyId, @RequestBody CourseView courseView){
+    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView course) {
+        // TODO: check if faculty id exists
+        CourseView courseView = course.getCourse();
+        // TODO: check if each major id exists in faculty
         ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
         CourseView outputCourse = new CourseView();
