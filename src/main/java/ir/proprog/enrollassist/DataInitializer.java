@@ -2,10 +2,7 @@ package ir.proprog.enrollassist;
 
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.EnrollmentListRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.repository.*;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -19,12 +16,14 @@ public class DataInitializer {
     CourseRepository courseRepository;
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
-
-    public DataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
+    MajorRepository majorRepository;
+    public DataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository,
+                           MajorRepository majorRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
         this.enrollmentListRepository = enrollmentListRepository;
+        this.majorRepository = majorRepository;
     }
 
     @PostConstruct
@@ -44,12 +43,17 @@ public class DataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3);
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
+        Major cs = new Major("8101", "CS");
+        cs.addCourse(math1, math2, phys1, phys2);
+        majorRepository.save(cs);
+
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
                 .setGrade("t1", math1, 10)
                 .setGrade("t1", phys1, 12)
                 .setGrade("t1", prog, 16.3)
                 .setGrade("t1", farsi, 18.5)
                 .setGrade("t1", akhlagh, 15);
+        mahsa.setMajor(cs);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
                 .setGrade("t1", math1, 13.2)
