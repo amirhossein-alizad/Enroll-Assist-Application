@@ -42,14 +42,13 @@ public class CourseController {
             majors = faculty.getMajors();
         if (!faculty.getMajors().containsAll(majors))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not all majors belong to this faculty.");
-        CourseView courseView = input.getCourse();
         Course validated = null;
         ExceptionList exceptionList = new ExceptionList();
-        if (courseRepository.findCourseByCourseNumber(courseView.getCourseNumber()).isPresent())
+        if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
-        Set<Course> prerequisites = this.validatePrerequisites(courseView.getPrerequisites(), exceptionList);
+        Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
         try {
-            validated = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
+            validated = new Course(input.getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
