@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.repository;
 import ir.proprog.enrollassist.controller.EnrollmentListView;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.StudentNumber;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,14 +26,14 @@ public class StudentRepositoryTest {
     public void Student_with_specific_student_number_is_returned_correctly() {
         Student mahsa = new Student("810199999", "Mahsa Mahsaei");
         studentRepository.save(mahsa);
-        Optional<Student> res = studentRepository.findByStudentNumber("810199999");
-        assertThat(res.get().getStudentNumber()).isEqualTo("810199999");
+        Optional<Student> res = studentRepository.findByStudentNumber(new StudentNumber("810199999"));
+        assertThat(res.get().getStudentNumber().getNumber()).isEqualTo("810199999");
         assertThat(res.get().getName()).isEqualTo("Mahsa Mahsaei");
     }
 
     @Test
     public void No_student_is_returned_if_student_number_is_invalid() {
-        Optional<Student> res = studentRepository.findByStudentNumber("810199999");
+        Optional<Student> res = studentRepository.findByStudentNumber(new StudentNumber("810199999"));
         assertThat(res).isEmpty();
     }
 
