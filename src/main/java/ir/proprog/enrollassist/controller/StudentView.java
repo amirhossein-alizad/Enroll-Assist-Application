@@ -16,7 +16,7 @@ public class StudentView {
 
     public StudentView(Student student) {
         this.studentId = student.getId();
-        this.studentNo = student.getStudentNumber().getStudentNumber();
+        this.studentNo = student.getStudentNumber().getNumber();
         this.name = student.getName();
         if (student.getMajor() != null) {
             this.majorName = student.getMajor().getMajorName();
