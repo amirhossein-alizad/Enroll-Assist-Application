@@ -37,13 +37,9 @@ public class CourseController {
             consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
         Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
-        Set<Major> majors = input.getMajors().stream().map(id -> majorRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"))).collect(Collectors.toSet());
-        if (majors.isEmpty())
-            majors = faculty.getMajors();
-        if (!faculty.getMajors().containsAll(majors))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not all majors belong to this faculty.");
-        Course validated = null;
         ExceptionList exceptionList = new ExceptionList();
+        Set<Major> majors = this.validateMajors(input.getMajors(), faculty, exceptionList);
+        Course validated = null;
         if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
         Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
@@ -59,6 +55,21 @@ public class CourseController {
         courseRepository.save(course);
         majors.forEach(m -> m.addCourse(course));
         return new CourseView(course);
+    }
+
+    private Set<Major> validateMajors(Set<Long> majorIds, Faculty f, ExceptionList exceptions) {
+        Set<Major> majors = new HashSet<>();
+        if (majorIds.isEmpty())
+            return f.getMajors();
+        for (Long L : majorIds) {
+            Optional<Major> major = majorRepository.findById(L);
+            if (major.isEmpty())
+                exceptions.addNewException(new Exception(String.format("Major with id = %s was not found.", L)));
+            else majors.add(major.get());
+        }
+        if (!f.getMajors().containsAll(majors))
+            exceptions.addNewException(new Exception("Not all majors belong to this faculty."));
+        return majors;
     }
 
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptions) {
