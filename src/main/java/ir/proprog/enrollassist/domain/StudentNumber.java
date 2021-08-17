@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.Getter;
+import java.util.Objects;
 
 @Getter
 public class StudentNumber {
@@ -16,4 +17,14 @@ public class StudentNumber {
 
     public String getMajorNumber() {return studentNumber.substring(0, 4);}
 
+    @Override
+    public int hashCode() { return Objects.hash(studentNumber); }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        StudentNumber stdNo = (StudentNumber) o;
+        return studentNumber.equals(stdNo.studentNumber);
+    }
 }
