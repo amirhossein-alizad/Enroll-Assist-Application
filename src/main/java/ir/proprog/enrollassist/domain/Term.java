@@ -20,11 +20,13 @@ public class Term {
     }
 
     private void validate(String term) throws Exception {
-        if (term.length() != 5)
-            throw new Exception("Term format is not valid.");
+        if (term.equals(""))
+            throw new Exception("Term can not be empty.");
         try {
             Integer.parseInt(term);
         } catch (Exception exception) { throw new Exception("Term format  must be number."); }
+        if (term.length() != 5)
+            throw new Exception("Term format is not valid.");
         int season = Integer.parseInt(term.substring(4));
         if ((season < 1) || (season > 3))
             throw new Exception("Season of term is not valid.");

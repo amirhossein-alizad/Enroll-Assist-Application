@@ -1,11 +1,13 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.SectionView;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 
@@ -197,5 +199,31 @@ public class StudentTest {
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
+    }
+
+    @Test
+    void Grade_of_course_with_valid_term_can_set_correctly() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        try {
+            Course math1 = new Course("1111111", "MATH1", 3);
+            Student student = bebe.setGrade("13962", math1, 19.1);
+        }catch (ExceptionList e) {
+            error = e.toString();
+        }
+        assertEquals(error, "");
+    }
+
+    @Test
+    void Grade_of_course_with_invalid_season_can_set_correctly() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        try {
+            Course math1 = new Course("1111111", "MATH1", 3);
+            Student student = bebe.setGrade("13960", math1, 19.1);
+        }catch (ExceptionList e) {
+            error = e.toString();
+        }
+        assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
     }
 }
