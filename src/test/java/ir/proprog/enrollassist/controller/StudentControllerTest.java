@@ -104,7 +104,7 @@ public class StudentControllerTest {
         Course math2 = mock(Course.class);
         List<Course> list = List.of(math1, math2);
         Student student = new Student("010101", "ali");
-        student.setGrade("t1", math1, 20.0);
+        student.setGrade("13981", math1, 20.0);
         Section section = new Section(math2, "01");
 
         given(sectionRepository.findAll()).willReturn(List.of(section));

@@ -16,7 +16,8 @@ public class StudyRecord {
     @javax.persistence.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long Id;
-    private String term;
+    @Embedded
+    private Term term;
     @ManyToOne
     private Course course;
     @ManyToOne
@@ -25,15 +26,21 @@ public class StudyRecord {
     private Grade grade;
 
     public StudyRecord(String term, Course course, double grade) throws ExceptionList {
-        this.term = term;
         this.course = course;
         ExceptionList exceptionList = new ExceptionList();
         try {
+            this.term = new Term(term);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+        try {
             this.grade = new Grade(grade);
-        } catch (Exception e) {
-            exceptionList.addNewException(e);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+
+        if (exceptionList.hasException())
             throw exceptionList;
-        }
+    }
+
+    public String getTerm() {
+        return this.term.getTermCode();
     }
 
     public double weightedScore() {

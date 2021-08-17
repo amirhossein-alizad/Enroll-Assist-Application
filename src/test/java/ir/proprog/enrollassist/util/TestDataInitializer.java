@@ -43,18 +43,18 @@ public class TestDataInitializer {
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
-                .setGrade("t1", math1, 10)
-                .setGrade("t1", phys1, 12)
-                .setGrade("t1", prog, 16.3)
-                .setGrade("t1", farsi, 18.5)
-                .setGrade("t1", akhlagh, 15);
+                .setGrade("13981", math1, 10)
+                .setGrade("13981", phys1, 12)
+                .setGrade("13981", prog, 16.3)
+                .setGrade("13981", farsi, 18.5)
+                .setGrade("13981", akhlagh, 15);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
-                .setGrade("t1", math1, 13.2)
-                .setGrade("t1", phys1, 8.3)
-                .setGrade("t1", prog, 10.5)
-                .setGrade("t1", english, 11)
-                .setGrade("t1", akhlagh, 16);
+                .setGrade("13981", math1, 13.2)
+                .setGrade("13981", phys1, 8.3)
+                .setGrade("13981", prog, 10.5)
+                .setGrade("13981", english, 11)
+                .setGrade("13981", akhlagh, 16);
         studentRepository.save(changiz);
 
         Section math1_1 = new Section(math1, "01"); sectionRepository.save(math1_1);
