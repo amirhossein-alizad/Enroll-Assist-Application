@@ -35,62 +35,58 @@ public class CourseController {
     @PostMapping(
             value = "/{facultyId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView course) {
+    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
         Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
-        Set<Long> majors = faculty.getMajors().stream().map(Major::getId).collect(Collectors.toSet());
-        if (!majors.containsAll(course.getMajors()))
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not all majors belong to this faculty.");
-
-        CourseView courseView = course.getCourse();
         ExceptionList exceptionList = new ExceptionList();
-        Set<Course> prerequisites = new HashSet<>();
-        CourseView outputCourse = new CourseView();
-        if (courseRepository.findCourseByCourseNumber(courseView.getCourseNumber()).isPresent())
+        Set<Major> majors = this.validateMajors(input.getMajors(), faculty, exceptionList);
+        Course validated = null;
+        if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
+        Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
         try {
-            prerequisites = this.validatePrerequisites(courseView.getPrerequisites());
+            validated = new Course(input.getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
-        try {
-            Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
-            newCourse.setPrerequisites(prerequisites);
-            outputCourse = new CourseView(newCourse);
-            courseRepository.save(newCourse);
-            Set<Long> requestedMajors = course.getMajors();
-            if (requestedMajors.isEmpty())
-                requestedMajors = majors;
-            requestedMajors.forEach(m -> {
-                Major major = majorRepository.findById(m).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
-                major.addCourse(newCourse);
-            });
-        } catch (ExceptionList e) {
-            exceptionList.addExceptions(e.getExceptions());
-        }
-
         if (exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        return outputCourse;
+        Course course = validated;
+        course.setPrerequisites(prerequisites);
+        courseRepository.save(course);
+        majors.forEach(m -> m.addCourse(course));
+        return new CourseView(course);
     }
 
-    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
+    private Set<Major> validateMajors(Set<Long> majorIds, Faculty f, ExceptionList exceptions) {
+        Set<Major> majors = new HashSet<>();
+        if (majorIds.isEmpty())
+            return f.getMajors();
+        for (Long L : majorIds) {
+            Optional<Major> major = majorRepository.findById(L);
+            if (major.isEmpty())
+                exceptions.addNewException(new Exception(String.format("Major with id = %s was not found.", L)));
+            else majors.add(major.get());
+        }
+        if (!f.getMajors().containsAll(majors))
+            exceptions.addNewException(new Exception("Not all majors belong to this faculty."));
+        return majors;
+    }
+
+    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptions) {
         Set<Course> prerequisites = new HashSet<>();
         for(Long L : prerequisiteIds){
             Optional<Course> pre = courseRepository.findById(L);
             if(pre.isEmpty())
-                exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
+                exceptions.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
             else {
                 try {
                     this.checkLoop(pre.get());
                     prerequisites.add(pre.get());
                 }catch (ExceptionList e) {
-                    exceptionList.addExceptions(e.getExceptions());
+                    exceptions.addExceptions(e.getExceptions());
                 }
             }
         }
-        if (exceptionList.hasException())
-            throw exceptionList;
         return prerequisites;
     }
 

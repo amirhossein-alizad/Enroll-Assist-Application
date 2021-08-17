@@ -33,8 +33,8 @@ public class StudentTest {
         bebe.setGrade("t1", prog, 17.25);
         bebe.setGrade("t1", economy, 19.5);
         bebe.setGrade("t1", maaref, 16);
-        assertThat(bebe.calculateGPA())
-                .isEqualTo(15.53F);
+        assertThat(bebe.calculateGPA().getGrade())
+                .isEqualTo(15.53);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class StudentTest {
         Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3);
         bebe.setGrade("3900", math1, 19);
-        assertThat(bebe.calculateGPA())
+        assertThat(bebe.calculateGPA().getGrade())
                 .isEqualTo(19);
     }
 
@@ -72,8 +72,8 @@ public class StudentTest {
         bebe.setGrade("3900", math1, 19);
         bebe.setGrade("3900", prog, 17);
         bebe.setGrade("3900", andishe, 19);
-        assertThat(bebe.calculateGPA())
-                .isEqualTo(18.25F);
+        assertThat(bebe.calculateGPA().getGrade())
+                .isEqualTo(18.25);
     }
 
     @Test

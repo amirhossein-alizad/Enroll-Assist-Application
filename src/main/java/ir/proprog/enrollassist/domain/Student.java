@@ -19,7 +19,8 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String studentNumber;
+    @Embedded
+    private StudentNumber studentNumber;
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
@@ -27,11 +28,7 @@ public class Student {
     Major major;
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
-        if (studentNumber.equals(""))
-            throw new IllegalArgumentException("Student number cannot be empty");
-        if (name.equals(""))
-            throw new IllegalArgumentException("Student must have a name");
-        this.studentNumber = studentNumber;
+        this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;
     }
 
@@ -50,7 +47,7 @@ public class Student {
 
     public boolean hasPassed(Course course) {
         for (StudyRecord sr : grades) {
-            if (sr.getCourse().equals(course) && sr.getGrade() >= 10)
+            if (sr.getCourse().equals(course) && sr.getGrade().isPassingGrade())
                 return true;
         }
         return false;
@@ -65,23 +62,22 @@ public class Student {
         return grades.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
     }
 
-    public float calculateGPA() {
-        int credits = 0;
-        float sum = 0;
-        for (StudyRecord sr : grades) {
-            sum += sr.getCourse().getCredits() * sr.getGrade();
-            credits += sr.getCourse().getCredits();
+    public Grade calculateGPA() {
+        double sum = grades.stream().mapToDouble(StudyRecord::weightedScore).sum();
+        int credits = grades.stream().mapToInt(sr -> sr.getCourse().getCredits()).sum();
+        if (credits == 0) return new Grade();
+        try {
+            return new Grade(sum / credits);
+        } catch (Exception e) {
+            return new Grade();
         }
-        if(credits == 0) return 0F;
-
-        return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
     @VisibleForTesting
     List<Course> getTakeableCourses(Iterable<Course> allCourses){
         List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
-            if (sr.getGrade() >= 10)
+            if (sr.getGrade().isPassingGrade())
                 passed.add(sr.getCourse());
         List<Course> takeable  = new ArrayList<>();
         List<Course> notPassed = new ArrayList<>();

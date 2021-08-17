@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.StudentNumber;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -39,7 +40,7 @@ public class EnrollmentListController {
             consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE }
     )
     public EnrollmentListView addOne(@PathVariable String studentNo, @RequestBody EnrollmentListView req) {
-        Student student = studentRepository.findByStudentNumber(studentNo).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo)).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         if(req.getEnrollmentListName().equals(""))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "EnrollmentList must have a name.");
         List<EnrollmentListView> lists = studentRepository.findAllListsForStudent(studentNo);

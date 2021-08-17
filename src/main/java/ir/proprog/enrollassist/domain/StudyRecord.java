@@ -36,7 +36,9 @@ public class StudyRecord {
         }
     }
 
-    public double getGrade() { return this.grade.getGrade(); }
+    public double weightedScore() {
+        return grade.getGrade() * course.getCredits();
+    }
 
     @Override
     public boolean equals(Object o) {

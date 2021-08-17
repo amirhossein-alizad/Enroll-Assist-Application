@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.StudentNumber;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -38,14 +39,14 @@ public class StudentController {
 
     @GetMapping("/{studentNumber}")
     public StudentView one(@PathVariable String studentNumber) {
-        Student student = this.studentRepository.findByStudentNumber(studentNumber)
+        Student student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNumber))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
         return new StudentView(student);
     }
 
     @PostMapping(consumes = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE })
     public StudentView addStudent(@RequestBody StudentView studentView) {
-        Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
+        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentView.getStudentNo()));
         if (student.isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         try {
@@ -59,7 +60,7 @@ public class StudentController {
 
     @GetMapping("/takeableSections/{studentNumber}")
     public Iterable<SectionView> takeableSections(@PathVariable String studentNumber){
-        Optional<Student> student = this.studentRepository.findByStudentNumber(studentNumber);
+        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNumber));
         if(student.isEmpty())
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
         Student std = student.get();

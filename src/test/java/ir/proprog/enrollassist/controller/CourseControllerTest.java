@@ -101,20 +101,18 @@ public class CourseControllerTest {
         Faculty f1 = mock(Faculty.class);
 
         JSONObject request = new JSONObject();
-        JSONObject course = new JSONObject();
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        course.put("courseNumber","1412121");
-        course.put("courseCredits", 3);
-        course.put("courseTitle", "C4");
-        course.put("prerequisites", jArray);
+        request.put("courseNumber","1412121");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        request.put("prerequisites", jArray);
 
         JSONArray majors = new JSONArray();
         majors.put(10);
         majors.put(11);
 
-        request.put("course", course);
         request.put("majors", majors);
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
@@ -141,12 +139,8 @@ public class CourseControllerTest {
     @Test
     public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
-        JSONObject course = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
-
-        request.put("course", course);
-        request.put("majors", majors);
 
         mvc.perform(post("/courses/1")
                 .content(request.toString())
@@ -156,23 +150,53 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void Course_cannot_be_added_if_major_does_not_belong_to_faculty() throws Exception {
+    public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
-        JSONObject course = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
-
-        request.put("course", course);
         request.put("majors", majors);
+        request.put("majors", majors);
+        request.put("courseNumber","0000000");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C0");
 
         Faculty f1 = mock(Faculty.class);
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+
+        JSONObject result = new JSONObject();
+        result.put("1", "Major with id = 10 was not found.");
 
         mvc.perform(post("/courses/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Not all majors belong to this faculty."));
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), result.toString()));
+    }
+
+    @Test
+    public void Course_cannot_be_added_if_major_does_not_belong_to_faculty() throws Exception {
+        JSONObject request = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
+        request.put("majors", majors);
+        request.put("courseNumber","0000000");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C0");
+
+        Faculty f1 = mock(Faculty.class);
+        Major m1 = mock(Major.class);
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+
+        JSONObject result = new JSONObject();
+        result.put("1", "Not all majors belong to this faculty.");
+
+        mvc.perform(post("/courses/1")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), result.toString()));
     }
 
     @Test
@@ -181,16 +205,13 @@ public class CourseControllerTest {
         Faculty f1 = mock(Faculty.class);
 
         JSONObject request = new JSONObject();
-        JSONObject courseJson = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
 
 
-        courseJson.put("courseNumber","1412121");
-        courseJson.put("courseCredits", 3);
-        courseJson.put("courseTitle", "C4");
-
-        request.put("course", courseJson);
+        request.put("courseNumber","1412121");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
         request.put("majors", majors);
 
         Course course = new Course("1412121", "C5", 4);
@@ -217,18 +238,15 @@ public class CourseControllerTest {
         Faculty f1 = mock(Faculty.class);
 
         JSONObject request = new JSONObject();
-        JSONObject courseJson = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        courseJson.put("courseNumber","1412121");
-        courseJson.put("courseCredits", 3);
-        courseJson.put("courseTitle", "C4");
-        courseJson.put("prerequisites", jArray);
-
-        request.put("course", courseJson);
+        request.put("courseNumber","1412121");
+        request.put("courseCredits", 3);
+        request.put("courseTitle", "C4");
+        request.put("prerequisites", jArray);
         request.put("majors", majors);
 
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
@@ -251,18 +269,15 @@ public class CourseControllerTest {
         Faculty f1 = mock(Faculty.class);
 
         JSONObject request = new JSONObject();
-        JSONObject courseJson = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        courseJson.put("courseNumber","");
-        courseJson.put("courseCredits", -1);
-        courseJson.put("courseTitle", "");
-        courseJson.put("prerequisites", jArray);
-
-        request.put("course", courseJson);
+        request.put("courseNumber","");
+        request.put("courseCredits", -1);
+        request.put("courseTitle", "");
+        request.put("prerequisites", jArray);
         request.put("majors", majors);
 
         Course mockedCourse1 = mock(Course.class);
