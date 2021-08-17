@@ -156,7 +156,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void Course_cannot_be_added_if_major_does_not_belong_to_faculty() throws Exception {
+    public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
         JSONObject course = new JSONObject();
         JSONArray majors = new JSONArray();
@@ -167,6 +167,28 @@ public class CourseControllerTest {
 
         Faculty f1 = mock(Faculty.class);
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+
+        mvc.perform(post("/courses/1")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Major not found"));
+    }
+
+    @Test
+    public void Course_cannot_be_added_if_major_does_not_belong_to_faculty() throws Exception {
+        JSONObject request = new JSONObject();
+        JSONObject course = new JSONObject();
+        JSONArray majors = new JSONArray();
+        majors.put(10);
+
+        request.put("course", course);
+        request.put("majors", majors);
+
+        Faculty f1 = mock(Faculty.class);
+        Major m1 = mock(Major.class);
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
 
         mvc.perform(post("/courses/1")
                 .content(request.toString())

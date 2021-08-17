@@ -35,62 +35,48 @@ public class CourseController {
     @PostMapping(
             value = "/{facultyId}",
             consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView course) {
+    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
         Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
-        Set<Long> majors = faculty.getMajors().stream().map(Major::getId).collect(Collectors.toSet());
-        if (!majors.containsAll(course.getMajors()))
+        Set<Major> majors = input.getMajors().stream().map(id -> majorRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"))).collect(Collectors.toSet());
+        if (majors.isEmpty())
+            majors = faculty.getMajors();
+        if (!faculty.getMajors().containsAll(majors))
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Not all majors belong to this faculty.");
-
-        CourseView courseView = course.getCourse();
+        CourseView courseView = input.getCourse();
+        Course validated = null;
         ExceptionList exceptionList = new ExceptionList();
-        Set<Course> prerequisites = new HashSet<>();
-        CourseView outputCourse = new CourseView();
         if (courseRepository.findCourseByCourseNumber(courseView.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
+        Set<Course> prerequisites = this.validatePrerequisites(courseView.getPrerequisites(), exceptionList);
         try {
-            prerequisites = this.validatePrerequisites(courseView.getPrerequisites());
+            validated = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
-        try {
-            Course newCourse = new Course(courseView.getCourseNumber(), courseView.getCourseTitle(), courseView.getCourseCredits());
-            newCourse.setPrerequisites(prerequisites);
-            outputCourse = new CourseView(newCourse);
-            courseRepository.save(newCourse);
-            Set<Long> requestedMajors = course.getMajors();
-            if (requestedMajors.isEmpty())
-                requestedMajors = majors;
-            requestedMajors.forEach(m -> {
-                Major major = majorRepository.findById(m).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
-                major.addCourse(newCourse);
-            });
-        } catch (ExceptionList e) {
-            exceptionList.addExceptions(e.getExceptions());
-        }
-
         if (exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        return outputCourse;
+        Course course = validated;
+        course.setPrerequisites(prerequisites);
+        courseRepository.save(course);
+        majors.forEach(m -> m.addCourse(course));
+        return new CourseView(course);
     }
 
-    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
+    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptions) {
         Set<Course> prerequisites = new HashSet<>();
         for(Long L : prerequisiteIds){
             Optional<Course> pre = courseRepository.findById(L);
             if(pre.isEmpty())
-                exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
+                exceptions.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
             else {
                 try {
                     this.checkLoop(pre.get());
                     prerequisites.add(pre.get());
                 }catch (ExceptionList e) {
-                    exceptionList.addExceptions(e.getExceptions());
+                    exceptions.addExceptions(e.getExceptions());
                 }
             }
         }
-        if (exceptionList.hasException())
-            throw exceptionList;
         return prerequisites;
     }
 
