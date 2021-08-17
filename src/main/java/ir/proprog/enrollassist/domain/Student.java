@@ -19,7 +19,8 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String studentNumber;
+    @Embedded
+    private StudentNumber studentNumber;
     private String name;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
@@ -27,11 +28,7 @@ public class Student {
     Major major;
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
-        if (studentNumber.equals(""))
-            throw new IllegalArgumentException("Student number cannot be empty");
-        if (name.equals(""))
-            throw new IllegalArgumentException("Student must have a name");
-        this.studentNumber = studentNumber;
+        this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;
     }
 
