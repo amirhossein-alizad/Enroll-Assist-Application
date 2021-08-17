@@ -102,21 +102,21 @@ public class EnrollmentList {
     }
 
     List<EnrollmentRuleViolation> checkValidGPALimit() {
-        double GPA = owner.calculateGPA();
+        Grade GPA = owner.calculateGPA();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         if(credits < 12)
             violations.add(new MinCreditsRequiredNotMet(12));
-        if(GPA == 0 && owner.getTotalTakenCredits() == 0){
+        if(GPA.getGrade() == 0 && owner.getTotalTakenCredits() == 0){
             if (credits > 20)
                 violations.add(new MaxCreditsLimitExceeded(20));
         }
         else if(owner.getTotalTakenCredits() > 0) {
-            if (credits > 14 && GPA < 12)
+            if (credits > 14 && GPA.getGrade() < 12)
                 violations.add(new MaxCreditsLimitExceeded(14));
-            else if (credits > 20 && GPA < 17)
+            else if (credits > 20 && GPA.getGrade() < 17)
                 violations.add(new MaxCreditsLimitExceeded(20));
-            else if (credits > 24 && GPA >= 17)
+            else if (credits > 24 && GPA.getGrade() >= 17)
                 violations.add(new MaxCreditsLimitExceeded(24));
         }
         return violations;

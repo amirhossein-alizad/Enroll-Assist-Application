@@ -65,16 +65,15 @@ public class Student {
         return grades.stream().mapToInt(e -> e.getCourse().getCredits()).sum();
     }
 
-    public float calculateGPA() {
-        int credits = 0;
-        float sum = 0;
-        for (StudyRecord sr : grades) {
-            sum += sr.getCourse().getCredits() * sr.getGrade().getGrade();
-            credits += sr.getCourse().getCredits();
+    public Grade calculateGPA() {
+        double sum = grades.stream().mapToDouble(StudyRecord::weightedScore).sum();
+        int credits = grades.stream().mapToInt(sr -> sr.getCourse().getCredits()).sum();
+        if (credits == 0) return new Grade();
+        try {
+            return new Grade(sum / credits);
+        } catch (Exception e) {
+            return new Grade();
         }
-        if(credits == 0) return 0F;
-
-        return (float) (Math.round(sum / credits * 100.0) / 100.0);
     }
 
     @VisibleForTesting

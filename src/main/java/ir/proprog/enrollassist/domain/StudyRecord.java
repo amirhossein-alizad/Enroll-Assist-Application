@@ -36,6 +36,10 @@ public class StudyRecord {
         }
     }
 
+    public double weightedScore() {
+        return grade.getGrade() * course.getCredits();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

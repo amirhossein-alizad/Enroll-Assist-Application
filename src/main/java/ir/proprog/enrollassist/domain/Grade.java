@@ -20,11 +20,7 @@ public class Grade {
     public Grade(double grade) throws Exception {
         if (grade < 0 || grade > 20)
             throw new Exception("Grade must be in range of (0, 20).");
-        String[] number = Double.toString(grade).split("\\.");
-        if (number.length > 1)
-            if (number[1].length() > 2)
-                throw new Exception("There should be at most 2 decimal places in grade.");
-        this.grade = grade;
+        this.grade = (Math.round(grade * 100.0) / 100.0);;
     }
 
     public boolean isPassingGrade() { return this.grade >= 10.0; }
