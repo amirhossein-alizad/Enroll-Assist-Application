@@ -289,7 +289,7 @@ public class EnrollmentListControllerTest {
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
 
-        when(std.calculateGPA()).thenReturn(11.99F);
+        when(std.calculateGPA()).thenReturn(new Grade(11.99));
         when(std.getTotalTakenCredits()).thenReturn(1);
 
         List<String> err = new ArrayList<>(List.of("[3333333] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));

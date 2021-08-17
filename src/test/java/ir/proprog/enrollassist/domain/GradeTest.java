@@ -6,11 +6,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GradeTest {
     @Test
-    public void Grade_cannot_hold_more_than_two_decimal_points() {
-        Exception exception = assertThrows(Exception.class, () -> {
-            Grade grade = new Grade(13.567);
-        });
-        assertEquals(exception.getMessage(), "There should be at most 2 decimal places in grade.");
+    public void Grade_should_hold_two_decimal_points() throws Exception {
+        Grade grade = new Grade(13.567);
+        assertEquals(grade.getGrade(), 13.57);
     }
 
     @Test
