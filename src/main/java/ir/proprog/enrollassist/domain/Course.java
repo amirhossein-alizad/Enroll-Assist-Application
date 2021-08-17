@@ -17,8 +17,9 @@ public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    private String courseNumber;
     private String title;
+    @Embedded
+    private CourseNumber courseNumber;
     @Embedded
     private Credit credits;
     private boolean hasExam = false;
@@ -27,43 +28,24 @@ public class Course {
 
     public Course(String courseNumber, String title, int credits) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        this.courseNumber = courseNumber;
+        if (title.equals("")) {
+            exceptionList.addNewException(new Exception("Course must have a name."));
+        }
         this.title = title;
         try {
+            this.courseNumber = new CourseNumber(courseNumber);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+        try {
             this.credits = new Credit(credits);
-        } catch (Exception e) {
-            exceptionList.addNewException(e);
-        }
-        exceptionList.addExceptions(this.validateCourseInfo(courseNumber, title));
+        } catch (Exception e) { exceptionList.addNewException(e); }
+
         if (exceptionList.hasException())
             throw exceptionList;
     }
 
     public int getCredits() { return credits.getCredit(); }
 
-    private List<Exception> validateCourseInfo(String courseNumber, String title) {
-        List<Exception> exceptions = new ArrayList<>();
-        try {
-            this.validateCourseNumber(courseNumber);
-        }catch (Exception e) {
-            exceptions.add(e);
-        }
-        if (title.equals(""))
-            exceptions.add(new Exception("Course must have a name."));
-        return exceptions;
-    }
-
-    private void validateCourseNumber(String courseNumber) throws Exception {
-        if (courseNumber.equals(""))
-            throw new Exception("Course number cannot be empty.");
-        try {
-            Integer.parseInt(courseNumber);
-            if (courseNumber.length() != 7)
-                throw new Exception("Course number must contain 7 numbers.");
-        }catch (Exception exception) {
-            throw new Exception("Course number must contain 7 numbers.");
-        }
-    }
+    public String getCourseNumber() { return courseNumber.getCourseNumber(); }
 
     public Course withPre(Course... pres) {
         prerequisites.addAll(Arrays.asList(pres));
@@ -80,12 +62,12 @@ public class Course {
 
     @Override
     public int hashCode() {
-        return Objects.hash(courseNumber);
+        return Objects.hash(courseNumber.getCourseNumber());
     }
 
     @Override
     public String toString() {
-        return String.format("[%s] %s", courseNumber, title);
+        return String.format("[%s] %s", courseNumber.getCourseNumber(), title);
     }
 
     public void setPrerequisites(Set<Course> prerequisites) {

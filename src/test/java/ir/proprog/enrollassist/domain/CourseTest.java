@@ -18,8 +18,8 @@ public class CourseTest {
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
-        assertEquals(exceptionList.toString(), "{\"1\":\"Course number cannot be empty.\"," +
-                                                        "\"2\":\"Course must have a name.\"}");
+        assertEquals(exceptionList.toString(), "{\"1\":\"Course must have a name.\"," +
+                                                        "\"2\":\"Course number cannot be empty.\"}");
     }
 
     @Test
@@ -31,8 +31,8 @@ public class CourseTest {
             exceptionList.addExceptions(e.getExceptions());
         }
         assertEquals(exceptionList.toString(),
-                "{\"1\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\","
-                + "\"2\":\"Course number must contain 7 numbers.\"}");
+                "{\"1\":\"Course number must contain 7 numbers.\","
+                + "\"2\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
     }
 
     @Test

@@ -286,8 +286,8 @@ public class CourseControllerTest {
                             .andReturn();
         String content = result.getResponse().getErrorMessage();
         assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
-                                    "\"2\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"," +
+                                    "\"2\":\"Course must have a name.\"," +
                                     "\"3\":\"Course number cannot be empty.\"," +
-                                    "\"4\":\"Course must have a name.\"}");
+                                    "\"4\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
     }
 }

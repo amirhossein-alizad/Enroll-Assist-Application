@@ -4,11 +4,8 @@ import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.PresentationSchedule;
 import ir.proprog.enrollassist.domain.Section;
 import lombok.Getter;
-import org.checkerframework.checker.optional.qual.Present;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
