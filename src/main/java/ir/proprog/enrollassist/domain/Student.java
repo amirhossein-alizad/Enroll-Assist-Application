@@ -50,7 +50,7 @@ public class Student {
 
     public boolean hasPassed(Course course) {
         for (StudyRecord sr : grades) {
-            if (sr.getCourse().equals(course) && sr.getGrade() >= 10)
+            if (sr.getCourse().equals(course) && sr.getGrade().isPassingGrade())
                 return true;
         }
         return false;
@@ -69,7 +69,7 @@ public class Student {
         int credits = 0;
         float sum = 0;
         for (StudyRecord sr : grades) {
-            sum += sr.getCourse().getCredits() * sr.getGrade();
+            sum += sr.getCourse().getCredits() * sr.getGrade().getGrade();
             credits += sr.getCourse().getCredits();
         }
         if(credits == 0) return 0F;
@@ -81,7 +81,7 @@ public class Student {
     List<Course> getTakeableCourses(Iterable<Course> allCourses){
         List<Course> passed = new ArrayList<>();
         for (StudyRecord sr : grades)
-            if (sr.getGrade() >= 10)
+            if (sr.getGrade().isPassingGrade())
                 passed.add(sr.getCourse());
         List<Course> takeable  = new ArrayList<>();
         List<Course> notPassed = new ArrayList<>();

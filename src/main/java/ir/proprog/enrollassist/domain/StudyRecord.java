@@ -36,8 +36,6 @@ public class StudyRecord {
         }
     }
 
-    public double getGrade() { return this.grade.getGrade(); }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

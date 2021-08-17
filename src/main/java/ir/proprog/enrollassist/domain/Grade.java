@@ -1,14 +1,15 @@
 package ir.proprog.enrollassist.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
 @Embeddable
+@Access(AccessType.FIELD)
 public class Grade {
     private final double grade;
 
@@ -25,6 +26,8 @@ public class Grade {
                 throw new Exception("There should be at most 2 decimal places in grade.");
         this.grade = grade;
     }
+
+    public boolean isPassingGrade() { return this.grade >= 10.0; }
 
     @Override
     public int hashCode() { return Objects.hash(grade); }
