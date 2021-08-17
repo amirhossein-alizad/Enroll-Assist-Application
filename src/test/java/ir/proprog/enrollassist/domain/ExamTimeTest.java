@@ -87,4 +87,13 @@ public class ExamTimeTest {
         assertEquals(exception, "Dates must be of the format yyyy-MM-ddTHH:mm");
     }
 
+    @Test
+    public void Equals_method_works_correctly() {
+        try {
+            ExamTime time1 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
+            ExamTime time2 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
+            assertTrue(time1.equals(time2));
+        } catch(Exception ignored) {
+        }
+    }
 }
