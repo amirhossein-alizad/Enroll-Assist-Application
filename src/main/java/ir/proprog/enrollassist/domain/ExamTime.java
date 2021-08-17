@@ -13,6 +13,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -37,12 +38,22 @@ public class ExamTime {
             this.start = LocalDateTime.parse(start, dateFormat);
             this.end = LocalDateTime.parse(end, dateFormat);
         } catch (Exception e) {
-            System.out.println(e);
             throw new Exception("Dates must be of the format yyyy-MM-ddTHH:mm");
         }
     }
 
     public boolean hasTimeConflict(ExamTime other) {
         return !(other.end.compareTo(this.start) <= 0 || other.start.compareTo(this.end) >= 0);
+    }
+
+    @Override
+    public int hashCode() { return Objects.hash(start, end); }
+
+    @Override
+    public boolean equals(Object o){
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ExamTime examTime = (ExamTime) o;
+        return start.equals(examTime.start) && end.equals(examTime.end);
     }
 }
