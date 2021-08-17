@@ -17,8 +17,6 @@ public class StudentNumber {
         this.studentNumber = studentNumber;
     }
 
-    public String getMajorNumber() {return studentNumber.substring(0, 4);}
-
     @Override
     public int hashCode() { return Objects.hash(studentNumber); }
 
