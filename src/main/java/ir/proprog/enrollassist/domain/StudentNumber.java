@@ -1,9 +1,11 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.Getter;
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
+@Embeddable
 public class StudentNumber {
     private final String studentNumber;
 
