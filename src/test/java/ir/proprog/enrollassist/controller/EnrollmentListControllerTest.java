@@ -77,7 +77,7 @@ public class EnrollmentListControllerTest {
         Student std = new Student("00000", "gina");
         JSONObject req = new JSONObject();
         req.put("enrollmentListName", "new_list");
-        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        given(studentRepository.findByStudentNumber(new StudentNumber("00000"))).willReturn(Optional.of(std));
         mvc.perform(post("/lists/00000")
                 .content(req.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -115,7 +115,7 @@ public class EnrollmentListControllerTest {
     @Test
     public void Untitled_enrollment_lists_cannot_be_added() throws Exception {
         Student std = new Student("00000", "gina");
-        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        given(studentRepository.findByStudentNumber(new StudentNumber("00000"))).willReturn(Optional.of(std));
         JSONObject req = new JSONObject();
         req.put("enrollmentListName", "");
         mvc.perform(post("/lists/00000")
@@ -132,7 +132,7 @@ public class EnrollmentListControllerTest {
         EnrollmentList list = new EnrollmentList("Mahsa's List", std);
         List<EnrollmentListView> lists = new ArrayList<>();
         lists.add(new EnrollmentListView(list));
-        given(studentRepository.findByStudentNumber("00000")).willReturn(Optional.of(std));
+        given(studentRepository.findByStudentNumber(new StudentNumber("00000"))).willReturn(Optional.of(std));
         given(studentRepository.findAllListsForStudent("00000")).willReturn(lists);
         JSONObject req = new JSONObject();
         req.put("enrollmentListName", "Mahsa's List");
