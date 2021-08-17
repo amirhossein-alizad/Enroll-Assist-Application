@@ -12,8 +12,6 @@ public class StudentNumber {
     public StudentNumber(String studentNumber) {
         if(studentNumber.equals(""))
             throw new IllegalArgumentException("Student number can not be empty.");
-        if(studentNumber.length() != 9)
-            throw new IllegalArgumentException("Student number must be 9 digits.");
         this.studentNumber = studentNumber;
     }
 
