@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-//https://medium.com/@nicolopigna/value-objects-like-a-pro-f1bfc1548c72
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Embeddable

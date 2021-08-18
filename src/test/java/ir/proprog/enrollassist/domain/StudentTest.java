@@ -1,7 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.SectionView;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -215,7 +214,7 @@ public class StudentTest {
     }
 
     @Test
-    void Grade_of_course_with_invalid_season_can_set_correctly() {
+    void Grade_of_course_with_invalid_season_cant_set_correctly() {
         String error = "";
         Student bebe = new Student("810197000", "bebe");
         try {
@@ -226,4 +225,5 @@ public class StudentTest {
         }
         assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
     }
+
 }

@@ -1,9 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.Section;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.domain.StudentNumber;
+import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -135,5 +132,40 @@ public class StudentControllerTest {
         mvc.perform(get("/student/takeableSections/1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    public void Takeable_sections_by_major_are_returned_correctly() throws Exception{
+        Student student = new Student("010101", "ali");
+        Course math1 = new Course("4444444", "MATH1", 3);
+        Course ap = new Course("4444004", "AP", 3);
+        Course math2 = new Course("4666644", "MATH2", 3).withPre(math1);
+        student.setGrade("13981", math1, 20.0);
+        Section math2_1 = new Section(math2, "01");
+        Section math2_2 = new Section(math2, "02");
+        Section math1_1 = new Section(math1, "01");
+        Section ap_1 = new Section(ap, "01");
+
+        Major cs = new Major("1", "CS");
+        cs.addCourse(math1, math2);
+        student.setMajor(cs);
+
+        given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+
+        mvc.perform(get("/student/takeableSectionsInStudentMajor/010101")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].sectionNo", is("01")))
+                .andExpect(jsonPath("$[0].courseNumber", is("4666644")))
+                .andExpect(jsonPath("$[0].courseTitle", is("MATH2")))
+                .andExpect(jsonPath("$[0].courseCredits", is(3)))
+                .andExpect(jsonPath("$[1].sectionNo", is("02")))
+                .andExpect(jsonPath("$[1].courseNumber", is("4666644")))
+                .andExpect(jsonPath("$[1].courseTitle", is("MATH2")))
+                .andExpect(jsonPath("$[1].courseCredits", is(3)));
+
     }
 }

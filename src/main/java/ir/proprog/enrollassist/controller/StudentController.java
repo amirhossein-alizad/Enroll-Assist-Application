@@ -68,4 +68,13 @@ public class StudentController {
         return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
     }
 
+    @GetMapping("/takeableSectionsInStudentMajor/{studentNumber}")
+    public Iterable<SectionView> takeableSectionsByMajor(@PathVariable String studentNumber){
+        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNumber));
+        if(student.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
+        Student std = student.get();
+        Iterable<Section> takeable = std.getTakeableSections(std.getMajor().getCourses(), sectionRepository.findAll());
+        return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
+    }
 }
