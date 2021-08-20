@@ -1,17 +1,18 @@
 package ir.proprog.enrollassist.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Embeddable
-public class Term {
-    private String termCode;
+final public class Term {
+    final private String termCode;
+
+    public Term() {
+        this.termCode = "00001";
+    }
 
     public Term(String term) throws Exception {
         this.validate(term);

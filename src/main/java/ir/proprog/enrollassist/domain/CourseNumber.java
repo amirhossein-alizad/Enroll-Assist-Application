@@ -1,17 +1,18 @@
 package ir.proprog.enrollassist.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @Embeddable
-public class CourseNumber {
-    private String courseNumber;
+final public class CourseNumber {
+    final private String courseNumber;
+
+    public CourseNumber() {
+        this.courseNumber = "0000000";
+    }
 
     public CourseNumber(String courseNumber) throws Exception {
         this.validate(courseNumber);
