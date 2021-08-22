@@ -99,7 +99,8 @@ public class StudentController {
     public List<StudentView> getAllFriends(@PathVariable String studentNo) {
         Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        List<Student> friends = s.getFriends();
+//        List<Student> friends = s.getFriends();
+        List<Student> friends = new ArrayList<>();
         friends.addAll(s.getBlocked());
         friends.addAll(s.getFriends());
         friends.addAll(s.getRequested());

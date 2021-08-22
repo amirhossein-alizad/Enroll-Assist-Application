@@ -205,4 +205,28 @@ public class StudentControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
     }
+
+    @Test
+    public void Student_friends_are_returned_correctly() throws Exception {
+        Student student = new Student("010101", "bob");
+        Student friend1 = new Student("111111", "jack");
+        Student friend2 = new Student("222222", "john");
+        Student friend3 = new Student("333333", "rob");
+        Student friend4 = new Student("444444", "fin");
+        Student req = new Student("877877", "matt");
+        Student pending = new Student("123456", "mark");
+        Student blocked = new Student("987654", "jake");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        student.getFriends().add(friend3);
+        student.getFriends().add(friend4);
+        student.getBlocked().add(blocked);
+        student.getRequested().add(req);
+        student.getPending().add(pending);
+        mvc.perform(get("/student/010101/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(7)));
+    }
 }
