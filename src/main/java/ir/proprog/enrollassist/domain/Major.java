@@ -21,7 +21,7 @@ public class Major {
     private String majorName;
     @ManyToMany
     Set<Course> courses = new HashSet<>();
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
     Faculty faculty;
 
     public Major(String majorNumber, String majorName) throws ExceptionList {

@@ -18,7 +18,7 @@ public class Faculty {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String facultyName;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.MERGE)
     private Set<Major> majors = new HashSet<>();
 
     public Faculty(String facultyName) throws ExceptionList {
