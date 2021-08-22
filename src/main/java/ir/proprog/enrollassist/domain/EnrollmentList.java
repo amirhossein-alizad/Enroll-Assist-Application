@@ -107,7 +107,7 @@ public class EnrollmentList {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         if(credits < 12)
             violations.add(new MinCreditsRequiredNotMet(12));
-        if(GPA.isEqualTo(0) && owner.getTotalTakenCredits() == 0 && credits > 20)
+        if(GPA.equals(Grade.ZERO) && owner.getTotalTakenCredits() == 0 && credits > 20)
             violations.add(new MaxCreditsLimitExceeded(20));
         else if(owner.getTotalTakenCredits() > 0) {
             if (credits > 14 && GPA.isLessThan(12))

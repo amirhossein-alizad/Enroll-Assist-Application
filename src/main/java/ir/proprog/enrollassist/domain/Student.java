@@ -75,11 +75,11 @@ public class Student {
     public Grade calculateGPA() {
         double sum = grades.stream().mapToDouble(StudyRecord::weightedScore).sum();
         int credits = grades.stream().mapToInt(sr -> sr.getCourse().getCredits()).sum();
-        if (credits == 0) return new Grade();
+        if (credits == 0) return Grade.ZERO;
         try {
             return new Grade(sum / credits);
         } catch (Exception e) {
-            return new Grade();
+            return Grade.ZERO;
         }
     }
 
