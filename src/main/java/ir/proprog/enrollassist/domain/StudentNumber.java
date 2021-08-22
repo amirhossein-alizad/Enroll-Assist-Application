@@ -1,17 +1,20 @@
 package ir.proprog.enrollassist.domain;
 
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Value;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
+@Value
 public class StudentNumber {
-    private String number;
+    String number;
+    public static final StudentNumber DEFAULT = new StudentNumber();
 
+    public StudentNumber(){
+        number = "000000000";
+    }
     public StudentNumber(String studentNumber) {
         if(studentNumber.equals(""))
             throw new IllegalArgumentException("Student number can not be empty.");
