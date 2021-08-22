@@ -114,7 +114,7 @@ public class EnrollmentList {
                 violations.add(new MaxCreditsLimitExceeded(14));
             else if (credits > 20 && GPA.isLessThan(17))
                 violations.add(new MaxCreditsLimitExceeded(20));
-            else if (credits > 24 && GPA.isGreaterThanOrEqual(17))
+            else if (credits > 24 && !GPA.isLessThan(17))
                 violations.add(new MaxCreditsLimitExceeded(24));
         }
         return violations;

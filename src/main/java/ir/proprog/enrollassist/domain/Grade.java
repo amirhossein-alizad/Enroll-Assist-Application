@@ -25,11 +25,7 @@ public class Grade {
         this.grade = (Math.round(grade * 100.0) / 100.0);;
     }
 
-    public boolean isGreaterThanOrEqual(double grade) { return this.grade >= grade; }
-
     public boolean isLessThan(double grade) { return this.grade < grade; }
-
-    public boolean isEqualTo(double grade) { return this.grade == grade; }
 
     public boolean isPassingGrade() { return this.grade >= 10.0; }
 
