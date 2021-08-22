@@ -12,6 +12,7 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // as required by JPA, don't use it in your code
@@ -87,25 +88,15 @@ public class Student {
     @VisibleForTesting
     List<Course> getTakeableCourses(){
         List<Course> passed = grades.stream().filter(sr -> sr.getGrade().isPassingGrade()).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> takeable  = new ArrayList<>();
-        List<Course> notPassed = new ArrayList<>(major.getCourses());
-        notPassed.removeAll(passed);
-        for(Course c : notPassed)
-            if(c.canBeTakenBy(this).isEmpty())
-                takeable.add(c);
-        return takeable;
+        List<Course> all = new ArrayList<>(major.getCourses());
+        all.removeAll(passed);
+        return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
 
     public List<Section> getTakeableSections(Iterable<Section> allSections){
-        List<Course> takeableCourses = getTakeableCourses();
-        List<Section> takeableSections = new ArrayList<>();
-        for (Section section: allSections)
-            for(Course course: takeableCourses)
-                if(section.courseIsEqualTo(course)) {
-                    takeableSections.add(section);
-                    break;
-                }
-        return takeableSections;
+        List<Course> courses = getTakeableCourses();
+        List<Section> all = StreamSupport.stream(allSections.spliterator(), false).collect(Collectors.toList());
+        return all.stream().filter(section -> courses.contains(section.getCourse())).collect(Collectors.toList());
     }
 
     public void setMajor(Major major) {
