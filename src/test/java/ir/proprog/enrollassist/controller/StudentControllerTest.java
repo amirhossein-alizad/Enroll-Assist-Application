@@ -261,4 +261,102 @@ public class StudentControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
     }
+
+    @Test
+    public void Blocked_students_of_one_student_are_returned_correctly() throws Exception{
+        Student student = mock(Student.class);;
+        Student blockedStudent1 = new Student("010102", "reza");
+        Student blockedStudent2 = new Student("010103", "sara");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        when(student.getBlocked()).thenReturn(List.of(blockedStudent1, blockedStudent2));
+        mvc.perform(get("/student/010101/friends/blocked")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].studentNo", is("010102")))
+                .andExpect(jsonPath("$[0].name", is("reza")))
+                .andExpect(jsonPath("$[1].studentNo", is("010103")))
+                .andExpect(jsonPath("$[1].name", is("sara")));
+    }
+
+
+    @Test
+    public void Student_with_no_blocked_friends_returns_empty_list() throws Exception{
+        Student student = mock(Student.class);;
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        mvc.perform(get("/student/010101/friends/blocked")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void Unreal_Student_cant_return_its_blocked_friends() throws Exception{
+        mvc.perform(get("/student/010101/friends/blocked")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void Pending_students_of_one_student_are_returned_correctly() throws Exception{
+        Student student = mock(Student.class);;
+        Student pendingStudent1 = new Student("010102", "reza");
+        Student pendingStudent2 = new Student("010103", "sara");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        when(student.getPending()).thenReturn(List.of(pendingStudent1, pendingStudent2));
+        mvc.perform(get("/student/010101/friends/pending")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].studentNo", is("010102")))
+                .andExpect(jsonPath("$[0].name", is("reza")))
+                .andExpect(jsonPath("$[1].studentNo", is("010103")))
+                .andExpect(jsonPath("$[1].name", is("sara")));
+    }
+
+    @Test
+    public void Student_with_no_pending_friends_returns_empty_list() throws Exception{
+        Student student = mock(Student.class);;
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        mvc.perform(get("/student/010101/friends/pending")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void Requested_student_of_one_student_is_returned_correctly() throws Exception{
+        Student student = mock(Student.class);;
+        Student requestedStudent = new Student("010102", "reza");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        when(student.getRequested()).thenReturn(List.of(requestedStudent));
+        mvc.perform(get("/student/010101/friends/requested")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].studentNo", is("010102")))
+                .andExpect(jsonPath("$[0].name", is("reza")));
+    }
+
+    @Test
+    public void Student_with_no_requested_friends_returns_empty_list() throws Exception{
+        Student student = mock(Student.class);;
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
+        mvc.perform(get("/student/010101/friends/requested")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    public void Student_can_add_other_student_to_his_friends_list_without_request____its_incorrect() throws Exception{
+        Student student1 = mock(Student.class);
+        Student student2 = mock(Student.class);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        mvc.perform(put("/student/010101/friends/accept")
+                .content("010102")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 }
