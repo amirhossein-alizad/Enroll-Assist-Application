@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import javax.persistence.*;
 import java.text.DateFormatSymbols;
@@ -15,12 +16,20 @@ import java.util.List;
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Embeddable
+@Value
 public class PresentationSchedule {
-    private String dayOfWeek;
-    private String startTime;
-    private String endTime;
+
+    String dayOfWeek;
+    String startTime;
+    String endTime;
+    public static final PresentationSchedule DEFAULT = new PresentationSchedule();
+
+    public PresentationSchedule(){
+        dayOfWeek = "Saturday";
+        startTime = "09:00";
+        endTime = "10:30";
+    }
 
     public PresentationSchedule(String dayOfWeek, String start, String end) throws ExceptionList {
         this.dayOfWeek = dayOfWeek;
