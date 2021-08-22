@@ -95,41 +95,10 @@ public class StudentControllerTest {
 //                .andExpect(status().isBadRequest());
 //    }
 
-    @Test
-    public void Takeable_sections_are_returned_correctly() throws Exception{
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course math2 = mock(Course.class);
-        List<Course> list = List.of(math1, math2);
-        Student student = new Student("010101", "ali");
-        student.setGrade("13981", math1, 20.0);
-        Section section = new Section(math2, "01");
-
-        given(sectionRepository.findAll()).willReturn(List.of(section));
-        given(courseRepository.findAll()).willReturn(list);
-        given(studentRepository.findByStudentNumber(new StudentNumber("1"))).willReturn(java.util.Optional.of(student));
-
-        when(math2.getId()).thenReturn(1L);
-        when(math2.getCredits()).thenReturn(3);
-        when(math2.getTitle()).thenReturn("math2");
-        when(math2.getCourseNumber()).thenReturn("1");
-        when(math2.canBeTakenBy(student)).thenReturn(new ArrayList<>());
-
-        mvc.perform(get("/student/takeableSections/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].courseId", is(1)))
-                .andExpect(jsonPath("$[0].sectionNo", is("01")))
-                .andExpect(jsonPath("$[0].courseNumber", is("1")))
-                .andExpect(jsonPath("$[0].courseTitle", is("math2")))
-                .andExpect(jsonPath("$[0].courseCredits", is(3)));
-
-    }
-
 
     @Test
     public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
-        mvc.perform(get("/student/takeableSections/1")
+        mvc.perform(get("/student/1/takeable")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -154,7 +123,7 @@ public class StudentControllerTest {
         given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
 
-        mvc.perform(get("/student/takeableSectionsInStudentMajor/010101")
+        mvc.perform(get("/student/010101/takeable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
