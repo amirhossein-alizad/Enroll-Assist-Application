@@ -27,6 +27,16 @@ public class Student {
     @ManyToOne
     Major major;
 
+    @OneToMany
+    private List<Student> pending = new ArrayList<>();
+    @OneToMany
+    private List<Student> requested = new ArrayList<>();
+    @OneToMany
+    private List<Student> friends = new ArrayList<>();
+    @OneToMany
+    private List<Student> blocked = new ArrayList<>();
+
+
     public Student(@NonNull String studentNumber, @NonNull String name) {
         this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;

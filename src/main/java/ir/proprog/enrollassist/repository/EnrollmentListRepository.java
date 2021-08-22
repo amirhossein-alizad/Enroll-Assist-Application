@@ -1,8 +1,8 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.controller.EnrollmentListView;
 import ir.proprog.enrollassist.controller.SectionDemandView;
 import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.Student;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
@@ -14,4 +14,6 @@ public interface EnrollmentListRepository extends CrudRepository<EnrollmentList,
 
     @Query(value = "select list from EnrollmentList list join list.sections as section where section.id=?1")
     List<EnrollmentList> findEnrollmentListContainingSection(Long id);
+
+    List<EnrollmentList> findByOwner(Student owner);
 }
