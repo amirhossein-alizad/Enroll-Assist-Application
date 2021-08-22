@@ -1,26 +1,26 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-
+import lombok.Value;
 import javax.persistence.Embeddable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.ResolverStyle;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Value
 @Embeddable
 public class ExamTime {
-    private LocalDateTime start;
-    private LocalDateTime end;
+    LocalDateTime start;
+    LocalDateTime end;
+    public static final ExamTime DEFAULT = new ExamTime();
+
+    public ExamTime(){
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyy--MM-dd'T'HH:mm");
+        start = LocalDateTime.parse("2021-06-21T08:00", dateTimeFormatter);
+        end = LocalDateTime.parse("2021-06-21T11:00", dateTimeFormatter);
+    }
 
     public void validate() throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
