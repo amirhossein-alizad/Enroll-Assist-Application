@@ -1,14 +1,16 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.Getter;
+import lombok.Value;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
+@Value
 @Getter
 @Embeddable
 public class Credit {
-    private final int credit;
+    int credit;
 
     public Credit() {
         this.credit = 0;
