@@ -162,4 +162,47 @@ public class StudentControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
     }
+
+    @Test
+    public void Friendship_requests_cannot_be_sent_if_sender_does_not_exist() throws Exception {
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Friendships_are_removed_correctly() throws Exception {
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Friendships_cannot_be_removed_if_requested_student_does_not_exist() throws Exception {
+        Student student = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Friendships_cannot_be_removed_if_requested_friend_does_not_exist() throws Exception {
+        Student student = new Student("010101", "bob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
+    }
 }
