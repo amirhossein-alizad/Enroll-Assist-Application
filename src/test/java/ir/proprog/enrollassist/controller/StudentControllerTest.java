@@ -207,7 +207,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void Student_friends_are_returned_correctly() throws Exception {
+    public void Student_friends_in_different_states_are_returned_correctly() throws Exception {
         Student student = new Student("010101", "bob");
         Student friend1 = new Student("111111", "jack");
         Student friend2 = new Student("222222", "john");
@@ -228,5 +228,37 @@ public class StudentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(7)));
+    }
+
+    @Test
+    public void Friendships_are_not_found_if_student_does_not_exist() throws Exception {
+        mvc.perform(get("/student/010101/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Students_friends_are_returned_correctly() throws Exception {
+        Student student = new Student("010101", "bob");
+        Student friend1 = new Student("111111", "jack");
+        Student friend2 = new Student("222222", "john");
+        Student friend3 = new Student("333333", "rob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        student.getFriends().add(friend3);
+        mvc.perform(get("/student/010101/friends/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+    }
+
+    @Test
+    public void Friends_are_not_found_if_student_does_not_exist() throws Exception {
+        mvc.perform(get("/student/010101/friends/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
     }
 }
