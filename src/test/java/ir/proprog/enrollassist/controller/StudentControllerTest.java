@@ -16,9 +16,11 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -136,5 +138,28 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[1].courseTitle", is("MATH2")))
                 .andExpect(jsonPath("$[1].courseCredits", is(3)));
 
+    }
+
+    @Test
+    public void Friendship_requests_are_sent_correctly() throws Exception{
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Friendship_requests_cannot_be_sent_if_requested_student_does_not_exist() throws Exception{
+        Student student1 = new Student("010101", "bob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
     }
 }
