@@ -17,9 +17,9 @@ public class ExamTime {
     public static final ExamTime DEFAULT = new ExamTime();
 
     public ExamTime(){
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyy--MM-dd'T'HH:mm");
-        start = LocalDateTime.parse("2021-06-21T08:00", dateTimeFormatter);
-        end = LocalDateTime.parse("2021-06-21T11:00", dateTimeFormatter);
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+        start = LocalDateTime.parse("2021-06-21T08:00", dateFormat);
+        end = LocalDateTime.parse("2021-06-21T11:00", dateFormat);
     }
 
     public void validate() throws ExceptionList {
