@@ -83,7 +83,10 @@ public class StudentTest {
         Course math1 = new Course("1111111", "MATH1", 3);
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
-        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1, prog, andishe);
@@ -97,7 +100,10 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         bebe.setGrade("13981", math1, 20);
-        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(2)
                 .containsExactlyInAnyOrder(prog, andishe);
@@ -111,7 +117,10 @@ public class StudentTest {
         Course andishe = new Course("3333333", "ANDISHE", 2);
         Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
         bebe.setGrade("13981", math1, 20);
-        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, math2, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(prog, andishe, math2);
@@ -124,7 +133,10 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        assertThat(bebe.getTakeableCourses(List.of(math1, prog, andishe, math2)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, math2, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(prog, andishe, math1);
@@ -140,7 +152,10 @@ public class StudentTest {
         Section math1_2 = new Section(math1, "02");
         Section prog1_1 = new Section(prog, "01");
         Section andishe1_1 = new Section(andishe, "01");
-        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
                 .containsExactlyInAnyOrder(math1_1, math1_2, prog1_1, andishe1_1);
@@ -153,11 +168,14 @@ public class StudentTest {
         Course prog = new Course("2222222", "PROG", 3);
         Course andishe = new Course("3333333", "ANDISHE", 2);
         bebe.setGrade("13981", math1, 20);
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        bebe.setMajor(major);
         Section math1_1 = new Section(math1, "01");
         Section math1_2 = new Section(math1, "02");
         Section prog1_1 = new Section(prog, "01");
         Section andishe1_1 = new Section(andishe, "01");
-        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe), List.of(math1_1, math1_2, prog1_1, andishe1_1)))
+        assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(2)
                 .containsExactlyInAnyOrder(prog1_1, andishe1_1);
@@ -176,7 +194,10 @@ public class StudentTest {
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
         bebe.setGrade("13981", math1, 20);
-        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, math2, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
                 .containsExactlyInAnyOrder(math2_2, math2_1, prog1_1, andishe1_1);
@@ -194,7 +215,10 @@ public class StudentTest {
         Section andishe1_1 = new Section(andishe, "01");
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
-        assertThat(bebe.getTakeableSections(List.of(math1, prog, andishe, math2), List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, math2, prog, andishe);
+        bebe.setMajor(major);
+        assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);

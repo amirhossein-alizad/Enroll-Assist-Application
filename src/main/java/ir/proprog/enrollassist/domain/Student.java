@@ -11,6 +11,7 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // as required by JPA, don't use it in your code
@@ -84,14 +85,10 @@ public class Student {
     }
 
     @VisibleForTesting
-    List<Course> getTakeableCourses(Iterable<Course> allCourses){
-        List<Course> passed = new ArrayList<>();
-        for (StudyRecord sr : grades)
-            if (sr.getGrade().isPassingGrade())
-                passed.add(sr.getCourse());
+    List<Course> getTakeableCourses(){
+        List<Course> passed = grades.stream().filter(sr -> sr.getGrade().isPassingGrade()).map(StudyRecord::getCourse).collect(Collectors.toList());
         List<Course> takeable  = new ArrayList<>();
-        List<Course> notPassed = new ArrayList<>();
-        allCourses.forEach(notPassed::add);
+        List<Course> notPassed = new ArrayList<>(major.getCourses());
         notPassed.removeAll(passed);
         for(Course c : notPassed)
             if(c.canBeTakenBy(this).isEmpty())
@@ -99,8 +96,8 @@ public class Student {
         return takeable;
     }
 
-    public List<Section> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
-        List<Course> takeableCourses = getTakeableCourses(allCourses);
+    public List<Section> getTakeableSections(Iterable<Section> allSections){
+        List<Course> takeableCourses = getTakeableCourses();
         List<Section> takeableSections = new ArrayList<>();
         for (Section section: allSections)
             for(Course course: takeableCourses)
