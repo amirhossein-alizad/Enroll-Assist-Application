@@ -27,7 +27,7 @@ public class Major {
     public Major(String majorNumber, String majorName) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if(majorName.equals(""))
-            exceptionList.addNewException(new Exception("Major name can not be empty."));
+            exceptionList.addNewException(new Exception("Major name can not be empty"));
         if(majorNumber.equals(""))
             exceptionList.addNewException(new Exception("Major number can not be empty"));
         if(exceptionList.hasException())
