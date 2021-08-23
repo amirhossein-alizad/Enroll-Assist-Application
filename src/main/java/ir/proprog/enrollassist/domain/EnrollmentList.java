@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -150,4 +151,23 @@ public class EnrollmentList {
         return violations;
     }
 
+    public boolean makeExamTimeConflict(Section section, ExamTime examTime) throws ExceptionList {
+        int index = this.sections.indexOf(section);
+        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkExamTimeConflicts();
+        ExamTime preExamTime = this.sections.get(index).getExamTime();
+        this.sections.get(index).setExamTime(examTime);
+        List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkExamTimeConflicts();
+        this.sections.get(index).setExamTime(preExamTime);
+        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+    }
+
+    public boolean makePresentationScheduleConflict(Section section, List<PresentationSchedule> schedule) {
+        int index = this.sections.indexOf(section);
+        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkHasNotAlreadyPassedCourses();
+        Set<PresentationSchedule> prePresentationSchedule = this.sections.get(index).getPresentationSchedule();
+        this.sections.get(index).setPresentationSchedule(new HashSet<>(schedule));
+        List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkSectionScheduleConflicts();
+        this.sections.get(index).setPresentationSchedule(prePresentationSchedule);
+        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+    }
 }

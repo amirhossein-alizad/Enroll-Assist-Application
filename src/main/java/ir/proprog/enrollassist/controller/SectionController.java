@@ -1,10 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.ExamTime;
-import ir.proprog.enrollassist.domain.PresentationSchedule;
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
@@ -121,6 +118,35 @@ public class SectionController {
         return new SectionView(section);
     }
 
+    @PutMapping(value = "/{id}/getExamTimeConflicts")
+    public ConflictView getNumberOfExamTimeConflicts(@RequestBody ExamTime examTime, @PathVariable Long id) {
+        Section section = this.sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        int numberOfConflict = 0;
+        Iterable<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(section.getId());
+        for (EnrollmentList e:enrollmentLists) {
+            try {
+                if (e.makeExamTimeConflict(section, examTime))
+                    numberOfConflict = numberOfConflict + 1;
+            } catch (ExceptionList exceptionList) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
+            }
+        }
+        return new ConflictView(numberOfConflict);
+    }
+
+    @PutMapping(value = "/{id}/getExamTimeConflicts")
+    public ConflictView getNumberOfScheduleConflicts(@RequestBody List<PresentationSchedule> schedule, @PathVariable Long id) {
+        Section section = this.sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        int numberOfConflict = 0;
+        Iterable<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(section.getId());
+        for (EnrollmentList e:enrollmentLists) {
+            if (e.makePresentationScheduleConflict(section, schedule))
+                numberOfConflict = numberOfConflict + 1;
+        }
+        return new ConflictView(numberOfConflict);
+    }
 
 }
 
