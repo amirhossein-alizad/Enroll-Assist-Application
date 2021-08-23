@@ -72,4 +72,22 @@ public class FacultyControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
     }
+
+    @Test
+    public void Faculty_with_the_same_name_cannot_be_added() throws Exception{
+        Faculty faculty = mock(Faculty.class);
+        JSONObject request = new JSONObject();
+        request.put("facultyName", "ECE");
+
+        JSONObject response = new JSONObject();
+        response.put("1", "Faculty with name ECE exists.");
+
+        given(facultyRepository.findByFacultyName("ECE")).willReturn(java.util.Optional.ofNullable(faculty));
+
+        mvc.perform(post("/faculties")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
+    }
 }
