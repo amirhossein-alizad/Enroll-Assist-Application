@@ -9,7 +9,6 @@ public class MajorView {
     private Long majorId;
     private String majorNumber;
     private String majorName;
-    private String facultyName;
 
     public MajorView() {
     }
@@ -18,6 +17,5 @@ public class MajorView {
         this.majorId = major.getId();
         this.majorNumber = major.getMajorNumber();
         this.majorName = major.getMajorName();
-        this.facultyName = major.getFaculty().getFacultyName();
     }
 }
