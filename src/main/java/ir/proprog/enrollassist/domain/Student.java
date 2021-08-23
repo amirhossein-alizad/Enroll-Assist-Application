@@ -44,6 +44,12 @@ public class Student {
         this.name = name;
     }
 
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major) {
+        this.studentNumber = new StudentNumber(studentNumber);
+        this.name = name;
+        this.major = major;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
