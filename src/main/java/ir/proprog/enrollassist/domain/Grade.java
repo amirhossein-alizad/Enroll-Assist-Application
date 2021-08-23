@@ -1,17 +1,19 @@
 package ir.proprog.enrollassist.domain;
 
-import lombok.Getter;
+import lombok.Value;
 
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
-@Getter
+@Value
 @Embeddable
 @Access(AccessType.FIELD)
 public class Grade {
-    private final double grade;
+    public static final Grade ZERO = new Grade();
+
+    double grade;
 
     public Grade() {
         this.grade = 0.0;
@@ -23,6 +25,8 @@ public class Grade {
         this.grade = (Math.round(grade * 100.0) / 100.0);;
     }
 
+    public boolean isLessThan(double grade) { return this.grade < grade; }
+
     public boolean isPassingGrade() { return this.grade >= 10.0; }
 
     @Override
@@ -32,6 +36,6 @@ public class Grade {
     public boolean equals(Object o){
         Grade other = (Grade) o;
         if (o == null || getClass() != o.getClass()) return false;
-        return this.grade == other.getGrade();
+        return this.grade == other.grade;
     }
 }

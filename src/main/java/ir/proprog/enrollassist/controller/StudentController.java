@@ -59,23 +59,11 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/takeableSections/{studentNumber}")
-    public Iterable<SectionView> takeableSections(@PathVariable String studentNumber) {
-        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNumber));
-        if (student.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
-        Student std = student.get();
-        Iterable<Section> takeable = std.getTakeableSections(courseRepository.findAll(), sectionRepository.findAll());
-        return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
-    }
-
-    @GetMapping("/takeableSectionsInStudentMajor/{studentNumber}")
-    public Iterable<SectionView> takeableSectionsByMajor(@PathVariable String studentNumber) {
-        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNumber));
-        if (student.isEmpty())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found.");
-        Student std = student.get();
-        Iterable<Section> takeable = std.getTakeableSections(std.getMajor().getCourses(), sectionRepository.findAll());
+    @GetMapping("/{studentNo}/takeable")
+    public Iterable<SectionView> findTakeableSections(@PathVariable String studentNo) {
+        Student student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNo))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found."));
+        Iterable<Section> takeable = student.getTakeableSections(sectionRepository.findAll());
         return StreamSupport.stream(takeable.spliterator(), false).map(SectionView::new).collect(Collectors.toList());
     }
 
@@ -111,7 +99,8 @@ public class StudentController {
     public List<StudentView> getAllFriends(@PathVariable String studentNo) {
         Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        List<Student> friends = s.getFriends();
+//        List<Student> friends = s.getFriends();
+        List<Student> friends = new ArrayList<>();
         friends.addAll(s.getBlocked());
         friends.addAll(s.getFriends());
         friends.addAll(s.getRequested());

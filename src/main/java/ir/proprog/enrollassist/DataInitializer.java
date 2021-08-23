@@ -56,19 +56,19 @@ public class DataInitializer {
         facultyRepository.save(ece);
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
-                .setGrade("t1", math1, 10)
-                .setGrade("t1", phys1, 12)
-                .setGrade("t1", prog, 16.3)
-                .setGrade("t1", farsi, 18.5)
-                .setGrade("t1", akhlagh, 15);
+                .setGrade("11112", math1, 10)
+                .setGrade("11112", phys1, 12)
+                .setGrade("11112", prog, 16.3)
+                .setGrade("11112", farsi, 18.5)
+                .setGrade("11112", akhlagh, 15);
         mahsa.setMajor(ce);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
-                .setGrade("t1", math1, 13.2)
-                .setGrade("t1", phys1, 8.3)
-                .setGrade("t1", prog, 10.5)
-                .setGrade("t1", english, 11)
-                .setGrade("t1", akhlagh, 16);
+                .setGrade("11112", math1, 13.2)
+                .setGrade("11112", phys1, 8.3)
+                .setGrade("11112", prog, 10.5)
+                .setGrade("11112", english, 11)
+                .setGrade("11112", akhlagh, 16);
         changiz.setMajor(ee);
         studentRepository.save(changiz);
 
@@ -100,5 +100,12 @@ public class DataInitializer {
         EnrollmentList changizList = new EnrollmentList("Changiz's List", changiz);
         changizList.addSections(math2_1, phys1_1, ap_1, dm_1);
         enrollmentListRepository.save(changizList);
+
+        Faculty f1 = new Faculty("TECH");
+        Faculty f2 = new Faculty("ART");
+        Faculty f3 = new Faculty("SOCIAL SCIENCE");
+        facultyRepository.save(f1);
+        facultyRepository.save(f2);
+        facultyRepository.save(f3);
     }
 }

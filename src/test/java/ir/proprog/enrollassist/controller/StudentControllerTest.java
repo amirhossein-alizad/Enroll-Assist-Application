@@ -16,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
@@ -96,41 +97,10 @@ public class StudentControllerTest {
 //                .andExpect(status().isBadRequest());
 //    }
 
-    @Test
-    public void Takeable_sections_are_returned_correctly() throws Exception{
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course math2 = mock(Course.class);
-        List<Course> list = List.of(math1, math2);
-        Student student = new Student("010101", "ali");
-        student.setGrade("13981", math1, 20.0);
-        Section section = new Section(math2, "01");
-
-        given(sectionRepository.findAll()).willReturn(List.of(section));
-        given(courseRepository.findAll()).willReturn(list);
-        given(studentRepository.findByStudentNumber(new StudentNumber("1"))).willReturn(java.util.Optional.of(student));
-
-        when(math2.getId()).thenReturn(1L);
-        when(math2.getCredits()).thenReturn(3);
-        when(math2.getTitle()).thenReturn("math2");
-        when(math2.getCourseNumber()).thenReturn("1");
-        when(math2.canBeTakenBy(student)).thenReturn(new ArrayList<>());
-
-        mvc.perform(get("/student/takeableSections/1")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].courseId", is(1)))
-                .andExpect(jsonPath("$[0].sectionNo", is("01")))
-                .andExpect(jsonPath("$[0].courseNumber", is("1")))
-                .andExpect(jsonPath("$[0].courseTitle", is("math2")))
-                .andExpect(jsonPath("$[0].courseCredits", is(3)));
-
-    }
-
 
     @Test
     public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
-        mvc.perform(get("/student/takeableSections/1")
+        mvc.perform(get("/student/1/takeable")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -155,7 +125,7 @@ public class StudentControllerTest {
         given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
 
-        mvc.perform(get("/student/takeableSectionsInStudentMajor/010101")
+        mvc.perform(get("/student/010101/takeable")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -168,6 +138,128 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[1].courseTitle", is("MATH2")))
                 .andExpect(jsonPath("$[1].courseCredits", is(3)));
 
+    }
+
+    @Test
+    public void Friendship_requests_are_sent_correctly() throws Exception{
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Friendship_requests_cannot_be_sent_if_requested_student_does_not_exist() throws Exception{
+        Student student1 = new Student("010101", "bob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
+    }
+
+    @Test
+    public void Friendship_requests_cannot_be_sent_if_sender_does_not_exist() throws Exception {
+        mvc.perform(put("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Friendships_are_removed_correctly() throws Exception {
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Friendships_cannot_be_removed_if_requested_student_does_not_exist() throws Exception {
+        Student student = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Friendships_cannot_be_removed_if_requested_friend_does_not_exist() throws Exception {
+        Student student = new Student("010101", "bob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        mvc.perform(delete("/student/010101/friends")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 111111 not found"));
+    }
+
+    @Test
+    public void Student_friends_in_different_states_are_returned_correctly() throws Exception {
+        Student student = new Student("010101", "bob");
+        Student friend1 = new Student("111111", "jack");
+        Student friend2 = new Student("222222", "john");
+        Student friend3 = new Student("333333", "rob");
+        Student friend4 = new Student("444444", "fin");
+        Student req = new Student("877877", "matt");
+        Student pending = new Student("123456", "mark");
+        Student blocked = new Student("987654", "jake");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        student.getFriends().add(friend3);
+        student.getFriends().add(friend4);
+        student.getBlocked().add(blocked);
+        student.getRequested().add(req);
+        student.getPending().add(pending);
+        mvc.perform(get("/student/010101/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(7)));
+    }
+
+    @Test
+    public void Friendships_are_not_found_if_student_does_not_exist() throws Exception {
+        mvc.perform(get("/student/010101/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
+    }
+
+    @Test
+    public void Students_friends_are_returned_correctly() throws Exception {
+        Student student = new Student("010101", "bob");
+        Student friend1 = new Student("111111", "jack");
+        Student friend2 = new Student("222222", "john");
+        Student friend3 = new Student("333333", "rob");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        student.getFriends().add(friend3);
+        mvc.perform(get("/student/010101/friends/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+    }
+
+    @Test
+    public void Friends_are_not_found_if_student_does_not_exist() throws Exception {
+        mvc.perform(get("/student/010101/friends/friends")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "requested Student with id 010101 not found"));
     }
 
     @Test
@@ -267,6 +359,5 @@ public class StudentControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
-
 
 }

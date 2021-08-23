@@ -11,6 +11,8 @@ import lombok.NonNull;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED) // as required by JPA, don't use it in your code
@@ -40,6 +42,12 @@ public class Student {
     public Student(@NonNull String studentNumber, @NonNull String name) {
         this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;
+    }
+
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major) {
+        this.studentNumber = new StudentNumber(studentNumber);
+        this.name = name;
+        this.major = major;
     }
 
     @Override
@@ -75,40 +83,26 @@ public class Student {
     public Grade calculateGPA() {
         double sum = grades.stream().mapToDouble(StudyRecord::weightedScore).sum();
         int credits = grades.stream().mapToInt(sr -> sr.getCourse().getCredits()).sum();
-        if (credits == 0) return new Grade();
+        if (credits == 0) return Grade.ZERO;
         try {
             return new Grade(sum / credits);
         } catch (Exception e) {
-            return new Grade();
+            return Grade.ZERO;
         }
     }
 
     @VisibleForTesting
-    List<Course> getTakeableCourses(Iterable<Course> allCourses){
-        List<Course> passed = new ArrayList<>();
-        for (StudyRecord sr : grades)
-            if (sr.getGrade().isPassingGrade())
-                passed.add(sr.getCourse());
-        List<Course> takeable  = new ArrayList<>();
-        List<Course> notPassed = new ArrayList<>();
-        allCourses.forEach(notPassed::add);
-        notPassed.removeAll(passed);
-        for(Course c : notPassed)
-            if(c.canBeTakenBy(this).isEmpty())
-                takeable.add(c);
-        return takeable;
+    List<Course> getTakeableCourses(){
+        List<Course> passed = grades.stream().filter(sr -> sr.getGrade().isPassingGrade()).map(StudyRecord::getCourse).collect(Collectors.toList());
+        List<Course> all = new ArrayList<>(major.getCourses());
+        all.removeAll(passed);
+        return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
 
-    public List<Section> getTakeableSections(Iterable<Course> allCourses, Iterable<Section> allSections){
-        List<Course> takeableCourses = getTakeableCourses(allCourses);
-        List<Section> takeableSections = new ArrayList<>();
-        for (Section section: allSections)
-            for(Course course: takeableCourses)
-                if(section.courseIsEqualTo(course)) {
-                    takeableSections.add(section);
-                    break;
-                }
-        return takeableSections;
+    public List<Section> getTakeableSections(Iterable<Section> allSections){
+        List<Course> courses = getTakeableCourses();
+        List<Section> all = StreamSupport.stream(allSections.spliterator(), false).collect(Collectors.toList());
+        return all.stream().filter(section -> courses.contains(section.getCourse())).collect(Collectors.toList());
     }
 
     public void setMajor(Major major) {
