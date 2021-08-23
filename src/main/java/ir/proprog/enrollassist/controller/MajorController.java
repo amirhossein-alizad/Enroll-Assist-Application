@@ -32,6 +32,8 @@ public class MajorController {
         Faculty faculty = this.facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
         ExceptionList exceptions = new ExceptionList();
+        if (majorRepository.findByMajorName(majorView.getMajorName()).isPresent())
+            exceptions.addNewException(new Exception("Major with name " + majorView.getMajorName() + " exists."));
         Major major = null;
         try {
             major = new Major(majorView.getMajorNumber(), majorView.getMajorName());
