@@ -135,7 +135,7 @@ public class SectionController {
         return new ConflictView(numberOfConflict);
     }
 
-    @PutMapping(value = "/{id}/getExamTimeConflicts")
+    @PutMapping(value = "/{id}/getScheduleConflicts")
     public ConflictView getNumberOfScheduleConflicts(@RequestBody List<PresentationSchedule> schedule, @PathVariable Long id) {
         Section section = this.sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
