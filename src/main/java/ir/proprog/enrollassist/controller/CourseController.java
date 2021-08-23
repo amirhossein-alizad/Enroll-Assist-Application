@@ -10,7 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -32,82 +33,32 @@ public class CourseController {
         return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
     }
 
-    @PostMapping(
-            value = "/{facultyId}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "addCourse/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
-        Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+        Faculty faculty = facultyRepository.findById(facultyId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+
         ExceptionList exceptionList = new ExceptionList();
-        Set<Major> majors = this.validateMajors(input.getMajors(), faculty, exceptionList);
-        Course validated = null;
-        if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
-            exceptionList.addNewException(new Exception("Course number already exists."));
-        Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
+        AddCourseService addCourseService = new AddCourseService(courseRepository, majorRepository);
+        Set<Major> majors = new HashSet<>();
         try {
-            validated = new Course(input.getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
-        } catch (ExceptionList e) {
-            exceptionList.addExceptions(e.getExceptions());
-        }
+            majors = addCourseService.getMajors(input.getMajors(), faculty);
+        }catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
+        Course course = null;
+        try {
+            course = addCourseService.addCourse(input);
+            this.courseRepository.save(course);
+            for (Major major: majors) {
+                major.addCourse(course);
+                this.majorRepository.save(major);
+            }
+        }catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
+
         if (exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        Course course = validated;
-        course.setPrerequisites(prerequisites);
-        courseRepository.save(course);
-        majors.forEach(m -> m.addCourse(course));
         return new CourseView(course);
     }
 
-    private Set<Major> validateMajors(Set<Long> majorIds, Faculty f, ExceptionList exceptions) {
-        Set<Major> majors = new HashSet<>();
-        if (majorIds.isEmpty())
-            return f.getMajors();
-        for (Long L : majorIds) {
-            Optional<Major> major = majorRepository.findById(L);
-            if (major.isEmpty())
-                exceptions.addNewException(new Exception(String.format("Major with id = %s was not found.", L)));
-            else majors.add(major.get());
-        }
-        if (!f.getMajors().containsAll(majors))
-            exceptions.addNewException(new Exception("Not all majors belong to this faculty."));
-        return majors;
-    }
-
-    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptions) {
-        Set<Course> prerequisites = new HashSet<>();
-        for(Long L : prerequisiteIds){
-            Optional<Course> pre = courseRepository.findById(L);
-            if(pre.isEmpty())
-                exceptions.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
-            else {
-                try {
-                    this.checkLoop(pre.get());
-                    prerequisites.add(pre.get());
-                }catch (ExceptionList e) {
-                    exceptions.addExceptions(e.getExceptions());
-                }
-            }
-        }
-        return prerequisites;
-    }
-
-    private void checkLoop(Course prerequisite) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
-        Stack<Course> courseStack = new Stack<>();
-        List<Course> courseList = new ArrayList<>();
-        courseStack.push(prerequisite);
-        while(!courseStack.isEmpty()){
-            Course c = courseStack.pop();
-            if(courseList.contains(c))
-                exceptionList.addNewException(new Exception(String.format("%s has made a loop in prerequisites.", c.getTitle())));
-            else{
-                for(Course p : c.getPrerequisites())
-                    courseStack.push(p);
-                courseList.add(c);
-            }
-        }
-        if (exceptionList.hasException())
-            throw exceptionList;
-    }
 
     @GetMapping("/{id}")
     public CourseView one(@PathVariable Long id){
