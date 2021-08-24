@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -251,5 +252,49 @@ public class FriendShipControllerTest {
                 .content("010102")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Student_can_block_other_student() throws Exception{
+        Student student1 = mock(Student.class);
+        Student student2 = mock(Student.class);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        mvc.perform(put("/friends/010101/block")
+                .content("010102")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Student_can_unblock_the_blocked_student() throws Exception{
+        Student student1 = mock(Student.class);
+        Student student2 = mock(Student.class);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        mvc.perform(put("/friends/010101/unblock")
+                .content("010102")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void Student_can_see_her_friends_enrollments() throws Exception{
+        Student student = new Student("000011", "Mehrnaz");
+        Student friend1 = new Student("000012", "Sarina");
+        Student friend2 = new Student("000013", "Hosna");
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        friend1.getFriends().add(student);
+        EnrollmentList enrollmentList1 = new EnrollmentList("Sarina's list", friend1);
+        EnrollmentList enrollmentList2 = new EnrollmentList("Hosna's list", friend2);
+        given(studentRepository.findByStudentNumber(new StudentNumber("000011"))).willReturn(Optional.of(student));
+        given(enrollmentListRepository.findByOwner(friend1)).willReturn(List.of(enrollmentList1));
+        mvc.perform(get("/friends/000011/enrollmentLists")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].enrollmentListName", is(enrollmentList1.getListName())));
     }
 }
