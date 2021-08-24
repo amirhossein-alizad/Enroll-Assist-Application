@@ -149,17 +149,13 @@ public class FriendShipController {
 
     @GetMapping("/{studentNo}/enrollmentLists")
     public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable String studentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
+        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
 
-        List<Student> f = new ArrayList<>();
-        for (Student student : s.getFriends())
-            if (student.getFriends().contains(s))
-                f.add(student);
-
+        List<Student> friends = student.getFriends();
         List<EnrollmentList> lists = new ArrayList<>();
-        for (Student student : f)
-            lists.addAll(enrollmentListRepository.findByOwner(student));
+        for (Student s : friends)
+            lists.addAll(enrollmentListRepository.findByOwner(s));
 
         return lists.stream().map(EnrollmentListView::new).collect(Collectors.toList());
     }
