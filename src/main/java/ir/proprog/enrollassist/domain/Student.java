@@ -175,5 +175,11 @@ public class Student {
             throw new Exception("This student is not your friend.");
     }
 
+    public void unblockFriend(Student other) throws Exception{
+        if (this.blocked.contains(other))
+            this.blocked.remove(other);
+        else
+            throw new Exception("This user is not blocked.");
+    }
 
 }
