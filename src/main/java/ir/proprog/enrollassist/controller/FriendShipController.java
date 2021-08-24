@@ -100,19 +100,20 @@ public class FriendShipController {
 
     @PutMapping("/{studentNo}/accept")
     public void acceptFriendship(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
+        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student f = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
+        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
 
-        s.getPending().remove(f);
-        s.getFriends().add(f);
+        try {
+            student.acceptRequest(friend);
+            friend.addFriend(student);
+        }catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
 
-        f.getRequested().remove(s);
-        f.getFriends().add(s);
-
-        studentRepository.save(s);
-        studentRepository.save(f);
+        studentRepository.save(student);
+        studentRepository.save(friend);
     }
 
     @PutMapping("/{studentNo}/block")

@@ -151,5 +151,19 @@ public class Student {
         return allFriends;
     }
 
+    public void acceptRequest(Student other) throws Exception {
+        if (this.requested.contains(other)) {
+            this.requested.remove(other);
+            this.friends.add(other);
+        }
+        else
+            throw new Exception("This user did not request.");
+
+    }
+
+    public void addFriend(Student other) {
+        this.pending.remove(other);
+        this.friends.add(other);
+    }
 
 }
