@@ -6,11 +6,11 @@ import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -123,7 +123,7 @@ public class SectionController {
         Section section = this.sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         int numberOfConflict = 0;
-        Iterable<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(section.getId());
+        List<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(id);
         for (EnrollmentList e:enrollmentLists) {
             try {
                 if (e.makeExamTimeConflict(section, examTime))
@@ -140,10 +140,10 @@ public class SectionController {
         Section section = this.sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         int numberOfConflict = 0;
-        Iterable<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(section.getId());
-        for (EnrollmentList e:enrollmentLists) {
+        List<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(id);
+        for (EnrollmentList e: enrollmentLists) {
             if (e.makePresentationScheduleConflict(section, schedule))
-                numberOfConflict = numberOfConflict + 1;
+                numberOfConflict = 1 + numberOfConflict;
         }
         return new ConflictView(numberOfConflict);
     }

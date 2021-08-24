@@ -375,9 +375,9 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_with_no_violation_is_created_correctly() throws Exception {
         Student bebe = mock(Student.class);
-        Course ap = new Course("2222222", "AP", 4);
-        Course phys2 = new Course("3333333", "PHYS2", 4);
-        Course da = new Course("4444444", "DA", 4);
+        Course ap = new Course("2222222", "AP", 4).setHasExam(true);
+        Course phys2 = new Course("3333333", "PHYS2", 4).setHasExam(true);
+        Course da = new Course("4444444", "DA", 4).setHasExam(true);
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -395,9 +395,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_zero_when_examTime_set_to_time_that_has_no_conflicts_with_others() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4);
-        Course ds = new Course("7777777", "DS", 4);
-        Course dm = new Course("8888888", "DM", 4);
+        Course da = new Course("6666666", "DA", 4).setHasExam(true);
+        Course ds = new Course("7777777", "DS", 4).setHasExam(true);
+        Course dm = new Course("8888888", "DM", 4).setHasExam(true);
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -411,11 +411,29 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_no_conflicts_with_others_1() throws Exception {
+    void Number_of_new_conflicts_are_not_zero_when_examTime_set_to_time_that_has_conflicts_with_others() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4);
-        Course ds = new Course("7777777", "DS", 4);
-        Course dm = new Course("8888888", "DM", 4);
+        Course da = new Course("6666666", "DA", 4).setHasExam(true);
+        Course ds = new Course("7777777", "DS", 4).setHasExam(true);
+        Course dm = new Course("8888888", "DM", 4).setHasExam(true);
+        PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
+        PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
+        PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
+        Section da_1 = new Section(da, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), Set.of(p1));
+        Section ds_1 = new Section(ds, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"), Set.of(p2));
+        Section dm_1 = new Section(dm, "01", new ExamTime("2021-08-21T11:00", "2021-08-21T13:00"), Set.of(p3));
+        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+        list.addSections(da_1, ds_1, dm_1);
+        assertThat(list.makeExamTimeConflict(da_1, new ExamTime("2021-08-21T13:30", "2021-08-21T16:30")))
+                .isEqualTo(true);
+    }
+
+    @Test
+    void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_conflicts_with_others_1() throws Exception {
+        Student bebe = mock(Student.class);
+        Course da = new Course("6666666", "DA", 4).setHasExam(true);
+        Course ds = new Course("7777777", "DS", 4).setHasExam(true);
+        Course dm = new Course("8888888", "DM", 4).setHasExam(true);
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -430,11 +448,11 @@ public class EnrollmentListTest {
 
 
     @Test
-    void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_no_conflicts_with_others_2() throws Exception {
+    void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_conflicts_with_others_2() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4);
-        Course ds = new Course("7777777", "DS", 4);
-        Course dm = new Course("8888888", "DM", 4);
+        Course da = new Course("6666666", "DA", 4).setHasExam(true);
+        Course ds = new Course("7777777", "DS", 4).setHasExam(true);
+        Course dm = new Course("8888888", "DM", 4).setHasExam(true);
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Monday", "10:00", "11:00");
@@ -443,8 +461,26 @@ public class EnrollmentListTest {
         Section dm_1 = new Section(dm, "01", new ExamTime("2021-08-21T11:00", "2021-08-21T13:00"), Set.of(p3));
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(da_1, ds_1, dm_1);
-        assertThat(list.makePresentationScheduleConflict(da_1, List.of(new PresentationSchedule("Monday", "09:00", "10:30"))))
+        assertThat(list.makePresentationScheduleConflict(da_1, List.of(new PresentationSchedule("Wednesday", "09:00", "11:00"))))
                 .isEqualTo(true);
+    }
+
+    @Test
+    void Number_of_new_conflicts_are_zero_when_Schedule_set_to_time_that_has_no_conflicts_with_others() throws Exception {
+        Student bebe = mock(Student.class);
+        Course da = new Course("6666666", "DA", 4).setHasExam(true);
+        Course ds = new Course("7777777", "DS", 4).setHasExam(true);
+        Course dm = new Course("8888888", "DM", 4).setHasExam(true);
+        PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
+        PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
+        PresentationSchedule p3 = new PresentationSchedule("Monday", "10:00", "11:00");
+        Section da_1 = new Section(da, "01", new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"), Set.of(p1));
+        Section ds_1 = new Section(ds, "01", new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"), Set.of(p2));
+        Section dm_1 = new Section(dm, "01", new ExamTime("2021-08-21T11:00", "2021-08-21T13:00"), Set.of(p3));
+        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+        list.addSections(da_1, ds_1, dm_1);
+        assertThat(list.makePresentationScheduleConflict(da_1, List.of(new PresentationSchedule("Wednesday", "09:00", "10:30"))))
+                .isEqualTo(false);
     }
 }
 

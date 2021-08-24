@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
@@ -18,10 +19,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.anyOf;
@@ -272,5 +270,73 @@ public class SectionControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    public void No_new_conflict_happens_if_new_exam_time_has_no_conflict_with_other() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime newExam = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
+        Course course = mock(Course.class);
+        Section section = new Section(course,"01", exam, Collections.emptySet());
+        EnrollmentList enrollmentList = mock(EnrollmentList.class);
+        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section));
+        given(enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
+        when(enrollmentList.makeExamTimeConflict(section, newExam)).thenReturn(false);
+        JSONObject jsonExam = new JSONObject();
+        jsonExam.put("start", "2021-08-10T09:00");
+        jsonExam.put("end", "2021-08-10T11:00");
+        mvc.perform(MockMvcRequestBuilders.put("/sections/1/getExamTimeConflicts")
+                .content(jsonExam.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numberOfConflict", is(0)));
+    }
+
+    @Test
+    public void New_conflict_happens_if_new_exam_time_has_conflict_with_other() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime newExam = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
+        Course course = mock(Course.class);
+        Section section = new Section(course,"01", exam, Collections.emptySet());
+        EnrollmentList enrollmentList = mock(EnrollmentList.class);
+        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section));
+        given(this.enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
+        when(enrollmentList.makeExamTimeConflict(section, newExam)).thenReturn(true);
+        JSONObject jsonExam = new JSONObject();
+        jsonExam.put("start", "2021-08-10T09:00");
+        jsonExam.put("end", "2021-08-10T11:00");
+        mvc.perform(MockMvcRequestBuilders.put("/sections/1/getExamTimeConflicts")
+                .content(jsonExam.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numberOfConflict", is(1)));
+
+    }
+
+    @Test
+    public void New_conflict_happens_if_new_schedule_time_has_conflict_with_other() throws Exception {
+        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        Course course1 = mock(Course.class);
+        PresentationSchedule s1 = new PresentationSchedule("Monday", "07:30", "09:00");
+        PresentationSchedule s2 = new PresentationSchedule("Monday", "09:00", "11:00");
+        Section section1 = new Section(course1,"01", exam, Set.of(s1));
+        EnrollmentList enrollmentList = mock(EnrollmentList.class);
+
+        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section1));
+        given(this.enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
+        when(enrollmentList.makePresentationScheduleConflict(section1, List.of(s2))).thenReturn(true);
+
+        JSONArray schedule = new JSONArray();
+        JSONObject jsonSchedule = new JSONObject();
+        jsonSchedule.put("startTime", "09:00");
+        jsonSchedule.put("endTime", "11:00");
+        jsonSchedule.put("dayOfWeek", "Monday");
+        schedule.put(jsonSchedule);
+
+        mvc.perform(MockMvcRequestBuilders.put("/sections/1/getScheduleConflicts")
+                .content(schedule.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numberOfConflict", is(1)));
+
+    }
 }
 
