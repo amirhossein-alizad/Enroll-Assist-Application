@@ -70,6 +70,8 @@ public class FriendShipControllerTest {
     public void Friendships_are_removed_correctly() throws Exception {
         Student student1 = new Student("010101", "bob");
         Student student2 = new Student("111111", "bill");
+        student1.addFriend(student2);
+        student2.addFriend(student1);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
         given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
         mvc.perform(delete("/friends/010101")
