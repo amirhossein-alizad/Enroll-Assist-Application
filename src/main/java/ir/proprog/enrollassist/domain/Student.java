@@ -166,4 +166,14 @@ public class Student {
         this.friends.add(other);
     }
 
+    public void blockFriend(Student other) throws Exception {
+        if (this.friends.contains(other)) {
+            this.friends.remove(other);
+            this.blocked.add(other);
+        }
+        else
+            throw new Exception("This student is not your friend.");
+    }
+
+
 }
