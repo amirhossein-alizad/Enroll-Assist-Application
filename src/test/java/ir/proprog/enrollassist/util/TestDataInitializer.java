@@ -1,20 +1,27 @@
 package ir.proprog.enrollassist.util;
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.*;
-import lombok.AllArgsConstructor;
+import ir.proprog.enrollassist.repository.CourseRepository;
+import ir.proprog.enrollassist.repository.EnrollmentListRepository;
+import ir.proprog.enrollassist.repository.SectionRepository;
+import ir.proprog.enrollassist.repository.StudentRepository;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@AllArgsConstructor
 @Component
 public class TestDataInitializer {
     StudentRepository studentRepository;
     CourseRepository courseRepository;
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
-    MajorRepository majorRepository;
+
+    public TestDataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
+        this.studentRepository = studentRepository;
+        this.courseRepository = courseRepository;
+        this.sectionRepository = sectionRepository;
+        this.enrollmentListRepository = enrollmentListRepository;
+    }
 
     public void populate() throws Exception{
         Course math1 = new Course("4444444", "MATH1", 3);
@@ -31,12 +38,6 @@ public class TestDataInitializer {
         Course akhlagh = new Course("1122111", "AKHLAGH", 2);
         Course karafarini = new Course("1313131", "KAR", 3);
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
-
-        Major ce = new Major("8101", "CE");
-        Major ee = new Major("1101", "EE");
-        ce.addCourse(ap, dm);
-        ee.addCourse(math1, phys1);
-        majorRepository.saveAll(List.of(ce, ee));
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")
                 .setGrade("13981", math1, 10)

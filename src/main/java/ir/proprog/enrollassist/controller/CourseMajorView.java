@@ -13,7 +13,7 @@ public class CourseMajorView {
     private CourseNumber courseNumber;
     private String courseTitle;
     private int courseCredits;
-    private final Set<Long> prerequisites = new HashSet<>();
+    private Set<Long> prerequisites = new HashSet<>();
     private Set<Long> majors = new HashSet<>();
 
     public CourseMajorView() {
@@ -27,6 +27,7 @@ public class CourseMajorView {
         if(!course.getPrerequisites().isEmpty())
             for(Course c : course.getPrerequisites())
                 prerequisites.add(c.getId());
+        this.prerequisites = prerequisites;
         this.majors = majors;
     }
 }

@@ -19,19 +19,7 @@ import java.util.Optional;
 @SpringBootTest
 public class SectionRepositoryTest {
     @Autowired
-    private TestDataInitializer testDataInitializer;
-    @Autowired
     private SectionRepository sectionRepository;
-
-    @BeforeEach
-    public void populate() throws Exception {
-        testDataInitializer.populate();
-    }
-
-    @AfterEach
-    public void cleanUp() {
-        testDataInitializer.deleteAll();
-    }
 
     @Test
     public void Unreal_section_not_found() {

@@ -22,33 +22,42 @@ public class AddCourseService {
         ExceptionList exceptionList = new ExceptionList();
         if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
+
         Course course = null;
-        Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
+        Set<Course> prerequisites = new HashSet<>();
+        try {
+            prerequisites = this.validatePrerequisites(input.getPrerequisites());
+        } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
+
         try {
             course = new Course(input.getCourseNumber().getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
             course.setPrerequisites(prerequisites);
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
+
         if (exceptionList.hasException())
             throw exceptionList;
 
         return course;
     }
 
-    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptions) {
+    private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
         for(Long L : prerequisiteIds){
             Optional<Course> pre = courseRepository.findById(L);
             if(pre.isEmpty())
-                exceptions.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
+                exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
             else {
                 try {
                     this.checkLoop(pre.get());
                     prerequisites.add(pre.get());
                 }catch (ExceptionList e) {
-                    exceptions.addExceptions(e.getExceptions());
+                    exceptionList.addExceptions(e.getExceptions());
                 }
             }
         }
+        if (exceptionList.hasException())
+            throw exceptionList;
         return prerequisites;
     }
 
