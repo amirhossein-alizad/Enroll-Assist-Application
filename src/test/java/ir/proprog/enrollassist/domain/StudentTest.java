@@ -250,4 +250,72 @@ public class StudentTest {
         assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
     }
 
+    @Test
+    void Student_can_block_her_friend() {
+        Student student = new Student("143960", "sara");
+        Student friend = new Student("123960", "sarina");
+        student.addFriend(friend);
+        String error = "";
+        try {
+            student.blockFriend(friend);
+        } catch (Exception exception) {
+            error = exception.getMessage();
+        }
+        assertEquals(error, "");
+    }
+
+
+    @Test
+    void Student_cant_block_other_student_who_is_not_her_friend() {
+        Student student = new Student("143960", "sara");
+        Student friend = new Student("123960", "sarina");
+        String error = "";
+        try {
+            student.blockFriend(friend);
+        } catch (Exception exception) {
+            error = exception.getMessage();
+        }
+        assertEquals(error, "This student is not your friend.");
+    }
+
+    @Test
+    void Student_can_unblock_the_blocked_student() {
+        Student student = new Student("143960", "sara");
+        Student friend = new Student("123960", "sarina");
+        student.getBlocked().add(friend);
+        String error = "";
+        try {
+            student.unblockFriend(friend);
+        } catch (Exception exception) {
+            error = exception.getMessage();
+        }
+        assertEquals(error, "");
+    }
+
+    @Test
+    void Student_cant_unblocked_the_student_who_is_not_blocked() {
+        Student student = new Student("143960", "sara");
+        Student friend = new Student("123960", "sarina");
+        String error = "";
+        try {
+            student.unblockFriend(friend);
+        } catch (Exception exception) {
+            error = exception.getMessage();
+        }
+        assertEquals(error, "This user is not blocked.");
+    }
+
+    @Test
+    void Students_friends_who_dont_block_student_return_correctly() {
+        Student student = new Student("143960", "sara");
+        Student friend1 = new Student("143961", "sarina");
+        Student friend2 = new Student("143962", "saber");
+        student.getFriends().add(friend1);
+        student.getFriends().add(friend2);
+        friend1.getFriends().add(student);
+        friend2.getBlocked().add(student);
+        List<Student> friends = student.getFriendsWhoDoesntBlock();
+        assertEquals(friends.size(), 1);
+        assertEquals(friends.get(0), friend1);
+    }
 }
