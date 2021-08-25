@@ -81,11 +81,6 @@
             <version>2.8.5</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>ir.proprog</groupId>
-            <artifactId>enroll-assist</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>
