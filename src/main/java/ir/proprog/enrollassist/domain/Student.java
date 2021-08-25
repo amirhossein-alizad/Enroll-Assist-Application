@@ -124,7 +124,7 @@ public class Student {
 
     public void receiveFriendshipRequest(Student other) throws Exception {
         if(this.blocked.contains(other))
-            throw new Exception("You have blocked this user.");
+            throw new Exception("You have been blocked by this user.");
 
         this.requested.add(other);
     }

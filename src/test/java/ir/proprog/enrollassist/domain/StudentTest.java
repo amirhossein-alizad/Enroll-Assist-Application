@@ -328,4 +328,20 @@ public class StudentTest {
         assertThat(bebe.getAllFriends()).hasSize(initSize + 1);
     }
 
+    @Test
+    void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+
+        friend.getBlocked().add(bebe);
+
+        try {
+            friend.receiveFriendshipRequest(bebe);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You have been blocked by this user.");
+    }
+
 }
