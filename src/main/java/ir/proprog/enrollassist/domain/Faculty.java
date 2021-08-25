@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.domain;
 
-import com.sun.istack.NotNull;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -43,5 +42,10 @@ public class Faculty {
 
     public void addMajor(Major ... major){
         this.majors.addAll(Arrays.asList(major));
+    }
+
+    public void changeMajor(Major major) {
+        this.majors.remove(major);
+        this.majors.add(major);
     }
 }

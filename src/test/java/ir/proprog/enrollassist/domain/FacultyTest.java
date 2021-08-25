@@ -3,8 +3,12 @@ package ir.proprog.enrollassist.domain;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FacultyTest {
     @Test
@@ -41,5 +45,24 @@ public class FacultyTest {
                     .containsExactlyInAnyOrder(major1, major2, major3);
         } catch (ExceptionList ignored) {
         }
+    }
+
+    @Test
+    public void Majors_changed_correctly() throws ExceptionList {
+        Major major1 = new Major("major1", "8101");
+
+        Faculty faculty = new Faculty("faculty");
+        faculty.addMajor(major1);
+
+        Major copyMajor1 = new Major("major1", "8101");
+        copyMajor1.addCourse(new Course("1122111", "DS", 3));
+
+        faculty.changeMajor(copyMajor1);
+
+        Set<Major> majors = faculty.getMajors();
+        assertEquals(majors.size(), 1);
+        assertTrue(majors.contains(major1));
+        for (Major m:majors)
+            assertEquals(m.getCourses().size(), 1);
     }
 }

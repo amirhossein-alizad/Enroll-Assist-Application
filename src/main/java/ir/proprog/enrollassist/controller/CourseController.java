@@ -50,8 +50,10 @@ public class CourseController {
             this.courseRepository.save(course);
             for (Major major: majors) {
                 major.addCourse(course);
+                faculty.changeMajor(major);
                 this.majorRepository.save(major);
             }
+            this.facultyRepository.save(faculty);
         }catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
 
         if (exceptionList.hasException())

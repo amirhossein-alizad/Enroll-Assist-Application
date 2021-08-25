@@ -230,7 +230,7 @@ public class StudentTest {
         Student bebe = new Student("810197000", "bebe");
         try {
             Course math1 = new Course("1111111", "MATH1", 3);
-            Student student = bebe.setGrade("13962", math1, 19.1);
+            bebe.setGrade("13962", math1, 19.1);
         }catch (ExceptionList e) {
             error = e.toString();
         }
@@ -243,7 +243,7 @@ public class StudentTest {
         Student bebe = new Student("810197000", "bebe");
         try {
             Course math1 = new Course("1111111", "MATH1", 3);
-            Student student = bebe.setGrade("13960", math1, 19.1);
+            bebe.setGrade("13960", math1, 19.1);
         }catch (ExceptionList e) {
             error = e.toString();
         }
