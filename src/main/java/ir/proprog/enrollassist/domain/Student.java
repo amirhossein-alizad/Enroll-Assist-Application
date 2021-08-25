@@ -137,7 +137,7 @@ public class Student {
         else if (this.friends.contains(other))
             this.friends.remove(other);
         else if (this.blocked.contains(other))
-            this.friends.remove(other);
+            this.blocked.remove(other);
         else
             throw new Exception("There is no relation between these students.");
     }

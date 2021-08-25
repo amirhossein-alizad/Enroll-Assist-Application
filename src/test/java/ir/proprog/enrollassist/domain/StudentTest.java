@@ -321,11 +321,10 @@ public class StudentTest {
         bebe.getFriends().add(friend1);
         bebe.getFriends().add(friend2);
         bebe.getRequested().add(friend3);
-        int initSize = bebe.getAllFriends().size();
 
         bebe.sendFriendshipRequest(friend4);
 
-        assertThat(bebe.getAllFriends()).hasSize(initSize + 1);
+        assertThat(bebe.getAllFriends()).hasSize(4);
     }
 
     @Test
@@ -333,7 +332,6 @@ public class StudentTest {
         String error = "";
         Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
-
         friend.getBlocked().add(bebe);
 
         try {
@@ -342,6 +340,51 @@ public class StudentTest {
             error = e.getMessage();
         }
         assertEquals(error, "You have been blocked by this user.");
+    }
+
+    @Test
+    void Friendships_are_removed_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "kent");
+        Student friend4 = new Student("810197004", "nile");
+        bebe.getFriends().add(friend1);
+        bebe.getRequested().add(friend2);
+        bebe.getBlocked().add(friend3);
+        bebe.getPending().add(friend4);
+        bebe.removeFriend(friend1);
+        bebe.removeFriend(friend2);
+        bebe.removeFriend(friend3);
+        assertThat(bebe.getAllFriends()).hasSize(1);
+    }
+
+    @Test
+    void Friendships_cannot_be_removed_without_any_relation() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+
+        try {
+            friend.removeFriend(bebe);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "There is no relation between these students.");
+    }
+
+    @Test
+    void All_friends_are_returned_correctly() {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "kent");
+        Student friend4 = new Student("810197004", "nile");
+        bebe.getFriends().add(friend1);
+        bebe.getRequested().add(friend2);
+        bebe.getBlocked().add(friend3);
+        bebe.getPending().add(friend4);
+        assertThat(bebe.getAllFriends()).hasSize(4);
     }
 
 }
