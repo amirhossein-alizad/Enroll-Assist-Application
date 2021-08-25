@@ -124,12 +124,10 @@ public class FriendShipController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
 
         try {
-            student.blockFriend(friend);
+            studentRepository.save(student.blockFriend(friend));
         }catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
         }
-
-        studentRepository.save(student);
     }
 
     @PutMapping("/{studentNo}/unblock")
@@ -140,11 +138,10 @@ public class FriendShipController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
 
         try {
-            student.unblockFriend(friend);
+            studentRepository.save(student.unblockFriend(friend));
         }catch (Exception exception) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
         }
-        studentRepository.save(student);
     }
 
     @GetMapping("/{studentNo}/enrollmentLists")
@@ -152,7 +149,7 @@ public class FriendShipController {
         Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
 
-        List<Student> friends = student.getFriends();
+        List<Student> friends = student.getFriendsWhoDoesntBlock();
         List<EnrollmentList> lists = new ArrayList<>();
         for (Student s : friends)
             lists.addAll(enrollmentListRepository.findByOwner(s));

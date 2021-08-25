@@ -262,10 +262,25 @@ public class FriendShipControllerTest {
         Student student2 = mock(Student.class);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        when(student1.blockFriend(student2)).thenReturn(student1);
         mvc.perform(put("/friends/010101/block")
                 .content("010102")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+
+    @Test
+    public void Student_cant_block_other_student_who_is_not_her_friend() throws Exception{
+        Student student1 = mock(Student.class);
+        Student student2 = mock(Student.class);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        when(student1.blockFriend(student2)).thenThrow(new Exception("This student is not your friend."));
+        mvc.perform(put("/friends/010101/block")
+                .content("010102")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -274,24 +289,33 @@ public class FriendShipControllerTest {
         Student student2 = mock(Student.class);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        when(student1.unblockFriend(student2)).thenReturn(student1);
         mvc.perform(put("/friends/010101/unblock")
                 .content("010102")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void Student_cant_unblock_the_student_who_is_not_blocked() throws Exception{
+        Student student1 = mock(Student.class);
+        Student student2 = mock(Student.class);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
+        when(student1.unblockFriend(student2)).thenThrow(new Exception("This user is not blocked."));
+        mvc.perform(put("/friends/010101/unblock")
+                .content("010102")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 
     @Test
     public void Student_can_see_her_friends_enrollments() throws Exception{
-        Student student = new Student("000011", "Mehrnaz");
+        Student student = mock(Student.class);
         Student friend1 = new Student("000012", "Sarina");
-        Student friend2 = new Student("000013", "Hosna");
-        student.getFriends().add(friend1);
-        student.getFriends().add(friend2);
-        friend1.getFriends().add(student);
         EnrollmentList enrollmentList1 = new EnrollmentList("Sarina's list", friend1);
-        EnrollmentList enrollmentList2 = new EnrollmentList("Hosna's list", friend2);
         given(studentRepository.findByStudentNumber(new StudentNumber("000011"))).willReturn(Optional.of(student));
+        when(student.getFriendsWhoDoesntBlock()).thenReturn(List.of(friend1));
         given(enrollmentListRepository.findByOwner(friend1)).willReturn(List.of(enrollmentList1));
         mvc.perform(get("/friends/000011/enrollmentLists")
                 .contentType(MediaType.APPLICATION_JSON))

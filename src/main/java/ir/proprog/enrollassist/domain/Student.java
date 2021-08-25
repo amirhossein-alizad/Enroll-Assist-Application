@@ -166,20 +166,31 @@ public class Student {
         this.friends.add(other);
     }
 
-    public void blockFriend(Student other) throws Exception {
+    public Student blockFriend(Student other) throws Exception {
         if (this.friends.contains(other)) {
             this.friends.remove(other);
             this.blocked.add(other);
+            return this;
         }
         else
             throw new Exception("This student is not your friend.");
     }
 
-    public void unblockFriend(Student other) throws Exception{
-        if (this.blocked.contains(other))
+    public Student unblockFriend(Student other) throws Exception{
+        if (this.blocked.contains(other)) {
             this.blocked.remove(other);
+            return this;
+        }
         else
             throw new Exception("This user is not blocked.");
+    }
+
+    public List<Student> getFriendsWhoDoesntBlock() {
+        List<Student> friendStudents = new ArrayList<>();
+        for (Student s: this.friends)
+            if (s.friends.contains(this))
+                friendStudents.add(s);
+        return friendStudents;
     }
 
 }
