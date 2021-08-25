@@ -157,7 +157,7 @@ public class Student {
             this.friends.add(other);
         }
         else
-            throw new Exception("This user did not request.");
+            throw new Exception("This user did not request to be your friend.");
 
     }
 

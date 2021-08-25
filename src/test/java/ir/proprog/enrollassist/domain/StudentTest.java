@@ -387,4 +387,28 @@ public class StudentTest {
         assertThat(bebe.getAllFriends()).hasSize(4);
     }
 
+    @Test
+    void Student_are_accepted_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getRequested().add(friend);
+        bebe.acceptRequest(friend);
+        assertThat(bebe.getFriends()).hasSize(1);
+    }
+
+    @Test
+    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getBlocked().add(friend);
+
+        try {
+            bebe.acceptRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user did not request to be your friend.");
+    }
+
 }
