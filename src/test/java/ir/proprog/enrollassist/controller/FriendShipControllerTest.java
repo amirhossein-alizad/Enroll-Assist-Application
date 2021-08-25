@@ -47,6 +47,20 @@ public class FriendShipControllerTest {
     }
 
     @Test
+    public void Invalid_friendship_requests_are_returned_with_correct_errors() throws Exception{
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        student1.getFriends().add(student2);
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(put("/friends/010101")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "This user is already your friend."));
+    }
+
+    @Test
     public void Friendship_requests_cannot_be_sent_if_requested_student_does_not_exist() throws Exception{
         Student student1 = new Student("010101", "bob");
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
@@ -78,6 +92,19 @@ public class FriendShipControllerTest {
                 .content("111111")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    public void Friendships_cannot_be_removed_if_requested_student_is_not_a_friend() throws Exception {
+        Student student1 = new Student("010101", "bob");
+        Student student2 = new Student("111111", "bill");
+        given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student1));
+        given(studentRepository.findByStudentNumber(new StudentNumber("111111"))).willReturn(java.util.Optional.of(student2));
+        mvc.perform(delete("/friends/010101")
+                .content("111111")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "There is no relation between these students."));
     }
 
     @Test
@@ -245,15 +272,16 @@ public class FriendShipControllerTest {
     }
 
     @Test
-    public void Student_can_add_other_student_to_his_friends_list_without_request____its_incorrect() throws Exception{
-        Student student1 = mock(Student.class);
-        Student student2 = mock(Student.class);
+    public void Student_cannot_add_other_student_to_his_friends_list_without_request() throws Exception{
+        Student student1 = new Student("010101", "reza");
+        Student student2 = new Student("010102", "ali");
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010102"))).willReturn(Optional.of(student2));
         mvc.perform(put("/friends/010101/accept")
                 .content("010102")
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isBadRequest())
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "This user did not request to be your friend."));
     }
 
     @Test
