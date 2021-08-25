@@ -62,7 +62,7 @@ public class CourseControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
+                .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[1].courseTitle", is("C2")))
                 .andExpect(jsonPath("$[2].courseCredits", is(4)));
     }
@@ -73,7 +73,7 @@ public class CourseControllerTest {
         mvc.perform(get("/courses/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseNumber", is("1111111")))
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(0)));
@@ -85,7 +85,7 @@ public class CourseControllerTest {
         mvc.perform(get("/courses/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.courseNumber", is("2222222")))
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("2222222")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseTitle", is("C2")))
                 .andExpect(jsonPath("$.prerequisites", hasSize(1)));
@@ -105,10 +105,11 @@ public class CourseControllerTest {
         Faculty f1 = mock(Faculty.class);
 
         JSONObject request = new JSONObject();
-
+        JSONObject courseN = new JSONObject();
+        courseN.put("courseNumber", "1412121");
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber", "1412121");
+        request.put("courseNumber", courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("prerequisites", jArray);
@@ -136,7 +137,7 @@ public class CourseControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
-                .andExpect(jsonPath("$.courseNumber", is("1412121")));
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("1412121")));
     }
 
 
@@ -185,15 +186,17 @@ public class CourseControllerTest {
         JSONArray majors = new JSONArray();
         majors.put(10);
 
+        JSONObject courseN = new JSONObject();
+        courseN.put("courseNumber", "1412121");
 
-        request.put("courseNumber","1412121");
+        request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("majors", majors);
 
         Course course = new Course("1412121", "C5", 4);
 
-        given(courseRepository.findCourseByCourseNumber("1412121")).willReturn(Optional.of(course));
+        given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(course));
 
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
         given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
@@ -214,13 +217,15 @@ public class CourseControllerTest {
         Major m1 = mock(Major.class);
         Faculty f1 = mock(Faculty.class);
 
+        JSONObject courseN = new JSONObject();
+        courseN.put("courseNumber", "1412121");
         JSONObject request = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","1412121");
+        request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("prerequisites", jArray);
@@ -245,13 +250,15 @@ public class CourseControllerTest {
         Major m1 = mock(Major.class);
         Faculty f1 = mock(Faculty.class);
 
+        JSONObject courseN = new JSONObject();
+        courseN.put("courseNumber", "");
         JSONObject request = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        request.put("courseNumber","");
+        request.put("courseNumber",courseN);
         request.put("courseCredits", -1);
         request.put("courseTitle", "");
         request.put("prerequisites", jArray);

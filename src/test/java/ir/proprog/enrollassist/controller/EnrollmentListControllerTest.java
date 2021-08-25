@@ -156,7 +156,7 @@ public class EnrollmentListControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
-                .andExpect(jsonPath("$[0].courseNumber", is("1111111")))
+                .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[0].courseTitle", is("ap")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)));
     }

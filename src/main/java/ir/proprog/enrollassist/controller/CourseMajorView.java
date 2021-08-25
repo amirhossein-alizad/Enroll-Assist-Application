@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.CourseNumber;
 import lombok.Getter;
 
 import java.util.HashSet;
@@ -9,7 +10,7 @@ import java.util.Set;
 @Getter
 public class CourseMajorView {
     private Long courseId;
-    private String courseNumber;
+    private CourseNumber courseNumber;
     private String courseTitle;
     private int courseCredits;
     private final Set<Long> prerequisites = new HashSet<>();

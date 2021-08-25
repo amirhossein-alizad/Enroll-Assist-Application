@@ -25,7 +25,7 @@ public class AddCourseService {
         Course course = null;
         Set<Course> prerequisites = this.validatePrerequisites(input.getPrerequisites(), exceptionList);
         try {
-            course = new Course(input.getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
+            course = new Course(input.getCourseNumber().getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
             course.setPrerequisites(prerequisites);
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
         if (exceptionList.hasException())

@@ -1,13 +1,14 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.CourseNumber;
 import lombok.Getter;
 import java.util.*;
 
 @Getter
 public class CourseView {
     private Long courseId;
-    private String courseNumber;
+    private CourseNumber courseNumber;
     private String courseTitle;
     private int courseCredits;
     private Set<Long> prerequisites = new HashSet<>();

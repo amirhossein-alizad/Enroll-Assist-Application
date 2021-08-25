@@ -130,11 +130,11 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
-                .andExpect(jsonPath("$[0].courseNumber", is("4666644")))
+                .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("4666644")))
                 .andExpect(jsonPath("$[0].courseTitle", is("MATH2")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)))
                 .andExpect(jsonPath("$[1].sectionNo", is("02")))
-                .andExpect(jsonPath("$[1].courseNumber", is("4666644")))
+                .andExpect(jsonPath("$[1].courseNumber.courseNumber", is("4666644")))
                 .andExpect(jsonPath("$[1].courseTitle", is("MATH2")))
                 .andExpect(jsonPath("$[1].courseCredits", is(3)));
 

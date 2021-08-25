@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.domain.CourseNumber;
 import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.PresentationSchedule;
 import ir.proprog.enrollassist.domain.Section;
@@ -14,7 +15,7 @@ public class SectionView {
     private String sectionNo;
     private ExamTime examTime;
     private Long courseId;
-    private String courseNumber;
+    private CourseNumber courseNumber;
     private String courseTitle;
     private int courseCredits;
     Set<PresentationSchedule> schedule = new HashSet<>();

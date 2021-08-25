@@ -45,8 +45,6 @@ public class Course {
 
     public int getCredits() { return credits.getCredit(); }
 
-    public String getCourseNumber() { return courseNumber.getCourseNumber(); }
-
     public Course withPre(Course... pres) {
         prerequisites.addAll(Arrays.asList(pres));
         return this;

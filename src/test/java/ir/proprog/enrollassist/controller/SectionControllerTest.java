@@ -58,7 +58,7 @@ public class SectionControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(sections.size())))
                 .andExpect(jsonPath("$[0].courseTitle", anyOf(is("C1"), is("C2"))))
-                .andExpect(jsonPath("$[0].courseNumber", anyOf(is("1111111"), is("2"))))
+                .andExpect(jsonPath("$[0].courseNumber.courseNumber", anyOf(is("1111111"), is("2"))))
                 .andExpect(jsonPath("$[0].sectionNo", anyOf(is("01"), is("02"))));
     }
 
@@ -71,7 +71,7 @@ public class SectionControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("ap")))
-                .andExpect(jsonPath("$.courseNumber", is("1111111")))
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
 
     }
@@ -126,7 +126,7 @@ public class SectionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
-                .andExpect(jsonPath("$.courseNumber", is("1111111")))
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")));
     }
 
@@ -145,7 +145,7 @@ public class SectionControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
-                .andExpect(jsonPath("$.courseNumber", is("1111111")))
+                .andExpect(jsonPath("$.courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.sectionNo", is("01")))
                 .andReturn();
 
