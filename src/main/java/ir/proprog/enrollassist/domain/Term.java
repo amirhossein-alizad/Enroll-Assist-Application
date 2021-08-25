@@ -1,14 +1,16 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.Getter;
+import lombok.Value;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
 @Embeddable
-final public class Term {
-    final private String termCode;
+@Value
+public class Term {
+    String termCode;
 
     public Term() {
         this.termCode = "00001";

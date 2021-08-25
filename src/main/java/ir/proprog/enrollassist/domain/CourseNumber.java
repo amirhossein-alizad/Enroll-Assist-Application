@@ -1,14 +1,16 @@
 package ir.proprog.enrollassist.domain;
 
 import lombok.Getter;
+import lombok.Value;
 
 import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Getter
 @Embeddable
-final public class CourseNumber {
-    final private String courseNumber;
+@Value
+public class CourseNumber {
+    String courseNumber;
 
     public CourseNumber() {
         this.courseNumber = "0000000";

@@ -5,6 +5,7 @@ import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +17,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
     private FacultyRepository facultyRepository;
     private MajorRepository majorRepository;
-
-    public CourseController(CourseRepository courseRepository, FacultyRepository facultyRepository, MajorRepository majorRepository) {
-        this.courseRepository = courseRepository;
-        this.facultyRepository = facultyRepository;
-        this.majorRepository = majorRepository;
-    }
 
     @GetMapping
     public Iterable<CourseView> all() {
@@ -38,15 +34,10 @@ public class CourseController {
         Faculty faculty = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
 
-        ExceptionList exceptionList = new ExceptionList();
         AddCourseService addCourseService = new AddCourseService(courseRepository, majorRepository);
-        Set<Major> majors = new HashSet<>();
         try {
-            majors = addCourseService.getMajors(input.getMajors(), faculty);
-        }catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
-        Course course = null;
-        try {
-            course = addCourseService.addCourse(input);
+            Set<Major> majors = addCourseService.getMajors(input.getMajors(), faculty);
+            Course course = addCourseService.addCourse(input);
             this.courseRepository.save(course);
             for (Major major: majors) {
                 major.addCourse(course);
@@ -54,11 +45,10 @@ public class CourseController {
                 this.majorRepository.save(major);
             }
             this.facultyRepository.save(faculty);
-        }catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
-
-        if (exceptionList.hasException())
+            return new CourseView(course);
+        }catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        return new CourseView(course);
+        }
     }
 
 
