@@ -328,6 +328,20 @@ public class StudentTest {
     }
 
     @Test
+    void Student_cannot_send_request_to_herself() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197000", "lily");
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You cannot send friendship request to yourself.");
+    }
+
+    @Test
     void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() {
         String error = "";
         Student bebe = new Student("810197000", "bebe");

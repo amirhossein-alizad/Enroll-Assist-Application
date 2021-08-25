@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/friends")
 @AllArgsConstructor
-public class FriendShipController {
+public class FriendshipController {
     private StudentRepository studentRepository;
     private EnrollmentListRepository enrollmentListRepository;
 

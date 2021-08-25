@@ -118,6 +118,8 @@ public class Student {
             throw new Exception("This user requested first.");
         else if(this.blocked.contains(other))
             throw new Exception("You have blocked this user.");
+        else if (this.equals(other))
+            throw new Exception("You cannot send friendship request to yourself.");
 
         this.pending.add(other);
     }

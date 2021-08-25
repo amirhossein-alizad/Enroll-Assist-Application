@@ -25,8 +25,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(FriendShipController.class)
-public class FriendShipControllerTest {
+@WebMvcTest(FriendshipController.class)
+public class FriendshipControllerTest {
     @MockBean
     private StudentRepository studentRepository;
     @MockBean
