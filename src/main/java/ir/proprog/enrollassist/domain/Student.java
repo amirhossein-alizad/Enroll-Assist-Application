@@ -118,13 +118,15 @@ public class Student {
             throw new Exception("This user requested first.");
         else if(this.blocked.contains(other))
             throw new Exception("You have blocked this user.");
+        else if (this.equals(other))
+            throw new Exception("You cannot send friendship request to yourself.");
 
         this.pending.add(other);
     }
 
     public void receiveFriendshipRequest(Student other) throws Exception {
         if(this.blocked.contains(other))
-            throw new Exception("You have blocked this user.");
+            throw new Exception("You have been blocked by this user.");
 
         this.requested.add(other);
     }
@@ -137,7 +139,7 @@ public class Student {
         else if (this.friends.contains(other))
             this.friends.remove(other);
         else if (this.blocked.contains(other))
-            this.friends.remove(other);
+            this.blocked.remove(other);
         else
             throw new Exception("There is no relation between these students.");
     }
@@ -157,7 +159,7 @@ public class Student {
             this.friends.add(other);
         }
         else
-            throw new Exception("This user did not request.");
+            throw new Exception("This user did not request to be your friend.");
 
     }
 

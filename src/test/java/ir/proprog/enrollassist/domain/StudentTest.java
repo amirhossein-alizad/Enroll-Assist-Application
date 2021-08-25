@@ -318,4 +318,179 @@ public class StudentTest {
         assertEquals(friends.size(), 1);
         assertEquals(friends.get(0), friend1);
     }
+    @Test
+    void Students_cannot_send_friendship_request_to_their_friends() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getFriends().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user is already your friend.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getRequested().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You requested to this user before.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_pending_students() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getPending().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user requested first.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_blocked_students() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getBlocked().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You have blocked this user.");
+    }
+
+    @Test
+    void Student_can_send_friendship_request_to_others_if_they_are_not_found_in_any_of_her_lists() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "noel");
+        Student friend4 = new Student("810197004", "jack");
+
+        bebe.getFriends().add(friend1);
+        bebe.getFriends().add(friend2);
+        bebe.getRequested().add(friend3);
+
+        bebe.sendFriendshipRequest(friend4);
+
+        assertThat(bebe.getAllFriends()).hasSize(4);
+    }
+
+    @Test
+    void Student_cannot_send_request_to_herself() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197000", "lily");
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You cannot send friendship request to yourself.");
+    }
+
+    @Test
+    void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        friend.getBlocked().add(bebe);
+
+        try {
+            friend.receiveFriendshipRequest(bebe);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You have been blocked by this user.");
+    }
+
+    @Test
+    void Friendships_are_removed_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "kent");
+        Student friend4 = new Student("810197004", "nile");
+        bebe.getFriends().add(friend1);
+        bebe.getRequested().add(friend2);
+        bebe.getBlocked().add(friend3);
+        bebe.getPending().add(friend4);
+        bebe.removeFriend(friend1);
+        bebe.removeFriend(friend2);
+        bebe.removeFriend(friend3);
+        assertThat(bebe.getAllFriends()).hasSize(1);
+    }
+
+    @Test
+    void Friendships_cannot_be_removed_without_any_relation() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+
+        try {
+            friend.removeFriend(bebe);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "There is no relation between these students.");
+    }
+
+    @Test
+    void All_friends_are_returned_correctly() {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "kent");
+        Student friend4 = new Student("810197004", "nile");
+        bebe.getFriends().add(friend1);
+        bebe.getRequested().add(friend2);
+        bebe.getBlocked().add(friend3);
+        bebe.getPending().add(friend4);
+        assertThat(bebe.getAllFriends()).hasSize(4);
+    }
+
+    @Test
+    void Student_are_accepted_correctly() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getRequested().add(friend);
+        bebe.acceptRequest(friend);
+        assertThat(bebe.getFriends()).hasSize(1);
+    }
+
+    @Test
+    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getBlocked().add(friend);
+
+        try {
+            bebe.acceptRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user did not request to be your friend.");
+    }
+
 }
