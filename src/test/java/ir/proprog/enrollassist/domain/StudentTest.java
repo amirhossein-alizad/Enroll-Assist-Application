@@ -250,4 +250,82 @@ public class StudentTest {
         assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
     }
 
+    @Test
+    void Students_cannot_send_friendship_request_to_their_friends() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getFriends().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user is already your friend.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getRequested().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You requested to this user before.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_pending_students() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getPending().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "This user requested first.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_blocked_students() {
+        String error = "";
+        Student bebe = new Student("810197000", "bebe");
+        Student friend = new Student("810197001", "pete");
+        bebe.getBlocked().add(friend);
+
+        try {
+            bebe.sendFriendshipRequest(friend);
+        } catch (Exception e) {
+            error = e.getMessage();
+        }
+        assertEquals(error, "You have blocked this user.");
+    }
+
+    @Test
+    void Student_can_send_friendship_request_to_others_if_they_are_not_found_in_any_of_her_lists() throws Exception {
+        Student bebe = new Student("810197000", "bebe");
+        Student friend1 = new Student("810197001", "pete");
+        Student friend2 = new Student("810197002", "mike");
+        Student friend3 = new Student("810197003", "noel");
+        Student friend4 = new Student("810197004", "jack");
+
+        bebe.getFriends().add(friend1);
+        bebe.getFriends().add(friend2);
+        bebe.getRequested().add(friend3);
+        int initSize = bebe.getAllFriends().size();
+
+        bebe.sendFriendshipRequest(friend4);
+
+        assertThat(bebe.getAllFriends()).hasSize(initSize + 1);
+    }
+
 }
