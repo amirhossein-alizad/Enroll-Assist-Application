@@ -3,6 +3,7 @@ package ir.proprog.enrollassist.domain;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.CourseMajorView;
 import ir.proprog.enrollassist.repository.CourseRepository;
+import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,8 @@ public class AddCourseServiceTest {
     private CourseRepository courseRepository;
     @MockBean
     private MajorRepository majorRepository;
+    @MockBean
+    private FacultyRepository facultyRepository;
 
     @BeforeEach
     public void setUp() throws ExceptionList {
@@ -36,7 +39,7 @@ public class AddCourseServiceTest {
         given(majorRepository.findById(67L)).willReturn(Optional.of(ee));
         faculty = new Faculty("ece");
         faculty.addMajor(ce);
-        this.addCourseService = new AddCourseService(courseRepository, majorRepository);
+        this.addCourseService = new AddCourseService(courseRepository, majorRepository, facultyRepository);
     }
 
 
@@ -46,7 +49,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Collections.emptySet(), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView);
+            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
             assertEquals(newCourse, course);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
@@ -60,7 +63,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(21L), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView);
+            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }

@@ -3,32 +3,36 @@ package ir.proprog.enrollassist.domain;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.CourseMajorView;
 import ir.proprog.enrollassist.repository.CourseRepository;
+import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@AllArgsConstructor
 public class AddCourseService {
     private CourseRepository courseRepository;
     private MajorRepository majorRepository;
+    private FacultyRepository facultyRepository;
 
-    public AddCourseService(CourseRepository courseRepository, MajorRepository majorRepository) {
-        this.courseRepository = courseRepository;
-        this.majorRepository = majorRepository;
-    }
 
-    public Course addCourse(CourseMajorView input) throws ExceptionList {
+    public Course addCourse(CourseMajorView input, Faculty faculty) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
 
         Course course = null;
         Set<Course> prerequisites = new HashSet<>();
+        Set<Major> majors = new HashSet<>();
+
+        try {
+            majors = getMajors(input.getMajors(), faculty);
+        } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
         try {
             prerequisites = this.validatePrerequisites(input.getPrerequisites());
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
-
         try {
             course = new Course(input.getCourseNumber().getCourseNumber(), input.getCourseTitle(), input.getCourseCredits());
             course.setPrerequisites(prerequisites);
@@ -37,7 +41,19 @@ public class AddCourseService {
         if (exceptionList.hasException())
             throw exceptionList;
 
+
+        addCourseToMajors(course, majors, faculty);
         return course;
+    }
+
+    private void addCourseToMajors(Course course, Set<Major> majors, Faculty faculty) {
+        this.courseRepository.save(course);
+        for (Major major: majors) {
+            major.addCourse(course);
+            faculty.changeMajor(major);
+            this.majorRepository.save(major);
+        }
+        this.facultyRepository.save(faculty);
     }
 
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {

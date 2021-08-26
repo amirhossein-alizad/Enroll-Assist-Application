@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CourseController.class)
+@WebMvcTest({CourseController.class, AddCourseService.class})
 public class CourseControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -164,7 +164,7 @@ public class CourseControllerTest {
         ExceptionList exceptionList = new ExceptionList();
         exceptionList.addNewException(new Exception("Major with id = 10 was not found."));
         when(addCourseService.getMajors(Set.of(10L), f1)).thenThrow(exceptionList);
-        when(addCourseService.addCourse(courseMajorView)).thenReturn(course);
+        when(addCourseService.addCourse(courseMajorView,f1)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
         MvcResult result =  mvc.perform(post("/courses/addCourse/1")

@@ -23,6 +23,7 @@ public class CourseController {
     private CourseRepository courseRepository;
     private FacultyRepository facultyRepository;
     private MajorRepository majorRepository;
+    private AddCourseService addCourseService;
 
     @GetMapping
     public Iterable<CourseView> all() {
@@ -34,17 +35,8 @@ public class CourseController {
         Faculty faculty = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
 
-        AddCourseService addCourseService = new AddCourseService(courseRepository, majorRepository);
         try {
-            Set<Major> majors = addCourseService.getMajors(input.getMajors(), faculty);
-            Course course = addCourseService.addCourse(input);
-            this.courseRepository.save(course);
-            for (Major major: majors) {
-                major.addCourse(course);
-                faculty.changeMajor(major);
-                this.majorRepository.save(major);
-            }
-            this.facultyRepository.save(faculty);
+            Course course = addCourseService.addCourse(input, faculty);
             return new CourseView(course);
         }catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
