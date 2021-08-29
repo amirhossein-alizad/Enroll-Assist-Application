@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Faculty;
 import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.repository.*;
@@ -46,6 +47,24 @@ public class MajorControllerTest {
                 .andExpect(jsonPath("$[0].majorNumber", is("8101")))
                 .andExpect(jsonPath("$[1].majorName", is("CHEM")))
                 .andExpect(jsonPath("$[1].majorNumber", is("8102")));
+    }
+
+    @Test
+    public void Major_courses_is_returned_correctly() throws Exception{
+        Faculty faculty = mock(Faculty.class);
+        Major major1 = new Major("8101", "CE");
+        Course c1 = new Course("1111111", "C1", 3);
+        Course c2 = new Course("1111112", "C2", 3);
+        Course c3 = new Course("1111113", "C3", 3);
+        major1.addCourse(c1, c2, c3);
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
+        given(majorRepository.findById(1L)).willReturn(java.util.Optional.of(major1));
+        mvc.perform(get("/majors/1/courses")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].courseTitle", is("C1")))
+                .andExpect(jsonPath("$[1].courseCredits", is(3)));
     }
 
     @Test
