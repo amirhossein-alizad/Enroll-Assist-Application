@@ -71,10 +71,14 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void Invalid_student_is_not_added_correctly() throws Exception {
+    public void Valid_student_is_added_correctly() throws Exception {
         JSONObject request = new JSONObject();
+        JSONObject major = new JSONObject();
+        major.put("majorNumber", "12");
+        major.put("majorName", "CS");
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
+        request.put("major", major);
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         mvc.perform(post("/student")
                 .content(request.toString())
@@ -107,19 +111,21 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_by_major_are_returned_correctly() throws Exception{
-        Student student = new Student("010101", "ali");
         Course math1 = new Course("4444444", "MATH1", 3);
         Course ap = new Course("4444004", "AP", 3);
         Course math2 = new Course("4666644", "MATH2", 3).withPre(math1);
+
+        Major cs = new Major("1", "CS");
+        cs.addCourse(math1, math2);
+
+        Student student = new Student("010101", "ali", cs);
         student.setGrade("13981", math1, 20.0);
+
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
         Section math1_1 = new Section(math1, "01");
         Section ap_1 = new Section(ap, "01");
 
-        Major cs = new Major("1", "CS");
-        cs.addCourse(math1, math2);
-        student.setMajor(cs);
 
         given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));

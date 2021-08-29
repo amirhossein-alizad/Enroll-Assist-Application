@@ -48,7 +48,7 @@ public class StudentController {
         if (student.isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         try {
-            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName());
+            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName(), studentView.getMajor());
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         } catch (IllegalArgumentException illegalArgumentException) {
