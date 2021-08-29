@@ -23,7 +23,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -100,7 +99,7 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
-        mvc.perform(get("/student/1/takeable")
+        mvc.perform(get("/student/1/takeableByMajor")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -125,7 +124,7 @@ public class StudentControllerTest {
         given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
 
-        mvc.perform(get("/student/010101/takeable")
+        mvc.perform(get("/student/010101/takeableByMajor")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))

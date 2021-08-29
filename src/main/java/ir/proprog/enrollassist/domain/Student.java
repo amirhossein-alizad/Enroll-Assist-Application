@@ -2,8 +2,6 @@ package ir.proprog.enrollassist.domain;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.CourseView;
-import ir.proprog.enrollassist.controller.SectionView;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
@@ -13,8 +12,6 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -59,8 +56,8 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/{studentNo}/takeable")
-    public Iterable<SectionView> findTakeableSections(@PathVariable String studentNo) {
+    @GetMapping("/{studentNo}/takeableByMajor")
+    public Iterable<SectionView> findTakeableSectionsByMajor(@PathVariable String studentNo) {
         Student student = this.studentRepository.findByStudentNumber(new StudentNumber(studentNo))
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found."));
         Iterable<Section> takeable = student.getTakeableSections(sectionRepository.findAll());
