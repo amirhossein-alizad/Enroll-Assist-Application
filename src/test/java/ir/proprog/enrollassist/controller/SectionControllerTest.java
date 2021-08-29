@@ -226,7 +226,7 @@ public class SectionControllerTest {
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2020-08-10T09:00");
         jsonExam.put("end", "2020-08-10T11:00");
-        mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+        mvc.perform(MockMvcRequestBuilders.put("/sections/1/setExamTime")
                 .content(jsonExam.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -237,7 +237,7 @@ public class SectionControllerTest {
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2020-08-10T09:00");
         jsonExam.put("end", "2020-08-10T11:00");
-        mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+        mvc.perform(MockMvcRequestBuilders.put("/sections/1/setExamTime")
                 .content(jsonExam.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -252,7 +252,7 @@ public class SectionControllerTest {
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2021-08-10T13:00");
         jsonExam.put("end", "2021-08-10T11:00");
-        MvcResult result = mvc.perform(MockMvcRequestBuilders.post("/sections/1")
+        MvcResult result = mvc.perform(MockMvcRequestBuilders.put("/sections/1/setExamTime")
                 .content(jsonExam.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
