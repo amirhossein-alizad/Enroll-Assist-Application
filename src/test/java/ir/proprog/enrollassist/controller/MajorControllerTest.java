@@ -51,13 +51,11 @@ public class MajorControllerTest {
 
     @Test
     public void Major_courses_is_returned_correctly() throws Exception{
-        Faculty faculty = mock(Faculty.class);
         Major major1 = new Major("8101", "CE");
         Course c1 = new Course("1111111", "C1", 3);
         Course c2 = new Course("1111112", "C2", 3);
         Course c3 = new Course("1111113", "C3", 3);
         major1.addCourse(c1, c2, c3);
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
         given(majorRepository.findById(1L)).willReturn(java.util.Optional.of(major1));
         mvc.perform(get("/majors/1/courses")
                 .contentType(MediaType.APPLICATION_JSON))
