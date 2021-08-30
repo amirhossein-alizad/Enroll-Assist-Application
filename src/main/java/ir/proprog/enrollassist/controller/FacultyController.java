@@ -22,13 +22,18 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/faculties")
 public class FacultyController {
     private final FacultyRepository facultyRepository;
-    private final MajorRepository majorRepository;
 
     @GetMapping
     public Iterable<FacultyView> all() {
         return StreamSupport.stream(facultyRepository.findAll().spliterator(), false).map(FacultyView::new).collect(Collectors.toList());
     }
 
+    @GetMapping("/{id}/majors")
+    public Iterable<MajorView> getMajors(@PathVariable Long id) {
+        Faculty faculty = facultyRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
+        return faculty.getMajors().stream().map(MajorView::new).collect(Collectors.toList());
+    }
     @PostMapping( consumes = {MediaType.APPLICATION_JSON_VALUE})
     public FacultyView addOne(@RequestBody String facultyName) {
         ExceptionList exceptions = new ExceptionList();
