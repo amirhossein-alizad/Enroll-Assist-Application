@@ -13,7 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -46,6 +48,23 @@ public class FacultyControllerTest {
                 .andExpect(jsonPath("$[0].facultyName", is("ECE")))
                 .andExpect(jsonPath("$[1].facultyName", is("ART")))
                 .andExpect(jsonPath("$[2].facultyName", is("MED")));
+    }
+
+    @Test
+    public void Faculty_majors_are_returned_correctly() throws Exception{
+        Faculty f1 = new Faculty("ECE");
+        Major m1 = new Major("8101" ,"CE");
+        Major m2 = new Major("8102" ,"CS");
+        Major m3 = new Major("8103" ,"EE");
+        f1.addMajor(m1, m2, m3);
+        given(facultyRepository.findById(1L)).willReturn(Optional.of(f1));
+        mvc.perform(get("/faculties/1/majors")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].majorName", anyOf(is("CE"), is("CS"), is("EE"))))
+                .andExpect(jsonPath("$[1].majorName", anyOf(is("CE"), is("CS"), is("EE"))))
+                .andExpect(jsonPath("$[2].majorName", anyOf(is("CE"), is("CS"), is("EE"))));
     }
 
     @Test
