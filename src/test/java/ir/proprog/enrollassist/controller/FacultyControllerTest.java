@@ -50,10 +50,8 @@ public class FacultyControllerTest {
 
     @Test
     public void Valid_faculty_is_added_correctly() throws Exception{
-        JSONObject request = new JSONObject();
-        request.put("facultyName", "ECE");
         mvc.perform(post("/faculties")
-                .content(request.toString())
+                .content("ECE")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.facultyName", is("ECE")));
@@ -61,13 +59,11 @@ public class FacultyControllerTest {
 
     @Test
     public void Faculty_with_empty_names_cannot_be_added() throws Exception{
-        JSONObject request = new JSONObject();
-        request.put("facultyName", "");
-
+        String content = "";
         JSONObject response = new JSONObject();
         response.put("1", "Faculty name can not be Empty.");
         mvc.perform(post("/faculties")
-                .content(request.toString())
+                .content(" ")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
@@ -76,8 +72,6 @@ public class FacultyControllerTest {
     @Test
     public void Faculty_with_the_same_name_cannot_be_added() throws Exception{
         Faculty faculty = mock(Faculty.class);
-        JSONObject request = new JSONObject();
-        request.put("facultyName", "ECE");
 
         JSONObject response = new JSONObject();
         response.put("1", "Faculty with name ECE exists.");
@@ -85,7 +79,7 @@ public class FacultyControllerTest {
         given(facultyRepository.findByFacultyName("ECE")).willReturn(java.util.Optional.ofNullable(faculty));
 
         mvc.perform(post("/faculties")
-                .content(request.toString())
+                .content("ECE")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
