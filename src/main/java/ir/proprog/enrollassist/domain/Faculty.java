@@ -22,7 +22,7 @@ public class Faculty {
 
     public Faculty(String facultyName) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        if(facultyName.equals("")){
+        if(facultyName.isEmpty() || facultyName.isBlank()){
             exceptionList.addNewException(new Exception("Faculty name can not be Empty."));
             throw exceptionList;
         }
