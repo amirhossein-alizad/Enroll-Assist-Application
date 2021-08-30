@@ -8,7 +8,7 @@ public class StudentView {
     private Long studentId;
     @Getter private String studentNo;
     @Getter private String name;
-    @Getter private Major major;
+    @Getter private Long majorId;
 
     public StudentView() {
     }
@@ -17,6 +17,7 @@ public class StudentView {
         this.studentId = student.getId();
         this.studentNo = student.getStudentNumber().getNumber();
         this.name = student.getName();
-        this.major = student.getMajor();
+        if (student.getMajor() != null)
+            this.majorId = student.getMajor().getId();
     }
 }

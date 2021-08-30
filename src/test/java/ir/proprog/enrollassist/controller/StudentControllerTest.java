@@ -1,9 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,7 @@ import java.util.*;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,6 +32,10 @@ public class StudentControllerTest {
     private CourseRepository courseRepository;
     @MockBean
     private SectionRepository sectionRepository;
+    @MockBean
+    private EnrollmentListRepository enrollmentListRepository;
+    @MockBean
+    private MajorRepository majorRepository;
 
     @Test
     public void Student_that_doesnt_exist_is_not_found() throws Exception {
@@ -58,8 +61,11 @@ public class StudentControllerTest {
         JSONObject request = new JSONObject();
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
+        request.put("majorId", 12L);
+        Major major = mock(Major.class);
         Student student = new Student("81818181", "Mehrnaz");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
+        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
                .content(request.toString())
                .contentType(MediaType.APPLICATION_JSON))
@@ -69,13 +75,12 @@ public class StudentControllerTest {
     @Test
     public void Valid_student_is_added_correctly() throws Exception {
         JSONObject request = new JSONObject();
-        JSONObject major = new JSONObject();
-        major.put("majorNumber", "12");
-        major.put("majorName", "CS");
+        Major major = mock(Major.class);
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
-        request.put("major", major);
+        request.put("majorId", 12L);
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
