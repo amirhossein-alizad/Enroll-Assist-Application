@@ -29,32 +29,19 @@ public class FacultyController {
         return StreamSupport.stream(facultyRepository.findAll().spliterator(), false).map(FacultyView::new).collect(Collectors.toList());
     }
 
-    @PostMapping( consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public FacultyView addOne(@RequestBody FacultyView facultyView) {
+    @PostMapping( consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public FacultyView addOne(@RequestBody String facultyName) {
         ExceptionList exceptions = new ExceptionList();
-        Set<Major> majors = new HashSet<>();
-        for(Long id: facultyView.getMajors()){
-            Optional<Major> major = majorRepository.findById(id);
-            if(major.isEmpty()) {
-                exceptions.addNewException(new Exception("Major with id:" + id + " does not exist."));
-                continue;
-            }
-            majors.add(major.get());
-        }
-        if (exceptions.hasException())
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, exceptions.toString());
-        if (facultyRepository.findByFacultyName(facultyView.getFacultyName()).isPresent())
-            exceptions.addNewException(new Exception("Faculty with name " + facultyView.getFacultyName() + " exists."));
+        if (facultyRepository.findByFacultyName(facultyName).isPresent())
+            exceptions.addNewException(new Exception("Faculty with name " + facultyName + " exists."));
         Faculty faculty = null;
         try {
-            faculty = new Faculty(facultyView.getFacultyName());
+            faculty = new Faculty(facultyName);
         } catch (ExceptionList exceptionList) {
             exceptions.addExceptions(exceptionList.getExceptions());
         }
         if (exceptions.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptions.toString());
-        for(Major m:majors)
-            faculty.addMajor(m);
         facultyRepository.save(faculty);
         return new FacultyView(faculty);
     }
