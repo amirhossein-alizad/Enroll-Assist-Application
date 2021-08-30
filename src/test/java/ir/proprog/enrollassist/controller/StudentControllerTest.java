@@ -1,9 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,14 +14,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -38,6 +32,10 @@ public class StudentControllerTest {
     private CourseRepository courseRepository;
     @MockBean
     private SectionRepository sectionRepository;
+    @MockBean
+    private EnrollmentListRepository enrollmentListRepository;
+    @MockBean
+    private MajorRepository majorRepository;
 
     @Test
     public void Student_that_doesnt_exist_is_not_found() throws Exception {
@@ -63,8 +61,11 @@ public class StudentControllerTest {
         JSONObject request = new JSONObject();
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
+        request.put("majorId", 12L);
+        Major major = mock(Major.class);
         Student student = new Student("81818181", "Mehrnaz");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
+        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
                .content(request.toString())
                .contentType(MediaType.APPLICATION_JSON))
@@ -72,11 +73,14 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void Invalid_student_is_not_added_correctly() throws Exception {
+    public void Valid_student_is_added_correctly() throws Exception {
         JSONObject request = new JSONObject();
+        Major major = mock(Major.class);
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
+        request.put("majorId", 12L);
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -100,7 +104,7 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
-        mvc.perform(get("/student/1/takeable")
+        mvc.perform(get("/student/1/takeableByMajor")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -108,24 +112,26 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_by_major_are_returned_correctly() throws Exception{
-        Student student = new Student("010101", "ali");
         Course math1 = new Course("4444444", "MATH1", 3);
         Course ap = new Course("4444004", "AP", 3);
         Course math2 = new Course("4666644", "MATH2", 3).withPre(math1);
+
+        Major cs = new Major("1", "CS");
+        cs.addCourse(math1, math2);
+
+        Student student = new Student("010101", "ali", cs);
         student.setGrade("13981", math1, 20.0);
+
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
         Section math1_1 = new Section(math1, "01");
         Section ap_1 = new Section(ap, "01");
 
-        Major cs = new Major("1", "CS");
-        cs.addCourse(math1, math2);
-        student.setMajor(cs);
 
         given(sectionRepository.findAll()).willReturn(List.of(math1_1, math2_1, math2_2, ap_1));
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(java.util.Optional.of(student));
 
-        mvc.perform(get("/student/010101/takeable")
+        mvc.perform(get("/student/010101/takeableByMajor")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))

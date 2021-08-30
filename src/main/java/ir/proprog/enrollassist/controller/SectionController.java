@@ -85,8 +85,8 @@ public class SectionController {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
     }
 
-    @PostMapping("/{id}")
-    public ExamTime changeExamTime(@RequestBody ExamTime examTime, @PathVariable Long id) {
+    @PutMapping("/{id}/setExamTime")
+    public ExamTime setExamTime(@RequestBody ExamTime examTime, @PathVariable Long id) {
         Section section = this.sectionRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         try {
