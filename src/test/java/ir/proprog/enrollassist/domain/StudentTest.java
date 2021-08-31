@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.section.Section;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

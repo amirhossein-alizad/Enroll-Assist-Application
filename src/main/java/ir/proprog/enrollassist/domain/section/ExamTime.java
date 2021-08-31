@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.section;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import lombok.Getter;

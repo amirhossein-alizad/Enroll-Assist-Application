@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.Section;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

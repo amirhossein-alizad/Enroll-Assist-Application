@@ -5,6 +5,9 @@ import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.section.ExamTime;
+import ir.proprog.enrollassist.domain.section.PresentationSchedule;
+import ir.proprog.enrollassist.domain.section.Section;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;

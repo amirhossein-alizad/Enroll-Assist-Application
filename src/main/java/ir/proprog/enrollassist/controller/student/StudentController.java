@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.controller.student;
 
 import ir.proprog.enrollassist.controller.section.SectionView;
 import ir.proprog.enrollassist.domain.Major;
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
 import ir.proprog.enrollassist.repository.*;

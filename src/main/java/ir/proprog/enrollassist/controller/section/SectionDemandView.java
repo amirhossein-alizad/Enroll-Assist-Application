@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.controller.section;
 
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.Section;
 
 public class SectionDemandView {
     private SectionView sectionView;

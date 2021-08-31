@@ -1,9 +1,9 @@
 package ir.proprog.enrollassist.controller.section;
 
 import ir.proprog.enrollassist.domain.course.CourseNumber;
-import ir.proprog.enrollassist.domain.ExamTime;
-import ir.proprog.enrollassist.domain.PresentationSchedule;
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.ExamTime;
+import ir.proprog.enrollassist.domain.section.PresentationSchedule;
+import ir.proprog.enrollassist.domain.section.Section;
 import lombok.Getter;
 
 import java.util.HashSet;
