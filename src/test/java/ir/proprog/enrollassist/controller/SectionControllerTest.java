@@ -1,12 +1,18 @@
 package ir.proprog.enrollassist.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.controller.section.SectionController;
+import ir.proprog.enrollassist.controller.section.SectionDemandView;
+import ir.proprog.enrollassist.controller.section.SectionView;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
+import ir.proprog.enrollassist.domain.section.ExamTime;
+import ir.proprog.enrollassist.domain.section.PresentationSchedule;
+import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

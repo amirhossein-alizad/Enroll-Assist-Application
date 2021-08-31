@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.domain.EnrollmentRules;
 
-import ir.proprog.enrollassist.domain.Course;
+import ir.proprog.enrollassist.domain.course.Course;
 
 import java.util.Objects;
 

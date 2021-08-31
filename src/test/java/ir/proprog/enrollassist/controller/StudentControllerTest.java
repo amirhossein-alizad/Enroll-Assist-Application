@@ -1,6 +1,11 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.controller.student.StudentController;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.student.Student;
+import ir.proprog.enrollassist.domain.student.StudentNumber;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;

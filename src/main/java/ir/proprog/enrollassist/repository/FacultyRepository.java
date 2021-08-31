@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.domain.Faculty;
+import ir.proprog.enrollassist.domain.faculty.Faculty;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
