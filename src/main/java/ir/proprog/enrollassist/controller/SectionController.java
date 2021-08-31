@@ -73,10 +73,11 @@ public class SectionController {
         }
         try {
             Section newSection;
-            if (section.getExamTime() == null)
-                newSection = new Section(course, section.getSectionNo());
-            else
-                newSection = new Section(course, section.getSectionNo(), section.getExamTime(), section.getSchedule());
+            newSection = new Section(course, section.getSectionNo());
+            if(section.getExamTime() != null)
+                newSection.setExamTime(section.getExamTime());
+            if(section.getSchedule().size() > 0)
+                newSection.setPresentationSchedule(section.getSchedule());
             this.sectionRepository.save(newSection);
             return new SectionView(newSection);
         } catch (ExceptionList e) {
