@@ -32,8 +32,8 @@ public class AddCourseServiceTest {
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        Course course1 = new Course("1100112", "DS", 3);
-        Course course2 = new Course("1100113", "DA", 3);
+        Course course1 = new Course("1100112", "DS", 3, "Undergraduate");
+        Course course2 = new Course("1100113", "DA", 3, "Undergraduate");
         given(courseRepository.findAll()).willReturn(List.of(course1, course2));
         Major ce = new Major("1", "CE");
         Major ee = new Major("2", "EE");
@@ -49,7 +49,7 @@ public class AddCourseServiceTest {
 
     @Test
     public void With_valid_input_course_is_added_correctly() throws Exception{
-        Course course = new Course("1100110", "OS", 3);
+        Course course = new Course("1100110", "OS", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Collections.emptySet(), Collections.emptySet());
         String error = "";
         try {
@@ -63,7 +63,7 @@ public class AddCourseServiceTest {
 
     @Test
     public void Course_is_not_added_correctly_with_invalid_prerequisites() throws Exception{
-        Course course = new Course("9999909", "OS", 3);
+        Course course = new Course("9999909", "OS", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(21L), Collections.emptySet());
         String error = "";
         try {

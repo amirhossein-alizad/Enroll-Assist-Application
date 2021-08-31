@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.domain.student;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.EducationGrade;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
@@ -26,9 +27,11 @@ public class Student {
     private Long id;
     @Embedded
     private StudentNumber studentNumber;
-    private String name;
+    @Embedded
+    private EducationGrade educationGrade;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
+    private String name;
     @ManyToOne
     Major major;
 
@@ -47,11 +50,24 @@ public class Student {
         this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major) {
-        this.studentNumber = new StudentNumber(studentNumber);
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String educationGrade) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        try {
+            this.studentNumber = new StudentNumber(studentNumber);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+        if (name.equals(""))
+            exceptionList.addNewException(new Exception("Student name can not be empty."));
+        try {
+            this.educationGrade = new EducationGrade(educationGrade);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+
+        if (exceptionList.hasException())
+            throw exceptionList;
+
         this.name = name;
         this.major = major;
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -66,10 +82,11 @@ public class Student {
         return Objects.hash(studentNumber);
     }
 
+
     public boolean hasPassed(Course course) {
         for (StudyRecord sr : grades) {
-            if (sr.getCourse().equals(course) && sr.getGrade().isPassingGrade())
-                return true;
+            if (sr.getCourse().equals(course))
+                return sr.isPassed(this.educationGrade);
         }
         return false;
     }
@@ -96,8 +113,8 @@ public class Student {
 
     @VisibleForTesting
     List<Course> getTakeableCourses(){
-        List<Course> passed = grades.stream().filter(sr -> sr.getGrade().isPassingGrade()).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> all = new ArrayList<>(major.getCourses());
+        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.educationGrade)).map(StudyRecord::getCourse).collect(Collectors.toList());
+        List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.educationGrade));
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }

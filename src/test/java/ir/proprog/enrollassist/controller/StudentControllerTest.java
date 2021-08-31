@@ -15,12 +15,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -67,6 +69,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
+        request.put("educationGrade", "Undergraduate");
         Major major = mock(Major.class);
         Student student = new Student("81818181", "Mehrnaz");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
@@ -84,6 +87,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
+        request.put("educationGrade", "Undergraduate");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
@@ -92,6 +96,40 @@ public class StudentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name", is("Sara")))
                 .andExpect(jsonPath("$.studentNo", is("81818181")));
+    }
+
+    @Test
+    public void Student_with_unreal_major_is_not_added_correctly() throws Exception {
+        JSONObject request = new JSONObject();
+        request.put("studentNo", "81818181");
+        request.put("name", "Sara");
+        request.put("majorId", 12L);
+        request.put("educationGrade", "Masters");
+        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.empty());
+        mvc.perform(post("/student")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void invalid_student_is_not_added_correctly() throws Exception {
+        JSONObject request = new JSONObject();
+        Major major = mock(Major.class);
+        request.put("studentNo", "81818181");
+        request.put("name", "");
+        request.put("majorId", 12L);
+        request.put("educationGrade", "Masters");
+        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
+        MvcResult result =  mvc.perform(post("/student")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Student name can not be empty.\"}");
     }
 
 
@@ -105,14 +143,14 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_by_major_are_returned_correctly() throws Exception{
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course ap = new Course("4444004", "AP", 3);
-        Course math2 = new Course("4666644", "MATH2", 3).withPre(math1);
+        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
+        Course ap = new Course("4444004", "AP", 3, "Undergraduate");
+        Course math2 = new Course("4666644", "MATH2", 3, "Undergraduate").withPre(math1);
 
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);
 
-        Student student = new Student("010101", "ali", cs).setGrade("13981", math1, 20.0);
+        Student student = new Student("010101", "ali", cs, "Undergraduate").setGrade("13981", math1, 20.0);
 
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");

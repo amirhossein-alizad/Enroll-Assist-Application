@@ -35,9 +35,9 @@ public class MajorTest {
     public void Courses_are_added_correctly_to_major(){
         try{
             Major major = new Major("major", "8101");
-            Course c1 = new Course("810197546", "alizad", 3);
-            Course c2 = new Course("810197547", "alizade", 3);
-            Course c3 = new Course("810197548", "alizadeh", 3);
+            Course c1 = new Course("810197546", "alizad", 3, "Undergraduate");
+            Course c2 = new Course("810197547", "alizade", 3, "Undergraduate");
+            Course c3 = new Course("810197548", "alizadeh", 3, "Undergraduate");
             major.addCourse(c1, c2, c3);
             assertThat(major.getCourses())
                     .containsExactlyInAnyOrder(c1, c2, c3);

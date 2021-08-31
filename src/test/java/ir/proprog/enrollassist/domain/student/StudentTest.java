@@ -20,28 +20,53 @@ public class StudentTest {
 
     @BeforeEach
     void setUp() throws Exception{
-        bebe = new Student("810197000", "bebe");
-        math1 = new Course("4444444", "MATH1", 3);
-        phys1 = new Course("8888888", "PHYS1", 3);
-        prog = new Course("7777777", "PROG", 4);
-        economy = new Course("1111111", "ECO", 3);
-        maaref = new Course("5555555", "MAAREF", 2);
-        andishe = new Course("3333333", "ANDISHE", 2);
-        math2 = new Course("2222222", "MATH2", 3).withPre(math1);
+        math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
+        phys1 = new Course("8888888", "PHYS1", 3, "Undergraduate");
+        prog = new Course("7777777", "PROG", 4, "Undergraduate");
+        economy = new Course("1111111", "ECO", 3, "Undergraduate");
+        maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
+        andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
+        math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
         major = new Major("123", "CE");
         major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        bebe = new Student("810197000", "bebe", major, "Undergraduate");
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
         andishe1_1 = new Section(andishe, "01");
         math2_1 = new Section(math2, "01");
         math2_2 = new Section(math2, "02");
-        bebe.setMajor(major);
+    }
+
+    @Test
+    void Student_with_invalid_data_cant_be_created() {
+        String error = "";
+        try {
+            Major major = mock(Major.class);
+            Student bebe = new Student("", "", major, "student");
+        }catch (ExceptionList exceptionList) {
+            error = exceptionList.toString();
+        }
+        assertEquals(error, "{\"1\":\"Student number can not be empty.\"," +
+                "\"2\":\"Student name can not be empty.\"," +
+                "\"3\":\"Education grade is not valid.\"}");
+    }
+
+    @Test
+    void Student_with_valid_data_cant_be_created() {
+        String error = "";
+        try {
+            Major major = mock(Major.class);
+            Student bebe = new Student("1234", "Mehrnaz", major, "PHD");
+        }catch (ExceptionList exceptionList) {
+            error = exceptionList.toString();
+        }
+        assertEquals(error, "");
     }
 
     @Test
     void Course_with_grade_less_than_ten_is_not_passed() throws Exception {
-        Course math1 = new Course("4444444", "MATH1", 3);
+        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
                 .isFalse();
@@ -59,7 +84,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_has_not_passed_records_that_are_not_in_grades_set()  throws Exception {
+    void Student_has_not_passed_records_that_are_not_in_grades_set() {
         Student mockedStudent = mock(Student.class);
         assertThat(mockedStudent.hasPassed(math1))
                 .isEqualTo(false);
@@ -68,6 +93,26 @@ public class StudentTest {
     @Test
     void Student_has_passed_records_that_are_in_grades_set()  throws Exception {
         bebe.setGrade("13981", math1, 19);
+        assertThat(bebe.hasPassed(math1))
+                .isEqualTo(true);
+    }
+
+    @Test
+    void PHD_student_has_not_passed_course_when_her_grade_is_less_than_14()  throws Exception {
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197000", "bebe", major, "PHD");
+        Course math1 = new Course("1111111", "MATH1", 3, "PHD");
+        bebe.setGrade("13981", math1, 13.5);
+        assertThat(bebe.hasPassed(math1))
+                .isEqualTo(false);
+    }
+
+    @Test
+    void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10()  throws Exception {
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        Course math1 = new Course("1111111", "MATH1", 3, "Masters");
+        bebe.setGrade("13981", math1, 11);
         assertThat(bebe.hasPassed(math1))
                 .isEqualTo(true);
     }
@@ -98,7 +143,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
+    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() {
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(6)
@@ -106,7 +151,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() throws Exception {
+    void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() {
         assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -132,12 +177,31 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() throws Exception {
+    void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() {
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
     }
+
+    @Test
+    void Student_does_not_return_sections_which_are_not_for_her_education_grade() throws Exception {
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        Course prog = new Course("2222222", "PROG", 3, "PHD");
+        Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
+        Section math1_1 = new Section(math1, "01");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+
+        assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactlyInAnyOrder(math1_1);
+    }
+
 
     @Test
     void Grade_of_course_with_valid_term_can_set_correctly() {

@@ -57,7 +57,7 @@ public class FacultyTest {
         faculty.addMajor(major1);
 
         Major copyMajor1 = new Major("major1", "8101");
-        copyMajor1.addCourse(new Course("1122111", "DS", 3));
+        copyMajor1.addCourse(new Course("1122111", "DS", 3, "Undergraduate"));
 
         faculty.changeMajor(copyMajor1);
 

@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.domain.course;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.EducationGrade;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import ir.proprog.enrollassist.domain.student.Student;
@@ -22,12 +23,14 @@ public class Course {
     @Embedded
     private CourseNumber courseNumber;
     @Embedded
+    private EducationGrade educationGrade;
+    @Embedded
     private Credit credits;
     private boolean hasExam = false;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
-    public Course(String courseNumber, String title, int credits) throws ExceptionList {
+    public Course(String courseNumber, String title, int credits, String educationGrade) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if (title.equals("")) {
             exceptionList.addNewException(new Exception("Course must have a name."));
@@ -39,6 +42,9 @@ public class Course {
         try {
             this.credits = new Credit(credits);
         } catch (Exception e) { exceptionList.addNewException(e); }
+        try {
+            this.educationGrade = new EducationGrade(educationGrade);
+        } catch (Exception e) { exceptionList.addNewException(e); }
 
         if (exceptionList.hasException())
             throw exceptionList;
@@ -49,6 +55,10 @@ public class Course {
     public Course withPre(Course... pres) {
         prerequisites.addAll(Arrays.asList(pres));
         return this;
+    }
+
+    public boolean equalsEducationGrade(EducationGrade otherEducationGrade) {
+        return this.educationGrade.equals(otherEducationGrade);
     }
 
     @Override
