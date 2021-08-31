@@ -4,6 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.studyRecord.Grade;
+import ir.proprog.enrollassist.domain.studyRecord.StudyRecord;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
