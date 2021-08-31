@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseMajorView;
 import ir.proprog.enrollassist.domain.course.AddCourseService;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;

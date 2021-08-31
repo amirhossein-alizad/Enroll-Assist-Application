@@ -8,6 +8,7 @@ import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.domain.course.AddCourseService;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.course.CourseNumber;
+import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONArray;
 import org.json.JSONObject;

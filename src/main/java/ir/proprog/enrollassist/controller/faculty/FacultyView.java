@@ -1,11 +1,7 @@
 package ir.proprog.enrollassist.controller.faculty;
 
-import ir.proprog.enrollassist.domain.Faculty;
-import ir.proprog.enrollassist.domain.Major;
+import ir.proprog.enrollassist.domain.faculty.Faculty;
 import lombok.Getter;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 public class FacultyView {

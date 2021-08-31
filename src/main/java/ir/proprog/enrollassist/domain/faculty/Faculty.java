@@ -1,6 +1,7 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.faculty;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.Major;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
