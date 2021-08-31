@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.controller.student.StudentController;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;

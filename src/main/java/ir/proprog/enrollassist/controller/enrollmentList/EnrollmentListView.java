@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.controller.enrollmentList;
 
-import ir.proprog.enrollassist.controller.StudentView;
+import ir.proprog.enrollassist.controller.student.StudentView;
 import ir.proprog.enrollassist.controller.section.SectionView;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import lombok.Getter;
