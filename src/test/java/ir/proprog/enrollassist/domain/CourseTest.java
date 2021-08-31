@@ -6,8 +6,7 @@ import ir.proprog.enrollassist.domain.student.Student;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class CourseTest {
@@ -59,7 +58,7 @@ public class CourseTest {
         ExceptionList exceptionList = new ExceptionList();
         Student bebe = mock(Student.class);
         when(bebe.hasPassed(any(Course.class))).thenReturn(true);
-        Course math1 = null;
+        Course math1;
         try {
             math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
             Course math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
@@ -126,5 +125,12 @@ public class CourseTest {
             exceptionList.addExceptions(e.getExceptions());
         }
         assertFalse(exceptionList.hasException());
+    }
+
+    @Test
+    public void EducationGrade_compared_correctly() throws Exception {
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        assertTrue(math1.equalsEducationGrade(new EducationGrade("Undergraduate")));
+        assertFalse(math1.equalsEducationGrade(new EducationGrade("PHD")));
     }
 }

@@ -85,6 +85,16 @@ public class StudentTest {
     }
 
     @Test
+    void PHD_student_has_not_passed_course_when_her_grade_is_less_than_14()  throws Exception {
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197000", "bebe", major, "PHD");
+        Course math1 = new Course("1111111", "MATH1", 3, "PHD");
+        bebe.setGrade("13981", math1, 13.5);
+        assertThat(bebe.hasPassed(math1))
+                .isEqualTo(false);
+    }
+
+    @Test
     void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10()  throws Exception {
         Major major = mock(Major.class);
         Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
