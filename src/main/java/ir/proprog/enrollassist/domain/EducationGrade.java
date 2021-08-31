@@ -21,7 +21,7 @@ public class EducationGrade {
     public EducationGrade() { this.grade = ""; }
 
     public EducationGrade(String grade) throws Exception {
-        List<String> allGrades = List.of("");
+        List<String> allGrades = List.of("Undergraduate", "Masters", "PHD");
         if (allGrades.contains(grade))
             this.grade = grade;
         else

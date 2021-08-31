@@ -62,6 +62,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
+        request.put("educationGrade", "Undergraduate");
         Major major = mock(Major.class);
         Student student = new Student("81818181", "Mehrnaz");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
@@ -79,6 +80,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
+        request.put("educationGrade", "Undergraduate");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
@@ -119,7 +121,7 @@ public class StudentControllerTest {
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);
 
-        Student student = new Student("010101", "ali", cs);
+        Student student = new Student("010101", "ali", cs, "Undergraduate");
         student.setGrade("13981", math1, 20.0);
 
         Section math2_1 = new Section(math2, "01");
