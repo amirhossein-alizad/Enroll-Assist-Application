@@ -30,7 +30,7 @@ public class CourseController {
         return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
     }
 
-    @PostMapping(value = "addCourse/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
     public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
         Faculty faculty = facultyRepository.findById(facultyId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));

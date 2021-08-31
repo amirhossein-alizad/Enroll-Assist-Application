@@ -46,17 +46,20 @@ public class CourseControllerTest {
     @MockBean
     private MajorRepository majorRepository;
     private Course course1, course2, course3;
-    private List<Course> courses = new ArrayList<>();
+    private Major major1, major2;
+    private Faculty faculty;
+    private final List<Course> courses = new ArrayList<>();
 
     @BeforeEach
-    void SetUp() throws Exception {
+    void setUp() throws Exception {
         course1 = new Course("1111111", "C1", 3);
-        course2 = new Course("2222222", "C2", 3);
-        course2.withPre(course1);
-        course3 = new Course("3333333", "C3", 4);
-        course2.withPre(course1);
+        course2 = new Course("2222222", "C2", 3).withPre(course1);
+        course3 = new Course("3333333", "C3", 4).withPre(course1);
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
+        major1 = mock(Major.class);
+        major2 = mock(Major.class);
+        faculty= mock(Faculty.class);
     }
 
     @Test
@@ -104,10 +107,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_added_and_returned_correctly() throws Exception {
-        Major m1 = mock(Major.class);
-        Major m2 = mock(Major.class);
-        Faculty f1 = mock(Faculty.class);
-
         JSONObject request = new JSONObject();
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "1412121");
@@ -126,16 +125,16 @@ public class CourseControllerTest {
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
 
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
-        given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(m2));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
+        given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
 
-        given(m1.getId()).willReturn(10L);
-        given(m2.getId()).willReturn(11L);
-        given(f1.getMajors()).willReturn(Set.of(m1, m2));
+        given(major1.getId()).willReturn(10L);
+        given(major2.getId()).willReturn(11L);
+        given(faculty.getMajors()).willReturn(Set.of(major1, major2));
 
-        mvc.perform(post("/courses/addCourse/1")
+        mvc.perform(post("/courses/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -149,7 +148,7 @@ public class CourseControllerTest {
     public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
 
-        mvc.perform(post("/courses/addCourse/1")
+        mvc.perform(post("/courses/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -160,18 +159,17 @@ public class CourseControllerTest {
     @Test
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
         AddCourseService addCourseService = mock(AddCourseService.class);
-        Faculty f1 = mock(Faculty.class);
         Course course = new Course("1212121", "AP", 3);
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
         ExceptionList exceptionList = new ExceptionList();
         exceptionList.addNewException(new Exception("Major with id = 10 was not found."));
-        when(addCourseService.getMajors(Set.of(10L), f1)).thenThrow(exceptionList);
-        when(addCourseService.addCourse(courseMajorView,f1)).thenReturn(course);
+        when(addCourseService.getMajors(Set.of(10L), faculty)).thenThrow(exceptionList);
+        when(addCourseService.addCourse(courseMajorView,faculty)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult result =  mvc.perform(post("/courses/addCourse/1")
+        MvcResult result =  mvc.perform(post("/courses/1")
                 .content(objectMapper.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -183,9 +181,6 @@ public class CourseControllerTest {
 
     @Test
     public void Course_with_duplicate_number_is_not_added_correctly() throws Exception{
-        Major m1 = mock(Major.class);
-        Faculty f1 = mock(Faculty.class);
-
         JSONObject request = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
@@ -202,12 +197,12 @@ public class CourseControllerTest {
 
         given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(course));
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
 
-        given(m1.getId()).willReturn(10L);
-        given(f1.getMajors()).willReturn(Set.of(m1));
-        MvcResult result =  mvc.perform(post("/courses/addCourse/1")
+        given(major1.getId()).willReturn(10L);
+        given(faculty.getMajors()).willReturn(Set.of(major1));
+        MvcResult result =  mvc.perform(post("/courses/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -240,7 +235,7 @@ public class CourseControllerTest {
         given(f1.getMajors()).willReturn(Set.of(m1));
         given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
 
-        MvcResult result =  mvc.perform(post("/courses/addCourse/1")
+        MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
@@ -251,8 +246,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_courses_with_violation_are_returned_correctly() throws Exception{
-        Major m1 = mock(Major.class);
-        Faculty f1 = mock(Faculty.class);
 
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "");
@@ -273,16 +266,16 @@ public class CourseControllerTest {
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
         given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
-        given(m1.getId()).willReturn(10L);
-        given(f1.getMajors()).willReturn(Set.of(m1));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
+        given(major1.getId()).willReturn(10L);
+        given(faculty.getMajors()).willReturn(Set.of(major1));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
         Set<Course> set1 = Set.of(mockedCourse1);
         Set<Course> set2 = Set.of(mockedCourse2);
         when(mockedCourse1.getPrerequisites()).thenReturn(set2);
         when(mockedCourse2.getPrerequisites()).thenReturn(set1);
         when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
-        MvcResult result =  mvc.perform(post("/courses/addCourse/1")
+        MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
