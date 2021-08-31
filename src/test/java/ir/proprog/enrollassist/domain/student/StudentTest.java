@@ -40,7 +40,7 @@ public class StudentTest {
     }
 
     @Test
-    void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed() throws Exception {
+    void Course_with_grade_less_than_ten_is_not_passed() throws Exception {
         Course math1 = new Course("4444444", "MATH1", 3);
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
@@ -48,7 +48,7 @@ public class StudentTest {
     }
 
     @Test
-    void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed_But_Calculated_in_GPA() throws Exception {
+    void Course_with_grade_less_than_ten_is_not_passed_but_calculated_in_GPA() throws Exception {
         bebe.setGrade("13981", math1, 15.5);
         bebe.setGrade("13981", phys1, 9);
         bebe.setGrade("13981", prog, 17.25);
