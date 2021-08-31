@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.repository;
 
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
-import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
 import org.junit.jupiter.api.Test;

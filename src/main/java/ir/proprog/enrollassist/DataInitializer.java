@@ -3,6 +3,7 @@ package ir.proprog.enrollassist;
 
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.repository.*;

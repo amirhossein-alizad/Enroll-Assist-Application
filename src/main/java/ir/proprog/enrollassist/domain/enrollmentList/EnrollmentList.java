@@ -1,7 +1,9 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.enrollmentList;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.*;
+import ir.proprog.enrollassist.domain.Grade;
+import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;

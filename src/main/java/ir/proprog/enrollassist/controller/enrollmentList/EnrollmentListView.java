@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.controller.enrollmentList;
 
 import ir.proprog.enrollassist.controller.student.StudentView;
 import ir.proprog.enrollassist.controller.section.SectionView;
-import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import lombok.Getter;
 
 import java.util.List;

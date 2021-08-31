@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.controller.enrollmentList;
 
 import ir.proprog.enrollassist.controller.section.SectionView;
-import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
