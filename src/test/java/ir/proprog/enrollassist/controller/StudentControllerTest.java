@@ -15,12 +15,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -96,17 +98,39 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$.studentNo", is("81818181")));
     }
 
-//    @Test
-//    public void Student_with_empty_studentNo_is_not_added_correctly() throws Exception {
-//        JSONObject request = new JSONObject();
-//        request.put("studentNo", "");
-//        request.put("name", "Sara");
-//        given(this.studentRepository.findByStudentNumber("")).willReturn(Optional.empty());
-//        mvc.perform(post("/student")
-//                .content(request.toString())
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
+    @Test
+    public void Student_with_unreal_major_is_not_added_correctly() throws Exception {
+        JSONObject request = new JSONObject();
+        request.put("studentNo", "81818181");
+        request.put("name", "Sara");
+        request.put("majorId", 12L);
+        request.put("educationGrade", "Masters");
+        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.empty());
+        mvc.perform(post("/student")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void invalid_student_is_not_added_correctly() throws Exception {
+        JSONObject request = new JSONObject();
+        Major major = mock(Major.class);
+        request.put("studentNo", "81818181");
+        request.put("name", "");
+        request.put("majorId", 12L);
+        request.put("educationGrade", "Masters");
+        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
+        given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
+        MvcResult result =  mvc.perform(post("/student")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String content = result.getResponse().getErrorMessage();
+        assertEquals(content, "{\"1\":\"Student name can not be empty.\"}");
+    }
 
 
     @Test
