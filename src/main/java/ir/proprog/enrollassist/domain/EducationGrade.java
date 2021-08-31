@@ -3,11 +3,7 @@ package ir.proprog.enrollassist.domain;
 import lombok.Getter;
 import lombok.Value;
 
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Embeddable;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -15,17 +11,26 @@ import java.util.Objects;
 @Value
 public class EducationGrade {
     String grade;
+    double minValidGPA;
 
     public static final EducationGrade ZERO = new EducationGrade();
 
-    public EducationGrade() { this.grade = ""; }
+    public EducationGrade() {
+        this.grade = "";
+        this.minValidGPA = 0.0;
+    }
 
     public EducationGrade(String grade) throws Exception {
-        List<String> allGrades = List.of("Undergraduate", "Masters", "PHD");
-        if (allGrades.contains(grade))
-            this.grade = grade;
+        if (grade.equals("Undergraduate"))
+            this.minValidGPA = 10.0;
+        else if (grade.equals("Masters"))
+            this.minValidGPA = 12.0;
+        else if (grade.equals("PHD"))
+            this.minValidGPA = 14.0;
         else
             throw new Exception("Education grade is not valid.");
+
+        this.grade = grade;
     }
 
     @Override

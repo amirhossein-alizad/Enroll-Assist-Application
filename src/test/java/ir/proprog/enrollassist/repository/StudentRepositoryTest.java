@@ -1,7 +1,9 @@
 package ir.proprog.enrollassist.repository;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.EnrollmentListView;
 import ir.proprog.enrollassist.domain.EnrollmentList;
+import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
 import org.junit.jupiter.api.Test;
@@ -12,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 @SpringBootTest
 public class StudentRepositoryTest {
@@ -19,12 +22,16 @@ public class StudentRepositoryTest {
     private StudentRepository studentRepository;
     @Autowired
     private EnrollmentListRepository enrollmentRepository;
+    @Autowired
+    private MajorRepository majorRepository;
 
 
 
     @Test
-    public void Student_with_specific_student_number_is_returned_correctly() {
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei");
+    public void Student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
+        Major major = new Major("12", "CE");
+        majorRepository.save(major);
+        Student mahsa = new Student("810199999", "Mahsa Mahsaei", major, "Undergraduate");
         studentRepository.save(mahsa);
         Optional<Student> res = studentRepository.findByStudentNumber(new StudentNumber("810199999"));
         assertThat(res.get().getStudentNumber().getNumber()).isEqualTo("810199999");
@@ -38,8 +45,10 @@ public class StudentRepositoryTest {
     }
 
     @Test
-    public void All_lists_for_student_with_specific_student_number_is_returned_correctly() {
-        Student john = new Student("810100000", "John  Doe");
+    public void All_lists_for_student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
+        Major major = new Major("12", "CE");
+        majorRepository.save(major);
+        Student john = new Student("810100000", "John  Doe", major, "Undergraduate");
         studentRepository.save(john);
         EnrollmentList list1 = new EnrollmentList("1st list", john);
         EnrollmentList list2 = new EnrollmentList("2nd list", john);

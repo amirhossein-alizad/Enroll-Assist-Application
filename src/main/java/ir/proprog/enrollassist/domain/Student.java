@@ -78,10 +78,11 @@ public class Student {
         return Objects.hash(studentNumber);
     }
 
+
     public boolean hasPassed(Course course) {
         for (StudyRecord sr : grades) {
-            if (sr.getCourse().equals(course) && sr.getGrade().isPassingGrade())
-                return true;
+            if (sr.getCourse().equals(course))
+                return sr.isPassed(this.educationGrade);
         }
         return false;
     }
@@ -108,7 +109,7 @@ public class Student {
 
     @VisibleForTesting
     List<Course> getTakeableCourses(){
-        List<Course> passed = grades.stream().filter(sr -> sr.getGrade().isPassingGrade()).map(StudyRecord::getCourse).collect(Collectors.toList());
+        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.educationGrade)).map(StudyRecord::getCourse).collect(Collectors.toList());
         List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.educationGrade));
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());

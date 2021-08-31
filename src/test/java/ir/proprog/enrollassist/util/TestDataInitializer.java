@@ -1,10 +1,7 @@
 package ir.proprog.enrollassist.util;
 
 import ir.proprog.enrollassist.domain.*;
-import ir.proprog.enrollassist.repository.CourseRepository;
-import ir.proprog.enrollassist.repository.EnrollmentListRepository;
-import ir.proprog.enrollassist.repository.SectionRepository;
-import ir.proprog.enrollassist.repository.StudentRepository;
+import ir.proprog.enrollassist.repository.*;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,12 +12,14 @@ public class TestDataInitializer {
     CourseRepository courseRepository;
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
+    MajorRepository majorRepository;
 
-    public TestDataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository) {
+    public TestDataInitializer(StudentRepository studentRepository, CourseRepository courseRepository, SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository, MajorRepository majorRepository) {
         this.studentRepository = studentRepository;
         this.courseRepository = courseRepository;
         this.sectionRepository = sectionRepository;
         this.enrollmentListRepository = enrollmentListRepository;
+        this.majorRepository = majorRepository;
     }
 
     public void populate() throws Exception{
@@ -39,14 +38,17 @@ public class TestDataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3, "Undergraduate");
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei")
+        Major ce = new Major("8101", "CE");
+        majorRepository.save(ce);
+
+        Student mahsa = new Student("810199999", "Mahsa Mahsaei", ce, "Undergraduate")
                 .setGrade("13981", math1, 10)
                 .setGrade("13981", phys1, 12)
                 .setGrade("13981", prog, 16.3)
                 .setGrade("13981", farsi, 18.5)
                 .setGrade("13981", akhlagh, 15);
         studentRepository.save(mahsa);
-        Student changiz = new Student("810199998", "Changiz Changizi")
+        Student changiz = new Student("810199998", "Changiz Changizi", ce, "Undergraduate")
                 .setGrade("13981", math1, 13.2)
                 .setGrade("13981", phys1, 8.3)
                 .setGrade("13981", prog, 10.5)

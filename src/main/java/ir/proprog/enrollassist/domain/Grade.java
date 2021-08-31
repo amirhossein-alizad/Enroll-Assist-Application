@@ -27,7 +27,7 @@ public class Grade {
 
     public boolean isLessThan(double grade) { return this.grade < grade; }
 
-    public boolean isPassingGrade() { return this.grade >= 10.0; }
+    public boolean isEqualMoreThan(double otherGrade) { return this.grade >= otherGrade; }
 
     @Override
     public int hashCode() { return Objects.hash(grade); }

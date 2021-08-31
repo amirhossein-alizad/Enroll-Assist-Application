@@ -12,7 +12,8 @@ public class StudentTest {
 
     @Test
     void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed() throws Exception {
-        Student bebe = new Student("810197546", "bebe");
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197546", "bebe", major, "Undergraduate");
         Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
@@ -46,7 +47,8 @@ public class StudentTest {
 
     @Test
     void Student_has_passed_records_that_are_in_grades_set()  throws Exception {
-        Student bebe = new Student("810197000", "bebe");
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 19);
         assertThat(bebe.hasPassed(math1))

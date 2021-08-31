@@ -47,6 +47,11 @@ public class StudyRecord {
         return grade.getGrade() * course.getCredits();
     }
 
+    public boolean isPassed(EducationGrade studentEducationGrade) {
+        return grade.isEqualMoreThan(studentEducationGrade.getMinValidGPA()) ||
+                grade.isEqualMoreThan(course.getEducationGrade().getMinValidGPA());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
