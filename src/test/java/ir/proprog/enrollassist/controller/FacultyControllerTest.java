@@ -52,26 +52,12 @@ public class FacultyControllerTest {
     }
 
     @Test
-    public void Faculty_majors_are_returned_correctly() throws Exception{
-        Faculty f1 = new Faculty("ECE");
-        Major m1 = new Major("8101" ,"CE");
-        Major m2 = new Major("8102" ,"CS");
-        Major m3 = new Major("8103" ,"EE");
-        f1.addMajor(m1, m2, m3);
-        given(facultyRepository.findById(1L)).willReturn(Optional.of(f1));
-        mvc.perform(get("/faculties/1/majors")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
-                .andExpect(jsonPath("$[0].majorName", anyOf(is("CE"), is("CS"), is("EE"))))
-                .andExpect(jsonPath("$[1].majorName", anyOf(is("CE"), is("CS"), is("EE"))))
-                .andExpect(jsonPath("$[2].majorName", anyOf(is("CE"), is("CS"), is("EE"))));
-    }
-
-    @Test
     public void Valid_faculty_is_added_correctly() throws Exception{
         mvc.perform(post("/faculties")
-                .content("ECE")
+                .content("{\n" +
+                        "  \"facultyId\": 0,\n" +
+                        "  \"facultyName\": \"ECE\"\n" +
+                        "}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.facultyName", is("ECE")));
@@ -79,11 +65,13 @@ public class FacultyControllerTest {
 
     @Test
     public void Faculty_with_empty_names_cannot_be_added() throws Exception{
-        String content = "";
         JSONObject response = new JSONObject();
         response.put("1", "Faculty name can not be Empty.");
         mvc.perform(post("/faculties")
-                .content(" ")
+                .content("{\n" +
+                        "  \"facultyId\": 0,\n" +
+                        "  \"facultyName\": \"\"\n" +
+                        "}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
@@ -99,7 +87,10 @@ public class FacultyControllerTest {
         given(facultyRepository.findByFacultyName("ECE")).willReturn(java.util.Optional.ofNullable(faculty));
 
         mvc.perform(post("/faculties")
-                .content("ECE")
+                .content("{\n" +
+                        "  \"facultyId\": 0,\n" +
+                        "  \"facultyName\": \"ECE\"\n" +
+                        "}")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
