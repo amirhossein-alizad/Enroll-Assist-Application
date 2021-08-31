@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;
@@ -50,8 +51,8 @@ public class StudentController {
             Student newStudent = new Student(studentView.getStudentNo(), studentView.getName(), major);
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
-        } catch (IllegalArgumentException illegalArgumentException) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Student number or student name is not valid.");
+        } catch (ExceptionList exceptionList) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
     }
 
