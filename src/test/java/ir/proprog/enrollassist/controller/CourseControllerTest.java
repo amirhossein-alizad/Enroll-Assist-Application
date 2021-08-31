@@ -2,6 +2,8 @@ package ir.proprog.enrollassist.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.course.CourseController;
+import ir.proprog.enrollassist.controller.course.CourseMajorView;
 import ir.proprog.enrollassist.domain.*;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONArray;

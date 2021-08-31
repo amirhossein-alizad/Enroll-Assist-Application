@@ -1,10 +1,9 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.course.CourseView;
 import ir.proprog.enrollassist.domain.Faculty;
 import ir.proprog.enrollassist.domain.Major;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.domain.StudentNumber;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

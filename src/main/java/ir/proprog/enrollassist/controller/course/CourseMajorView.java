@@ -1,22 +1,25 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.course;
 
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.CourseNumber;
 import lombok.Getter;
-import java.util.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
-public class CourseView {
+public class CourseMajorView {
     private Long courseId;
     private CourseNumber courseNumber;
     private String courseTitle;
     private int courseCredits;
     private Set<Long> prerequisites = new HashSet<>();
+    private Set<Long> majors = new HashSet<>();
 
-    public CourseView() {
+    public CourseMajorView() {
     }
 
-    public CourseView(Course course) {
+    public CourseMajorView(Course course, Set<Long> prerequisites, Set<Long> majors) {
         this.courseId = course.getId();
         this.courseNumber = course.getCourseNumber();
         this.courseTitle = course.getTitle();
@@ -24,13 +27,7 @@ public class CourseView {
         if(!course.getPrerequisites().isEmpty())
             for(Course c : course.getPrerequisites())
                 prerequisites.add(c.getId());
-    }
-
-    public CourseView(Course course, Set<Long> prerequisites) {
-        this.courseId = course.getId();
-        this.courseNumber = course.getCourseNumber();
-        this.courseTitle = course.getTitle();
-        this.courseCredits = course.getCredits();
         this.prerequisites = prerequisites;
+        this.majors = majors;
     }
 }

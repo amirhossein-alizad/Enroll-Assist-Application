@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.course;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.*;
