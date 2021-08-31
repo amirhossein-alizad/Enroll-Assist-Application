@@ -10,6 +10,7 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;
 import ir.proprog.enrollassist.domain.section.Section;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -19,15 +20,42 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
+    private Course math1, prog, ap, math2, eco , ds, phys1, signal, maaref, english, farsi, phys2;
+    private Section math1_1, math1_2, prog_1, ap_1, math2_1, eco_1, ds_1, signal_1, phys1_1, maaref1_1, english_1, farsi_1, phys2_1;
+    @BeforeEach
+    void setUp() throws ExceptionList {
+        math1 = new Course("1111111", "MATH1", 3);
+        prog = new Course("2222222", "PROG", 4);
+        ap = new Course("3333333", "AP", 3).withPre(prog);
+        math2 = new Course("4444444", "MATH2", 3).withPre(math1);
+        eco = new Course("5555555", "ECO", 3);
+        ds = new Course("6666666", "DS", 3);
+        phys1 = new Course("7777777", "PHYS1", 4);
+        signal = new Course("8888888", "SIGNAL", 4);
+        maaref = new Course("9999999", "MAAREF", 4);
+        english = new Course("1010101", "EN", 4);
+        farsi = new Course("1212121", "FA", 3);
+        phys2 = new Course("1313131", "PHYS2", 3).withPre(phys1, math1);
+
+        prog_1 = new Section(prog, "01");
+        maaref1_1 = new Section(maaref, "01");
+        english_1 = new Section(english, "01");
+        farsi_1 = new Section(farsi, "01");
+        math1_1 = new Section(math1, "01");
+        math1_2 = new Section(math1, "02");
+        phys1_1 = new Section(phys1, "01");
+        phys2_1 = new Section(phys2, "01");
+        signal_1 = new Section(signal, "01");
+        eco_1 = new Section(eco, "01");
+        ds_1 = new Section(ds, "01");
+        math2_1 = new Section(math2, "01");
+        ap_1 = new Section(ap, "01");
+    }
+
     @Test
     void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 4);
-        Course ap = new Course("3333333", "AP", 3).withPre(prog);
-        Course math2 = new Course("5555555", "MATH2", 3).withPre(math1);
-        Section math2_1 = new Section(math2, "01");
-        Section ap_1 = new Section(ap, "01");
+
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.hasPassed(prog)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
@@ -40,8 +68,6 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Section math1_1 = new Section(math1, "01");
         when(bebe.hasPassed(math1)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1);
@@ -53,9 +79,6 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_duplicate_courses() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Section math1_1 = new Section(math1, "01");
-        Section math1_2 = new Section(math1, "02");
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, math1_2);
         assertThat(list.checkNoCourseHasRequestedTwice())
@@ -66,16 +89,6 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_more_than_14_credits_belonging_to_student_with_gpa_less_than_12() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 4);
-        Course eco = new Course("3333333", "ECO", 3);
-        Course ap = new Course("4444444", "AP", 3);
-        Course ds = new Course("5555555", "DS", 3);
-        Section math1_1 = new Section(math1, "01");
-        Section prog_1 = new Section(prog, "01");
-        Section eco_1 = new Section(eco, "01");
-        Section ap_1 = new Section(ap, "01");
-        Section ds_1 = new Section(ds, "01");
         when(bebe.calculateGPA()).thenReturn(new Grade(11.5));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
@@ -138,24 +151,12 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_duplicate_courses_and_more_than_24_credits() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 4);
-        Course prog = new Course("2222222", "PROG", 4);
-        Course ethics = new Course("3333333", "ETHICS", 4);
-        Course math2 = new Course("5555555", "MATH2", 4).withPre(math1);
-        Course da = new Course("6666666", "DA", 4);
-        Course ds = new Course("7777777", "DS", 4);
-        Course dm = new Course("8888888", "DM", 4);
-        Section math2_1 = new Section(math2, "01");
-        Section prog_1 = new Section(prog, "01");
-        Section ethics_1 = new Section(ethics, "01");
-        Section da_1 = new Section(da, "01");
-        Section ds_1 = new Section(ds, "01");
-        Section dm_1 = new Section(dm, "01");
+
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(new Grade(20));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(math2_1, prog_1, da_1, ds_1, ethics_1, dm_1, dm_1);
+        list.addSections(math2_1, prog_1, phys1_1, signal_1, eco_1, ds_1, english_1, ds_1);
         ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
         assertThat(list.checkEnrollmentRules())
                 .isNotNull()
@@ -169,21 +170,9 @@ public class EnrollmentListTest {
     @Test
     void New_students_cant_take_more_than_twenty_credits() throws ExceptionList {
         Student bebe = mock(Student.class);
-        Course phys1 = new Course("1111111", "PHYS1", 4);
-        Course prog = new Course("2222222", "PROG", 4);
-        Course maaref = new Course("3333333", "MAAREF", 4);
-        Course dm = new Course("4444444", "DM", 4);
-        Course akhlagh = new Course("5555555", "AKHLAGH", 4);
-        Course db = new Course("6666666", "DB", 4);
-        Section phys1_1 = new Section(phys1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section dm_1 = new Section(dm, "01");
-        Section maaref1_1 = new Section(maaref, "01");
-        Section akhlagh_1 = new Section(akhlagh, "01");
-        Section db_1 = new Section(db, "01");
         when(bebe.calculateGPA()).thenReturn(new Grade());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(phys1_1, prog1_1, dm_1, maaref1_1, akhlagh_1, db_1);
+        list1.addSections(phys1_1, prog_1, ds_1, math1_2, signal_1, eco_1);
         assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .hasSize(1);
@@ -192,17 +181,9 @@ public class EnrollmentListTest {
     @Test
     void Students_with_GPA_more_than_12_can_take_more_than_14_credits() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 4);
-        Course phys1 = new Course("2222222", "PHYS1", 4);
-        Course prog = new Course("3333333", "PROG", 4);
-        Course ap = new Course("4444444", "AP", 4);
-        Section phys1_1 = new Section(phys1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section math1_1 = new Section(math1, "01");
-        Section ap_1 = new Section(ap, "01");
         when(bebe.calculateGPA()).thenReturn(new Grade(12.0));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(phys1_1, prog1_1, math1_1, ap_1);
+        list1.addSections(phys1_1, prog_1, math1_1, ap_1);
         assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .isEmpty();
@@ -211,24 +192,13 @@ public class EnrollmentListTest {
     @Test
     void Students_with_GPA_more_than_17_can_take_more_than_20_credits() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 4);
-        Course phys1 = new Course("2222222", "PHYS1", 4);
-        Course prog = new Course("3333333", "PROG", 4);
-        Course maaref = new Course("4444444", "MAAREF", 4);
-        Course english = new Course("5555555", "EN", 4);
-        Course farsi = new Course("6666666", "FA", 3);
 
-        Section phys1_1 = new Section(phys1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section maaref1_1 = new Section(maaref, "01");
-        Section english_1 = new Section(english, "01");
-        Section farsi_1 = new Section(farsi, "01");
 
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         when(bebe.calculateGPA()).thenReturn(new Grade(17.01));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(phys1_1, prog1_1, maaref1_1, english_1, farsi_1);
+        list1.addSections(phys1_1, prog_1, maaref1_1, english_1, farsi_1);
         assertThat(list1.checkValidGPALimit())
                 .isNotNull()
                 .isEmpty();
@@ -237,20 +207,8 @@ public class EnrollmentListTest {
     @Test
     void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course phys1 = new Course("2222222", "PHYS1", 3);
-        Course prog = new Course("3333333", "PROG", 4);
-        Course maaref = new Course("4444444", "MAAREF", 2);
-        Course economy = new Course("5555555", "ECO", 3);
-        Course akhlagh = new Course("6666666", "AKHLAGH", 2);
-        Course phys2 = new Course("7777777", "PHYS2", 3).withPre(math1, phys1);
-        Section prog1_1 = new Section(prog, "01");
-        Section maaref1_1 = new Section(maaref, "01");
-        Section economy1_1 = new Section(economy, "01");
-        Section akhlagh_1 = new Section(akhlagh, "01");
-        Section phys2_1 = new Section(phys2, "01");
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(prog1_1, maaref1_1, economy1_1, akhlagh_1, phys2_1);
+        list1.addSections(prog_1, maaref1_1, eco_1, maaref1_1, phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
         when(bebe.hasPassed(math1)).thenReturn(false);
         when(bebe.hasPassed(phys1)).thenReturn(false);
