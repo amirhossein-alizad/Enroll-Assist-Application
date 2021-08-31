@@ -24,18 +24,18 @@ public class EnrollmentListTest {
     private Section math1_1, math1_2, prog_1, ap_1, math2_1, eco_1, ds_1, signal_1, phys1_1, maaref1_1, english_1, farsi_1, phys2_1;
     @BeforeEach
     void setUp() throws ExceptionList {
-        math1 = new Course("1111111", "MATH1", 3);
-        prog = new Course("2222222", "PROG", 4);
-        ap = new Course("3333333", "AP", 3).withPre(prog);
-        math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        eco = new Course("5555555", "ECO", 3);
-        ds = new Course("6666666", "DS", 3);
-        phys1 = new Course("7777777", "PHYS1", 4);
-        signal = new Course("8888888", "SIGNAL", 4);
-        maaref = new Course("9999999", "MAAREF", 4);
-        english = new Course("1010101", "EN", 4);
-        farsi = new Course("1212121", "FA", 3);
-        phys2 = new Course("1313131", "PHYS2", 3).withPre(phys1, math1);
+        math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        prog = new Course("2222222", "PROG", 4, "Undergraduate");
+        ap = new Course("3333333", "AP", 3, "Undergraduate").withPre(prog);
+        math2 = new Course("4444444", "MATH2", 3, "Undergraduate").withPre(math1);
+        eco = new Course("5555555", "ECO", 3, "Undergraduate");
+        ds = new Course("6666666", "DS", 3, "Undergraduate");
+        phys1 = new Course("7777777", "PHYS1", 4, "Undergraduate");
+        signal = new Course("8888888", "SIGNAL", 4, "Undergraduate");
+        maaref = new Course("9999999", "MAAREF", 4, "Undergraduate");
+        english = new Course("1010101", "EN", 4, "Undergraduate");
+        farsi = new Course("1212121", "FA", 3, "Undergraduate");
+        phys2 = new Course("1313131", "PHYS2", 3, "Undergraduate").withPre(phys1, math1);
 
         prog_1 = new Section(prog, "01");
         maaref1_1 = new Section(maaref, "01");
@@ -53,7 +53,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() throws ExceptionList {
+    void Enrollment_list_returns_no_violation_when_all_courses_prerequisites_have_been_passed() {
         Student bebe = mock(Student.class);
 
         when(bebe.hasPassed(math1)).thenReturn(true);
@@ -66,7 +66,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() throws ExceptionList {
+    void Enrollment_list_cannot_have_courses_already_been_passed_by_owner() {
         Student bebe = mock(Student.class);
         when(bebe.hasPassed(math1)).thenReturn(true);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
@@ -77,7 +77,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_cannot_have_duplicate_courses() throws ExceptionList {
+    void Enrollment_list_cannot_have_duplicate_courses() {
         Student bebe = mock(Student.class);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, math1_2);
@@ -168,7 +168,7 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void New_students_cant_take_more_than_twenty_credits() throws ExceptionList {
+    void New_students_cant_take_more_than_twenty_credits() {
         Student bebe = mock(Student.class);
         when(bebe.calculateGPA()).thenReturn(new Grade());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);

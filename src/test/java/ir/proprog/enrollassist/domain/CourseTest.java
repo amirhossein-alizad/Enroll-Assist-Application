@@ -19,9 +19,9 @@ public class CourseTest {
     @BeforeEach
     void setUp() throws Exception{
         errors = new ExceptionList();
-        math1 = new Course("1111111", "MATH1", 3);
-        phys1 = new Course("2222222", "PHYS1", 3);
-        phys2 = new Course("3333333", "PHYS2", 3).withPre(math1, phys1);
+        math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        phys1 = new Course("2222222", "PHYS1", 3, "Undergraduate");
+        phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").withPre(math1, phys1);
         bebe = mock(Student.class);
 
     }
@@ -54,7 +54,7 @@ public class CourseTest {
         when(bebe.hasPassed(any(Course.class))).thenReturn(false);
         Course math1 = null;
         try {
-            math1 = new Course("1111111", "MATH1", 3);
+            math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         } catch (ExceptionList e) {
             errors.addExceptions(e.getExceptions());
         }

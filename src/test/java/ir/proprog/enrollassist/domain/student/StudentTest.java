@@ -20,23 +20,22 @@ public class StudentTest {
 
     @BeforeEach
     void setUp() throws Exception{
-        bebe = new Student("810197000", "bebe");
-        math1 = new Course("4444444", "MATH1", 3);
-        phys1 = new Course("8888888", "PHYS1", 3);
-        prog = new Course("7777777", "PROG", 4);
-        economy = new Course("1111111", "ECO", 3);
-        maaref = new Course("5555555", "MAAREF", 2);
-        andishe = new Course("3333333", "ANDISHE", 2);
-        math2 = new Course("2222222", "MATH2", 3).withPre(math1);
+        math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
+        phys1 = new Course("8888888", "PHYS1", 3, "Undergraduate");
+        prog = new Course("7777777", "PROG", 4, "Undergraduate");
+        economy = new Course("1111111", "ECO", 3, "Undergraduate");
+        maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
+        andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
+        math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
         major = new Major("123", "CE");
         major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        bebe = new Student("810197000", "bebe", major, "Undergraduate");
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
         andishe1_1 = new Section(andishe, "01");
         math2_1 = new Section(math2, "01");
         math2_2 = new Section(math2, "02");
-        bebe.setMajor(major);
     }
 
     @Test
@@ -67,7 +66,7 @@ public class StudentTest {
 
     @Test
     void Course_with_grade_less_than_ten_is_not_passed() throws Exception {
-        Course math1 = new Course("4444444", "MATH1", 3);
+        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
                 .isFalse();
@@ -85,7 +84,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_has_not_passed_records_that_are_not_in_grades_set()  throws Exception {
+    void Student_has_not_passed_records_that_are_not_in_grades_set() {
         Student mockedStudent = mock(Student.class);
         assertThat(mockedStudent.hasPassed(math1))
                 .isEqualTo(false);
@@ -144,7 +143,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
+    void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() {
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(6)
@@ -152,7 +151,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() throws Exception {
+    void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() {
         assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -178,7 +177,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() throws Exception {
+    void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() {
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)

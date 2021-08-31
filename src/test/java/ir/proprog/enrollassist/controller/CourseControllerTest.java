@@ -165,7 +165,7 @@ public class CourseControllerTest {
 
     @Test
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
-        Course course = new Course("1212121", "AP", 3);
+        Course course = new Course("1212121", "AP", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
         ExceptionList exceptionList = new ExceptionList();

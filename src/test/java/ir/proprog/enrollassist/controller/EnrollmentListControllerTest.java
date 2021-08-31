@@ -59,10 +59,10 @@ public class EnrollmentListControllerTest {
         list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz"));
         list2 = new EnrollmentList("list2", new Student("77777", "Sara"));
         std = new Student("00000", "gina");
-        S1 = new Section(new Course("1111111", "C1", 3), "01");
-        S2 = new Section(new Course("2222222", "C2", 3), "02");
-        S3 = new Section(new Course("3333333", "C3", 3), "01");
-        S4 = new Section(new Course("3333333", "C3", 3), "01");
+        S1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01");
+        S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
+        S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
+        S4 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
         this.lists = List.of(this.list1, this.list2);
 
         given(enrollmentListRepository.findAll()).willReturn(this.lists);
@@ -161,13 +161,13 @@ public class EnrollmentListControllerTest {
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
-                .andExpect(jsonPath("$[0].courseTitle", is("ap")))
+                .andExpect(jsonPath("$[0].courseTitle", is("C1")))
                 .andExpect(jsonPath("$[0].courseCredits", is(3)));
     }
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        Section section = new Section(new Course("4444444", "dm", 3), "01");
+        Section section = new Section(new Course("4444444", "dm", 3, "Undergraduate"), "01");
         this.list1.addSections(S1, S2, S3, section);
         mvc.perform(get("/lists/12/check")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -193,7 +193,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_added_correctly_to_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
         mvc.perform(MockMvcRequestBuilders.put("/lists/12/sections/2")
@@ -210,7 +210,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
@@ -220,7 +220,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
-        Section section = new Section(new Course("2222222", "dm", 3), "01");
+        Section section = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(sectionRepository.findById(2L)).willReturn(Optional.of(section));
 
         mvc.perform(MockMvcRequestBuilders.delete("/lists/10/sections/2")
@@ -270,7 +270,7 @@ public class EnrollmentListControllerTest {
     public void EnrollmentList_check_is_returned_correctly_with_more_than_one_violations() throws Exception{
         Student student = mock(Student.class);
         EnrollmentList list = new EnrollmentList("list", student);
-        Section S5 = new Section(new Course("5555555", "dm", 3), "01");
+        Section S5 = new Section(new Course("5555555", "dm", 3, "Undergraduate"), "01");
         list.addSections(S1, S2, S3, S4, S5);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
