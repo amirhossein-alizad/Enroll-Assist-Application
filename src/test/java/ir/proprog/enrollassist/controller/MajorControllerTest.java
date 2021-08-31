@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.controller.major.MajorController;
 import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Faculty;
 import ir.proprog.enrollassist.domain.Major;
