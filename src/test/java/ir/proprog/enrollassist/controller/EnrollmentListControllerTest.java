@@ -146,9 +146,9 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        Section ap_1 = new Section(new Course("1111111", "ap", 3), "01");
-        Section ds_1 = new Section(new Course("2222222", "ds", 3), "01");
-        Section da_1 = new Section(new Course("3333333", "da", 3), "01");
+        Section ap_1 = new Section(new Course("1111111", "ap", 3, "Undergraduate"), "01");
+        Section ds_1 = new Section(new Course("2222222", "ds", 3, "Undergraduate"), "01");
+        Section da_1 = new Section(new Course("3333333", "da", 3, "Undergraduate"), "01");
         this.list1.addSections(ap_1, ds_1, da_1);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/sections")
@@ -163,9 +163,9 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        Section ap_1 = new Section(new Course("1111111", "ap", 4), "01");
-        Section ds_1 = new Section(new Course("2222222", "ds", 4), "01");
-        Section da_1 = new Section(new Course("3333333", "da", 4), "01");
+        Section ap_1 = new Section(new Course("1111111", "ap", 4, "Undergraduate"), "01");
+        Section ds_1 = new Section(new Course("2222222", "ds", 4, "Undergraduate"), "01");
+        Section da_1 = new Section(new Course("3333333", "da", 4, "Undergraduate"), "01");
         this.list1.addSections(ap_1, ds_1, da_1);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         mvc.perform(get("/lists/12/check")
@@ -176,8 +176,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
-        Course ap = new Course("1111111", "ap", 4);
-        Course dm = new Course("2222222", "dm", 4);
+        Course ap = new Course("1111111", "ap", 4, "Undergraduate");
+        Course dm = new Course("2222222", "dm", 4, "Undergraduate");
         Section ap_1 = new Section(ap, "01");
         Section ap_2 = new Section(ap, "02");
         Section dm_1 = new Section(dm, "01");
@@ -193,7 +193,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_Added_correctly_to_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -211,7 +211,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
@@ -222,7 +222,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3), "01");
+        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
         given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
 
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
@@ -251,10 +251,10 @@ public class EnrollmentListControllerTest {
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
         EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
 
-        Section S1 = new Section(new Course("1111111", "C1", 3), "01");
-        Section S2 = new Section(new Course("2222222", "C2", 3), "02");
-        Section S3 = new Section(new Course("3333333", "C3", 3), "01");
-        Section S4 = new Section(new Course("3333333", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01");
+        Section S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
+        Section S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
+        Section S4 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
@@ -281,10 +281,10 @@ public class EnrollmentListControllerTest {
 
         EnrollmentList list = new EnrollmentList("list", std);
 
-        Section S1 = new Section(new Course("1111111", "C1", 4), "01");
-        Section S2 = new Section(new Course("2222222", "C2", 4), "02");
-        Section S3 = new Section(new Course("3333333", "C3", 4), "01");
-        Section S4 = new Section(new Course("3333333", "C3", 3), "01");
+        Section S1 = new Section(new Course("1111111", "C1", 4, "Undergraduate"), "01");
+        Section S2 = new Section(new Course("2222222", "C2", 4, "Undergraduate"), "02");
+        Section S3 = new Section(new Course("3333333", "C3", 4, "Undergraduate"), "01");
+        Section S4 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));

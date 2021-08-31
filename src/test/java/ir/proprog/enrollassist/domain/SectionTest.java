@@ -27,7 +27,7 @@ public class SectionTest {
 
     @Test
     public void scheduleToString_method_works_correctly() throws Exception {
-        Course math1 = new Course("1111111", "MATH1", 3);
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Section section = new Section(math1, "01");
         section.setPresentationSchedule(Set.of( new PresentationSchedule("Sunday", "10:00", "12:00"), new PresentationSchedule("Wednesday", "10:00", "12:00")));
         assertThat(section.scheduleToString())

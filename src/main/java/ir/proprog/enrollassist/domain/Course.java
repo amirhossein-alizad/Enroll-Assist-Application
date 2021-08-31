@@ -21,12 +21,14 @@ public class Course {
     @Embedded
     private CourseNumber courseNumber;
     @Embedded
+    private EducationGrade educationGrade;
+    @Embedded
     private Credit credits;
     private boolean hasExam = false;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
-    public Course(String courseNumber, String title, int credits) throws ExceptionList {
+    public Course(String courseNumber, String title, int credits, String educationGrade) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if (title.equals("")) {
             exceptionList.addNewException(new Exception("Course must have a name."));
@@ -37,6 +39,9 @@ public class Course {
         } catch (Exception e) { exceptionList.addNewException(e); }
         try {
             this.credits = new Credit(credits);
+        } catch (Exception e) { exceptionList.addNewException(e); }
+        try {
+            this.educationGrade = new EducationGrade(educationGrade);
         } catch (Exception e) { exceptionList.addNewException(e); }
 
         if (exceptionList.hasException())

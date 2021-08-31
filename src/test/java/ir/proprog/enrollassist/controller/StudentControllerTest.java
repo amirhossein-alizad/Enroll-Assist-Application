@@ -114,9 +114,9 @@ public class StudentControllerTest {
 
     @Test
     public void Takeable_sections_by_major_are_returned_correctly() throws Exception{
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course ap = new Course("4444004", "AP", 3);
-        Course math2 = new Course("4666644", "MATH2", 3).withPre(math1);
+        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
+        Course ap = new Course("4444004", "AP", 3, "Undergraduate");
+        Course math2 = new Course("4666644", "MATH2", 3, "Undergraduate").withPre(math1);
 
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);

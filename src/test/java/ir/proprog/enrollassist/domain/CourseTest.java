@@ -14,7 +14,7 @@ public class CourseTest {
     void Course_with_empty_field_cant_be_created() {
         ExceptionList exceptionList = new ExceptionList();
         try {
-            Course math1 = new Course("", "", 3);
+            Course math1 = new Course("", "", 3, "Undergraduate");
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
@@ -26,7 +26,7 @@ public class CourseTest {
     void Course_with_empty_invalid_course_number_cant_be_created() {
         ExceptionList exceptionList = new ExceptionList();
         try {
-            Course math1 = new Course("1", "C", -3);
+            Course math1 = new Course("1", "C", -3, "Undergraduate");
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
@@ -42,7 +42,7 @@ public class CourseTest {
         when(bebe.hasPassed(any(Course.class))).thenReturn(false);
         Course math1 = null;
         try {
-            math1 = new Course("1111111", "MATH1", 3);
+            math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         } catch (ExceptionList e) {
             exceptionList.addExceptions(e.getExceptions());
         }
@@ -59,8 +59,8 @@ public class CourseTest {
         when(bebe.hasPassed(any(Course.class))).thenReturn(true);
         Course math1 = null;
         try {
-            math1 = new Course("1111111", "MATH1", 3);
-            Course math2 = new Course("2222222", "MATH2", 3).withPre(math1);
+            math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+            Course math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
             assertThat(math2.canBeTakenBy(bebe))
                     .isNotNull()
                     .isEmpty();
@@ -76,9 +76,9 @@ public class CourseTest {
         Student bebe = mock(Student.class);
         when(bebe.hasPassed(any(Course.class))).thenReturn(true);
         try {
-            Course math1 = new Course("1111111", "MATH1", 3);
-            Course phys1 = new Course("2222222", "PHYS1", 3);
-            Course phys2 = new Course("3333333", "PHYS2", 3).withPre(math1, phys1);
+            Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+            Course phys1 = new Course("2222222", "PHYS1", 3, "Undergraduate");
+            Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").withPre(math1, phys1);
             assertThat(phys2.canBeTakenBy(bebe))
                     .isNotNull()
                     .isEmpty();
@@ -93,9 +93,9 @@ public class CourseTest {
         ExceptionList exceptionList = new ExceptionList();
         Student bebe = mock(Student.class);
         try {
-            Course math1 = new Course("1111111", "MATH1", 3);
-            Course phys1 = new Course("2222222", "PHYS1", 3);
-            Course phys2 = new Course("3333333", "PHYS2", 3).withPre(math1, phys1);
+            Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+            Course phys1 = new Course("2222222", "PHYS1", 3, "Undergraduate");
+            Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").withPre(math1, phys1);
             when(bebe.hasPassed(math1)).thenReturn(true);
             when(bebe.hasPassed(phys1)).thenReturn(false);
             assertThat(phys2.canBeTakenBy(bebe))
@@ -112,9 +112,9 @@ public class CourseTest {
         ExceptionList exceptionList = new ExceptionList();
         Student bebe = mock(Student.class);
         try {
-            Course math1 = new Course("1111111", "MATH1", 3);
-            Course phys1 = new Course("2222222", "PHYS1", 3);
-            Course phys2 = new Course("3333333", "PHYS2", 3).withPre(math1, phys1);
+            Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+            Course phys1 = new Course("2222222", "PHYS1", 3, "Undergraduate");
+            Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").withPre(math1, phys1);
             when(bebe.hasPassed(math1)).thenReturn(false);
             when(bebe.hasPassed(phys1)).thenReturn(false);
             assertThat(phys2.canBeTakenBy(bebe))

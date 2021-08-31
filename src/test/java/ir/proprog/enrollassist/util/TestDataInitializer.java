@@ -24,19 +24,19 @@ public class TestDataInitializer {
     }
 
     public void populate() throws Exception{
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course phys1 = new Course("8888888", "PHYS1", 3);
-        Course prog = new Course("7777777", "PROG", 4);
-        Course math2 = new Course("6666666", "MATH2", 3).withPre(math1);
-        Course phys2 = new Course("9999999", "PHYS2", 3).withPre(math1, phys1);
-        Course ap = new Course("2222222", "AP", 3).withPre(prog);
-        Course dm = new Course("3333333", "DM", 3).withPre(math1);
-        Course economy = new Course("1111111", "ECO", 3);
-        Course maaref = new Course("5555555", "MAAREF", 2);
-        Course farsi = new Course("1212121", "FA", 2);
-        Course english = new Course("1010101", "EN", 2);
-        Course akhlagh = new Course("1122111", "AKHLAGH", 2);
-        Course karafarini = new Course("1313131", "KAR", 3);
+        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
+        Course phys1 = new Course("8888888", "PHYS1", 3, "Undergraduate");
+        Course prog = new Course("7777777", "PROG", 4, "Undergraduate");
+        Course math2 = new Course("6666666", "MATH2", 3, "Undergraduate").withPre(math1);
+        Course phys2 = new Course("9999999", "PHYS2", 3, "Undergraduate").withPre(math1, phys1);
+        Course ap = new Course("2222222", "AP", 3, "Undergraduate").withPre(prog);
+        Course dm = new Course("3333333", "DM", 3, "Undergraduate").withPre(math1);
+        Course economy = new Course("1111111", "ECO", 3, "Undergraduate");
+        Course maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
+        Course farsi = new Course("1212121", "FA", 2, "Undergraduate");
+        Course english = new Course("1010101", "EN", 2, "Undergraduate");
+        Course akhlagh = new Course("1122111", "AKHLAGH", 2, "Undergraduate");
+        Course karafarini = new Course("1313131", "KAR", 3, "Undergraduate");
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")

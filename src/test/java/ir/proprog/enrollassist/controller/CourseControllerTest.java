@@ -44,10 +44,10 @@ public class CourseControllerTest {
 
     @BeforeEach
     void SetUp() throws Exception {
-        course1 = new Course("1111111", "C1", 3);
-        course2 = new Course("2222222", "C2", 3);
+        course1 = new Course("1111111", "C1", 3, "Undergraduate");
+        course2 = new Course("2222222", "C2", 3, "Undergraduate");
         course2.withPre(course1);
-        course3 = new Course("3333333", "C3", 4);
+        course3 = new Course("3333333", "C3", 4, "Undergraduate");
         course2.withPre(course1);
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
@@ -107,6 +107,10 @@ public class CourseControllerTest {
         courseN.put("courseNumber", "1412121");
         JSONArray jArray = new JSONArray();
         jArray.put(1);
+        JSONObject courseG = new JSONObject();
+        courseG.put("grade", "Undergraduate");
+
+        request.put("educationGrade",courseG);
         request.put("courseNumber", courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
@@ -155,7 +159,7 @@ public class CourseControllerTest {
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
         AddCourseService addCourseService = mock(AddCourseService.class);
         Faculty f1 = mock(Faculty.class);
-        Course course = new Course("1212121", "AP", 3);
+        Course course = new Course("1212121", "AP", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
 
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
@@ -187,12 +191,16 @@ public class CourseControllerTest {
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "1412121");
 
+        JSONObject courseG = new JSONObject();
+        courseG.put("grade", "Undergraduate");
+
+        request.put("educationGrade",courseG);
         request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("majors", majors);
 
-        Course course = new Course("1412121", "C5", 4);
+        Course course = new Course("1412121", "C5", 4, "Undergraduate");
 
         given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(course));
 
@@ -220,9 +228,12 @@ public class CourseControllerTest {
         JSONObject request = new JSONObject();
         JSONArray majors = new JSONArray();
         majors.put(10);
-
         JSONArray jArray = new JSONArray();
         jArray.put(1);
+        JSONObject courseG = new JSONObject();
+        courseG.put("grade", "Undergraduate");
+
+        request.put("educationGrade",courseG);
         request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
@@ -256,6 +267,10 @@ public class CourseControllerTest {
 
         JSONArray jArray = new JSONArray();
         jArray.put(1);
+        JSONObject courseG = new JSONObject();
+        courseG.put("grade", "Undergraduate");
+
+        request.put("educationGrade",courseG);
         request.put("courseNumber",courseN);
         request.put("courseCredits", -1);
         request.put("courseTitle", "");
