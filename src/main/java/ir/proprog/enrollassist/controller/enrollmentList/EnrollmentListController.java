@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.enrollmentList;
 
 import ir.proprog.enrollassist.controller.section.SectionView;
 import ir.proprog.enrollassist.domain.EnrollmentList;

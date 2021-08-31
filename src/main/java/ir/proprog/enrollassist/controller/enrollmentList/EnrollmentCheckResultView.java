@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.enrollmentList;
 
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 

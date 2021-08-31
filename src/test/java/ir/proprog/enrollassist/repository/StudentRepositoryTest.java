@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.controller.EnrollmentListView;
+import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
