@@ -22,6 +22,7 @@ public class Student {
     @Embedded
     private StudentNumber studentNumber;
     private String name;
+    private EducationGrade grade;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
     @ManyToOne
@@ -42,7 +43,7 @@ public class Student {
         this.name = name;
     }
 
-    public Student(String studentNumber, String name, Major major) throws ExceptionList {
+    public Student(String studentNumber, String name, Major major, String grade) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
@@ -51,6 +52,9 @@ public class Student {
             exceptionList.addNewException(new Exception("Student name can not be empty."));
         if (major == null)
             exceptionList.addNewException(new Exception("Student major can not be null."));
+        try {
+            this.grade = new EducationGrade(grade);
+        } catch (Exception e) { exceptionList.addNewException(e); }
 
         if (exceptionList.hasException())
             throw exceptionList;
