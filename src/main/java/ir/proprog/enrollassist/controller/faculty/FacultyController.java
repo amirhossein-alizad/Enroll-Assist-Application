@@ -1,19 +1,15 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.faculty;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.controller.MajorView;
 import ir.proprog.enrollassist.domain.Faculty;
-import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.repository.FacultyRepository;
-import ir.proprog.enrollassist.repository.MajorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 

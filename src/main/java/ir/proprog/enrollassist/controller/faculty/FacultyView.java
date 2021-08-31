@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.faculty;
 
 import ir.proprog.enrollassist.domain.Faculty;
 import ir.proprog.enrollassist.domain.Major;
