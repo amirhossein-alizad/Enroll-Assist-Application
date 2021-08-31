@@ -150,8 +150,7 @@ public class StudentControllerTest {
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);
 
-        Student student = new Student("010101", "ali", cs, "Undergraduate");
-        student.setGrade("13981", math1, 20.0);
+        Student student = new Student("010101", "ali", cs).setGrade("13981", math1, 20.0);
 
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
@@ -176,6 +175,4 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[1].courseCredits", is(3)));
 
     }
-
-
 }

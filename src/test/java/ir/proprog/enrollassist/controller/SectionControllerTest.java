@@ -14,6 +14,7 @@ import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -47,15 +48,27 @@ public class SectionControllerTest {
     private EnrollmentListRepository enrollmentListRepository;
     @MockBean
     private CourseRepository courseRepository;
+    private ExamTime exam1, exam2;
+    private Section section;
+
+    @BeforeEach
+    public void setUp() throws Exception {
+        exam1 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        exam2 = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
+
+        Course course = mock(Course.class);
+        section = new Section(course,"01", exam1, Collections.emptySet());
+        when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
+    }
 
     @Test
     public void All_sections_are_returned_correctly() throws Exception {
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
         List<Section> sections = List.of(
-                new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01", exam0, Collections.emptySet()),
-                new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02", exam1, Collections.emptySet()),
-                new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01", exam0, Collections.emptySet())
+                new Section(new Course("1111111", "C1", 3), "01", exam1, Collections.emptySet()),
+                new Section(new Course("2222222", "C2", 3), "02", exam2, Collections.emptySet()),
+                new Section(new Course("3333333", "C3", 3), "01", exam1, Collections.emptySet())
         );
 
         given(sectionRepository.findAll()).willReturn(sections);
@@ -70,10 +83,9 @@ public class SectionControllerTest {
 
     @Test
     public void Requested_section_is_returned_correctly() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1111111", "ap", 3, "Undergraduate"), "01", exam, Collections.emptySet());
-        given(sectionRepository.findById(1L)).willReturn(Optional.of(section));
-        mvc.perform(get("/sections/1")
+        Section section = new Section(new Course("1111111", "ap", 3), "01", exam1, Collections.emptySet());
+        given(sectionRepository.findById(5L)).willReturn(Optional.of(section));
+        mvc.perform(get("/sections/5")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("ap")))
@@ -84,16 +96,14 @@ public class SectionControllerTest {
 
     @Test
     public void All_section_demands_are_returned_correctly() throws Exception {
-        ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        ExamTime exam1 = new ExamTime("2021-07-11T09:00", "2021-07-11T11:00");
-        ExamTime exam2 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
-        Section s1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01", exam0, Collections.emptySet());
+        ExamTime exam3 = new ExamTime("2021-07-12T09:00", "2021-07-12T11:00");
+        Section s1 = new Section(new Course("1111111", "C1", 3), "01", exam1, Collections.emptySet());
         SectionView c1 = new SectionView(s1);
         SectionDemandView sd_1 = new SectionDemandView(c1, 50);
-        Section s2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "01", exam1, Collections.emptySet());
+        Section s2 = new Section(new Course("2222222", "C2", 3), "01", exam2, Collections.emptySet());
         SectionView c2 = new SectionView(s2);
         SectionDemandView sd_2 = new SectionDemandView(c2, 72);
-        Section s3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01", exam2, Collections.emptySet());
+        Section s3 = new Section(new Course("3333333", "C3", 3), "01", exam3, Collections.emptySet());
         SectionView c3 = new SectionView(s3);
         SectionDemandView sd_3 = new SectionDemandView(c3, 25);
 
@@ -116,19 +126,17 @@ public class SectionControllerTest {
 
     @Test
     public void Section_that_doesnt_exist_is_not_found() throws Exception{
-        mvc.perform(get("/sections/1")
+        mvc.perform(get("/sections/47")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void One_section_is_returned_correctly() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Section section = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01", exam, Collections.emptySet());
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam1, Collections.emptySet());
+        given(sectionRepository.findById(5L)).willReturn(java.util.Optional.of(section));
 
-        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
-
-        mvc.perform(get("/sections/1")
+        mvc.perform(get("/sections/5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
@@ -138,6 +146,7 @@ public class SectionControllerTest {
 
     @Test
     public void Section_is_removed_from_lists_correctly() throws Exception {
+        Section section = new Section(new Course("1111111", "C1", 3), "01", exam1, Collections.emptySet());
         ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         Section section = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01", exam, Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("SampleList1", mock(Student.class));
@@ -145,9 +154,9 @@ public class SectionControllerTest {
         list1.addSections(section);
         list2.addSections(section);
 
-        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.of(section));
+        given(sectionRepository.findById(5L)).willReturn(java.util.Optional.of(section));
 
-        mvc.perform(delete("/sections/1")
+        mvc.perform(delete("/sections/5")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C1")))
@@ -160,9 +169,9 @@ public class SectionControllerTest {
 
     @Test
     public void Section_cannot_be_removed_if_id_is_not_found() throws Exception {
-        given(sectionRepository.findById(1L)).willReturn(java.util.Optional.empty());
+        given(sectionRepository.findById(6L)).willReturn(java.util.Optional.empty());
 
-        mvc.perform(delete("/sections/1")
+        mvc.perform(delete("/sections/6")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
@@ -208,9 +217,8 @@ public class SectionControllerTest {
 
     @Test
     public void Existing_section_is_not_added_correctly() throws Exception{
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Course course = new Course("1010101", "DM", 3, "Undergraduate");
-        List<Section> findSections = List.of(new Section(course, "01", exam, Collections.emptySet()));
+        Course course = new Course("1010101", "DM", 3);
+        List<Section> findSections = List.of(new Section(course, "01", exam1, Collections.emptySet()));
         given(this.courseRepository.findById(1L)).willReturn(Optional.of(course));
         given(this.sectionRepository.findOneSectionOfSpecialCourse(1L, "01")).willReturn(findSections);
         JSONObject req = new JSONObject();
@@ -224,11 +232,8 @@ public class SectionControllerTest {
 
 
     @Test
-    public void ExamTime_can_be_changed_by_valid_another_ExamTime() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+    public void ExamTime_can_be_changed_by_valid_another_examTime() throws Exception {
         Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptySet());
-        when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2020-08-10T09:00");
         jsonExam.put("end", "2020-08-10T11:00");
@@ -239,11 +244,11 @@ public class SectionControllerTest {
     }
 
     @Test
-    public void ExamTime_of_unreal_section_cant_be_changed() throws Exception {
+    public void ExamTime_cannot_be_changed_if_section_does_not_exist() throws Exception {
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2020-08-10T09:00");
         jsonExam.put("end", "2020-08-10T11:00");
-        mvc.perform(MockMvcRequestBuilders.put("/sections/1/setExamTime")
+        mvc.perform(MockMvcRequestBuilders.put("/sections/47/setExamTime")
                 .content(jsonExam.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -251,10 +256,6 @@ public class SectionControllerTest {
 
     @Test
     public void ExamTime_cant_be_changed_by_invalid_another_ExamTime() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptySet());
-        when(this.sectionRepository.findById(1L)).thenReturn(Optional.of(section));
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2021-08-10T13:00");
         jsonExam.put("end", "2021-08-10T11:00");
@@ -269,8 +270,7 @@ public class SectionControllerTest {
 
     @Test
     public void Schedule_is_not_set_if_section_is_not_found() throws Exception {
-        given(sectionRepository.findById(1L)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not Found."));
-        mvc.perform(put("/sections/1/setSchedule")
+        mvc.perform(put("/sections/15/setSchedule")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content("[\n{\n\"dayOfWeek\": \"Sunday\",\n\"endTime\": \"10:00\",\n\"startTime\": \"12:00\"\n}\n]"))
                 .andExpect(status().isNotFound());
@@ -278,14 +278,9 @@ public class SectionControllerTest {
 
     @Test
     public void No_new_conflict_happens_if_new_exam_time_has_no_conflict_with_other() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        ExamTime newExam = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
-        Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptySet());
         EnrollmentList enrollmentList = mock(EnrollmentList.class);
-        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section));
         given(enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
-        when(enrollmentList.makeExamTimeConflict(section, newExam)).thenReturn(false);
+        when(enrollmentList.makeExamTimeConflict(section, exam2)).thenReturn(false);
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2021-08-10T09:00");
         jsonExam.put("end", "2021-08-10T11:00");
@@ -298,14 +293,9 @@ public class SectionControllerTest {
 
     @Test
     public void New_conflict_happens_if_new_exam_time_has_conflict_with_other() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        ExamTime newExam = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
-        Course course = mock(Course.class);
-        Section section = new Section(course,"01", exam, Collections.emptySet());
         EnrollmentList enrollmentList = mock(EnrollmentList.class);
-        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section));
         given(this.enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
-        when(enrollmentList.makeExamTimeConflict(section, newExam)).thenReturn(true);
+        when(enrollmentList.makeExamTimeConflict(section, exam2)).thenReturn(true);
         JSONObject jsonExam = new JSONObject();
         jsonExam.put("start", "2021-08-10T09:00");
         jsonExam.put("end", "2021-08-10T11:00");
@@ -319,16 +309,12 @@ public class SectionControllerTest {
 
     @Test
     public void New_conflict_happens_if_new_schedule_time_has_conflict_with_other() throws Exception {
-        ExamTime exam = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
-        Course course1 = mock(Course.class);
         PresentationSchedule s1 = new PresentationSchedule("Monday", "07:30", "09:00");
         PresentationSchedule s2 = new PresentationSchedule("Monday", "09:00", "11:00");
-        Section section1 = new Section(course1,"01", exam, Set.of(s1));
         EnrollmentList enrollmentList = mock(EnrollmentList.class);
 
-        given(this.sectionRepository.findById(1L)).willReturn(Optional.of(section1));
         given(this.enrollmentListRepository.findEnrollmentListContainingSection(1L)).willReturn(List.of(enrollmentList));
-        when(enrollmentList.makePresentationScheduleConflict(section1, List.of(s2))).thenReturn(true);
+        when(enrollmentList.makePresentationScheduleConflict(section, List.of(s2))).thenReturn(true);
 
         JSONArray schedule = new JSONArray();
         JSONObject jsonSchedule = new JSONObject();
