@@ -24,26 +24,20 @@ public class FacultyController {
         return StreamSupport.stream(facultyRepository.findAll().spliterator(), false).map(FacultyView::new).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}/majors")
-    public Iterable<MajorView> getMajors(@PathVariable Long id) {
-        Faculty faculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
-        return faculty.getMajors().stream().map(MajorView::new).collect(Collectors.toList());
-    }
     @PostMapping( consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public FacultyView addOne(@RequestBody String facultyName) {
+    public FacultyAddView addOne(@RequestBody FacultyAddView facultyAddView) {
         ExceptionList exceptions = new ExceptionList();
-        if (facultyRepository.findByFacultyName(facultyName).isPresent())
-            exceptions.addNewException(new Exception("Faculty with name " + facultyName + " exists."));
+        if (facultyRepository.findByFacultyName(facultyAddView.getFacultyName()).isPresent())
+            exceptions.addNewException(new Exception("Faculty with name " + facultyAddView.getFacultyName() + " exists."));
         Faculty faculty = null;
         try {
-            faculty = new Faculty(facultyName);
+            faculty = new Faculty(facultyAddView.getFacultyName());
         } catch (ExceptionList exceptionList) {
             exceptions.addExceptions(exceptionList.getExceptions());
         }
         if (exceptions.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptions.toString());
         facultyRepository.save(faculty);
-        return new FacultyView(faculty);
+        return new FacultyAddView(faculty);
     }
 }
