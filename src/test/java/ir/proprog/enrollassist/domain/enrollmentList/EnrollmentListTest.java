@@ -5,7 +5,7 @@ import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
-import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;

@@ -2,8 +2,8 @@ package ir.proprog.enrollassist.repository;
 
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.domain.StudentNumber;
+import ir.proprog.enrollassist.domain.student.Student;
+import ir.proprog.enrollassist.domain.student.StudentNumber;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

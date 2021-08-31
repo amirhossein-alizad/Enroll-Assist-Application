@@ -1,7 +1,8 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.student;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;

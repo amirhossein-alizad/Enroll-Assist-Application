@@ -2,8 +2,8 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.controller.friendship.FriendshipController;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.domain.StudentNumber;
+import ir.proprog.enrollassist.domain.student.Student;
+import ir.proprog.enrollassist.domain.student.StudentNumber;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
 import org.junit.jupiter.api.Test;

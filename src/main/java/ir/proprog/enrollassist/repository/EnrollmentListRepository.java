@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.repository;
 
 import ir.proprog.enrollassist.controller.section.SectionDemandView;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.student.Student;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

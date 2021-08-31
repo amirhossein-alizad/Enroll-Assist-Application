@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.domain.section;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
-import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.course.Course;
 import lombok.AccessLevel;
 import lombok.Getter;

@@ -1,8 +1,8 @@
 package ir.proprog.enrollassist.repository;
 
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
-import ir.proprog.enrollassist.domain.Student;
-import ir.proprog.enrollassist.domain.StudentNumber;
+import ir.proprog.enrollassist.domain.student.Student;
+import ir.proprog.enrollassist.domain.student.StudentNumber;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

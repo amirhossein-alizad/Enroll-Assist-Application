@@ -1,7 +1,6 @@
 package ir.proprog.enrollassist.controller.student;
 
-import ir.proprog.enrollassist.domain.Major;
-import ir.proprog.enrollassist.domain.Student;
+import ir.proprog.enrollassist.domain.student.Student;
 import lombok.Getter;
 
 public class StudentView {

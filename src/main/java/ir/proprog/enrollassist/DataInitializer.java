@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
 
 import javax.annotation.PostConstruct;
