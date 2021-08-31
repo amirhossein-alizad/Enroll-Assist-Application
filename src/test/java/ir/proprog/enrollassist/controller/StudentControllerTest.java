@@ -94,18 +94,6 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$.studentNo", is("81818181")));
     }
 
-//    @Test
-//    public void Student_with_empty_studentNo_is_not_added_correctly() throws Exception {
-//        JSONObject request = new JSONObject();
-//        request.put("studentNo", "");
-//        request.put("name", "Sara");
-//        given(this.studentRepository.findByStudentNumber("")).willReturn(Optional.empty());
-//        mvc.perform(post("/student")
-//                .content(request.toString())
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isBadRequest());
-//    }
-
 
     @Test
     public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
@@ -124,8 +112,7 @@ public class StudentControllerTest {
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);
 
-        Student student = new Student("010101", "ali", cs);
-        student.setGrade("13981", math1, 20.0);
+        Student student = new Student("010101", "ali", cs).setGrade("13981", math1, 20.0);
 
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
@@ -150,6 +137,4 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[1].courseCredits", is(3)));
 
     }
-
-
 }
