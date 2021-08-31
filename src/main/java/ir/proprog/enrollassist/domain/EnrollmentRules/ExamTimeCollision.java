@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.domain.EnrollmentRules;
 
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.Section;
 
 public class ExamTimeCollision extends EnrollmentRuleViolation {
     private final Section section1;

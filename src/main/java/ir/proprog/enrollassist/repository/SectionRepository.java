@@ -1,9 +1,6 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.controller.SectionDemandView;
-import ir.proprog.enrollassist.controller.SectionView;
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.Section;
+import ir.proprog.enrollassist.domain.section.Section;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 

@@ -2,7 +2,13 @@ package ir.proprog.enrollassist.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.controller.course.CourseController;
+import ir.proprog.enrollassist.controller.course.CourseMajorView;
+import ir.proprog.enrollassist.domain.course.AddCourseService;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.course.CourseNumber;
+import ir.proprog.enrollassist.domain.faculty.Faculty;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONArray;
 import org.json.JSONObject;

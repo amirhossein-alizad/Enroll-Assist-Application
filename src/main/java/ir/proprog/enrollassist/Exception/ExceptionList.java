@@ -1,12 +1,9 @@
 package ir.proprog.enrollassist.Exception;
 
-import ir.proprog.enrollassist.domain.Section;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
 
-import javax.persistence.ManyToMany;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class ExceptionList extends Exception{

@@ -1,10 +1,11 @@
 package ir.proprog.enrollassist.domain;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.section.PresentationSchedule;
+import ir.proprog.enrollassist.domain.section.Section;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
