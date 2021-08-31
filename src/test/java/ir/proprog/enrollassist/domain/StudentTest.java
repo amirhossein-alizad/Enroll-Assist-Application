@@ -77,13 +77,12 @@ public class StudentTest {
 
     @Test
     void Student_returns_takeable_courses_with_no_prerequisites_correctly() throws Exception{
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
@@ -93,14 +92,13 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_passed_courses_as_takeable() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
-        bebe.setGrade("13981", math1, 20);
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        bebe.setGrade("13981", math1, 20);
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(2)
@@ -109,15 +107,14 @@ public class StudentTest {
 
     @Test
     void Student_returns_courses_with_passed_prerequisites_as_takeable_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         Course math2 = new Course("4444444", "MATH2", 3, "Undergraduate").withPre(math1);
-        bebe.setGrade("13981", math1, 20);
         Major major = new Major("123", "CE");
         major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        bebe.setGrade("13981", math1, 20);
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
@@ -126,14 +123,14 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         Course math2 = new Course("4444444", "MATH2", 3, "Undergraduate").withPre(math1);
         Major major = new Major("123", "CE");
         major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
                 .hasSize(3)
@@ -142,7 +139,6 @@ public class StudentTest {
 
     @Test
     void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
@@ -152,7 +148,8 @@ public class StudentTest {
         Section andishe1_1 = new Section(andishe, "01");
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+
         assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -161,14 +158,14 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_sections_which_their_courses_are_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
-        bebe.setGrade("13981", math1, 20);
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        bebe.setGrade("13981", math1, 20);
+
         Section math1_1 = new Section(math1, "01");
         Section math1_2 = new Section(math1, "02");
         Section prog1_1 = new Section(prog, "01");
@@ -181,7 +178,6 @@ public class StudentTest {
 
     @Test
     void Student_returns_sections_which_prerequisites_for_their_courses_have_been_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
@@ -191,10 +187,11 @@ public class StudentTest {
         Section andishe1_1 = new Section(andishe, "01");
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
-        bebe.setGrade("13981", math1, 20);
         Major major = new Major("123", "CE");
         major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        bebe.setGrade("13981", math1, 20);
+
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -203,7 +200,6 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "Undergraduate");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
@@ -215,7 +211,8 @@ public class StudentTest {
         Section math2_2 = new Section(math2, "02");
         Major major = new Major("123", "CE");
         major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)

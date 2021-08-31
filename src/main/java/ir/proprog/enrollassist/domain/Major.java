@@ -36,6 +36,14 @@ public class Major {
         this.majorNumber = majorNumber;
     }
 
+    public Set<Course> getCoursesByEducationGrade(EducationGrade educationGrade) {
+        Set<Course> coursesOfEducationGrade = new HashSet<>();
+        for (Course c: this.courses)
+            if (c.equalsEducationGrade(educationGrade))
+                coursesOfEducationGrade.add(c);
+        return coursesOfEducationGrade;
+    }
+
     @Override
     public boolean equals(Object o){
         if (this == o) return true;

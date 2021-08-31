@@ -55,6 +55,10 @@ public class Course {
         return this;
     }
 
+    public boolean equalsEducationGrade(EducationGrade otherEducationGrade) {
+        return this.educationGrade.equals(otherEducationGrade);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
