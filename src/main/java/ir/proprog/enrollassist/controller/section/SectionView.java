@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.controller.section;
 
-import ir.proprog.enrollassist.domain.CourseNumber;
+import ir.proprog.enrollassist.domain.course.CourseNumber;
 import ir.proprog.enrollassist.domain.ExamTime;
 import ir.proprog.enrollassist.domain.PresentationSchedule;
 import ir.proprog.enrollassist.domain.Section;

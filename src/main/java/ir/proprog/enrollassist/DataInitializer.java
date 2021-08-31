@@ -2,11 +2,10 @@ package ir.proprog.enrollassist;
 
 
 import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.repository.*;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

@@ -1,8 +1,9 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.course;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
+import ir.proprog.enrollassist.domain.Student;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

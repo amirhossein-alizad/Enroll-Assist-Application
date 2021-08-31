@@ -1,6 +1,5 @@
 package ir.proprog.enrollassist.controller.major;
 
-import ir.proprog.enrollassist.domain.Course;
 import ir.proprog.enrollassist.domain.Major;
 import lombok.Getter;
 

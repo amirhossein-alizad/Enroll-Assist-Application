@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.controller.course;
 
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.CourseNumber;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.course.CourseNumber;
 import lombok.Getter;
 
 import java.util.HashSet;

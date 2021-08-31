@@ -1,7 +1,9 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.course;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseMajorView;
+import ir.proprog.enrollassist.domain.Faculty;
+import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;

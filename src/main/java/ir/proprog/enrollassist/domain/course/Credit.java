@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.course;
 
 import lombok.Getter;
 import lombok.Value;
@@ -27,8 +27,8 @@ public class Credit {
 
     @Override
     public boolean equals(Object o){
-        Credit other = (Credit) o;
         if (o == null || getClass() != o.getClass()) return false;
+        Credit other = (Credit) o;
         return this.credit == other.getCredit();
     }
 }

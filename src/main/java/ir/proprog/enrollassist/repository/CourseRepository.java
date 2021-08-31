@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.domain.Course;
-import ir.proprog.enrollassist.domain.CourseNumber;
+import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.course.CourseNumber;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;

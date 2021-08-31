@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.controller.section.SectionController;
 import ir.proprog.enrollassist.controller.section.SectionDemandView;
 import ir.proprog.enrollassist.controller.section.SectionView;
 import ir.proprog.enrollassist.domain.*;
+import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;

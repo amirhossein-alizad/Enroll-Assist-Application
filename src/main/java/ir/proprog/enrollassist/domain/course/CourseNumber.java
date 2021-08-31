@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.course;
 
 import lombok.Getter;
 import lombok.Value;

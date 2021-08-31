@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.domain;
 
+import ir.proprog.enrollassist.domain.course.CourseNumber;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
