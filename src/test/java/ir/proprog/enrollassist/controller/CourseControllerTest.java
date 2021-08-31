@@ -45,6 +45,7 @@ public class CourseControllerTest {
     private FacultyRepository facultyRepository;
     @MockBean
     private MajorRepository majorRepository;
+    private AddCourseService addCourseService;
     private Course course1, course2, course3;
     private Major major1, major2;
     private Faculty faculty;
@@ -58,8 +59,14 @@ public class CourseControllerTest {
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
         major1 = mock(Major.class);
+        given(major1.getId()).willReturn(10L);
         major2 = mock(Major.class);
         faculty= mock(Faculty.class);
+        addCourseService = mock(AddCourseService.class);
+
+        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
+        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
+        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
     }
 
     @Test
@@ -100,7 +107,7 @@ public class CourseControllerTest {
 
     @Test
     public void Course_that_doesnt_exist_is_not_found() throws Exception {
-        mvc.perform(get("/courses/1")
+        mvc.perform(get("/courses/34")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -123,14 +130,8 @@ public class CourseControllerTest {
 
         request.put("majors", majors);
 
-        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
-
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
-
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
         given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
 
-        given(major1.getId()).willReturn(10L);
         given(major2.getId()).willReturn(11L);
         given(faculty.getMajors()).willReturn(Set.of(major1, major2));
 
@@ -148,7 +149,7 @@ public class CourseControllerTest {
     public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
 
-        mvc.perform(post("/courses/1")
+        mvc.perform(post("/courses/90")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -158,14 +159,12 @@ public class CourseControllerTest {
 
     @Test
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
-        AddCourseService addCourseService = mock(AddCourseService.class);
         Course course = new Course("1212121", "AP", 3);
-        CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
+        CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
         ExceptionList exceptionList = new ExceptionList();
-        exceptionList.addNewException(new Exception("Major with id = 10 was not found."));
-        when(addCourseService.getMajors(Set.of(10L), faculty)).thenThrow(exceptionList);
+        exceptionList.addNewException(new Exception("Major with id = 45 was not found."));
+        when(addCourseService.getMajors(Set.of(45L), faculty)).thenThrow(exceptionList);
         when(addCourseService.addCourse(courseMajorView,faculty)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -175,7 +174,7 @@ public class CourseControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
         String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"Major with id = 10 was not found.\"}");
+        assertEquals(content, "{\"1\":\"Major with id = 45 was not found.\"}");
     }
 
 
@@ -197,10 +196,6 @@ public class CourseControllerTest {
 
         given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(course));
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
-
-        given(major1.getId()).willReturn(10L);
         given(faculty.getMajors()).willReturn(Set.of(major1));
         MvcResult result =  mvc.perform(post("/courses/1")
                 .content(request.toString())
@@ -213,8 +208,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-        Major m1 = mock(Major.class);
-        Faculty f1 = mock(Faculty.class);
 
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "1412121");
@@ -223,17 +216,14 @@ public class CourseControllerTest {
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
-        jArray.put(1);
+        jArray.put(19);
         request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
         request.put("prerequisites", jArray);
         request.put("majors", majors);
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(f1));
-        given(m1.getId()).willReturn(10L);
-        given(f1.getMajors()).willReturn(Set.of(m1));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(m1));
+        given(faculty.getMajors()).willReturn(Set.of(major1));
 
         MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
@@ -241,7 +231,7 @@ public class CourseControllerTest {
                             .andExpect(status().isBadRequest())
                             .andReturn();
         String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"Course with id = 1 was not found.\"}");
+        assertEquals(content, "{\"1\":\"Course with id = 19 was not found.\"}");
     }
 
     @Test
@@ -254,7 +244,7 @@ public class CourseControllerTest {
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
-        jArray.put(1);
+        jArray.put(12);
         request.put("courseNumber",courseN);
         request.put("courseCredits", -1);
         request.put("courseTitle", "");
@@ -264,12 +254,9 @@ public class CourseControllerTest {
         Course mockedCourse1 = mock(Course.class);
         Course mockedCourse2 = mock(Course.class);
 
-        given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(mockedCourse1));
-        given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(mockedCourse2));
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
-        given(major1.getId()).willReturn(10L);
+        given(courseRepository.findById(12L)).willReturn(java.util.Optional.of(mockedCourse1));
+        given(courseRepository.findById(13L)).willReturn(java.util.Optional.of(mockedCourse2));
         given(faculty.getMajors()).willReturn(Set.of(major1));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
         Set<Course> set1 = Set.of(mockedCourse1);
         Set<Course> set2 = Set.of(mockedCourse2);
         when(mockedCourse1.getPrerequisites()).thenReturn(set2);
