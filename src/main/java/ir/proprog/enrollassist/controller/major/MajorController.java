@@ -3,7 +3,7 @@ package ir.proprog.enrollassist.controller.major;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseView;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
-import ir.proprog.enrollassist.domain.Major;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;

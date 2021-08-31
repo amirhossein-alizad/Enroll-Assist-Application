@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.controller.major;
 
-import ir.proprog.enrollassist.domain.Major;
+import ir.proprog.enrollassist.domain.major.Major;
 import lombok.Getter;
 
 @Getter

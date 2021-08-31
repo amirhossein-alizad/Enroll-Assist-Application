@@ -1,10 +1,9 @@
 package ir.proprog.enrollassist.domain.student;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.Major;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
-import ir.proprog.enrollassist.domain.student.Student;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

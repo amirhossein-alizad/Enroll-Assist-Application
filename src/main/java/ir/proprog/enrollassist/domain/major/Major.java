@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.domain;
+package ir.proprog.enrollassist.domain.major;
 
 
 import ir.proprog.enrollassist.Exception.ExceptionList;

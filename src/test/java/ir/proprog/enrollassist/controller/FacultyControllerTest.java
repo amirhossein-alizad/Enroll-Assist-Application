@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.controller.faculty.FacultyController;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
-import ir.proprog.enrollassist.domain.Major;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
 import org.json.JSONObject;
