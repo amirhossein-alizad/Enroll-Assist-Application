@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.controller.friendship.FriendshipController;
 import ir.proprog.enrollassist.domain.EnrollmentList;
 import ir.proprog.enrollassist.domain.Student;
 import ir.proprog.enrollassist.domain.StudentNumber;
@@ -187,7 +188,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Blocked_students_of_one_student_are_returned_correctly() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         Student blockedStudent1 = new Student("010102", "reza");
         Student blockedStudent2 = new Student("010103", "sara");
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
@@ -205,7 +206,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Student_with_no_blocked_friends_returns_empty_list() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
         mvc.perform(get("/friends/010101/blocked")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -222,7 +223,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Pending_students_of_one_student_are_returned_correctly() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         Student pendingStudent1 = new Student("010102", "reza");
         Student pendingStudent2 = new Student("010103", "sara");
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
@@ -239,7 +240,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Student_with_no_pending_friends_returns_empty_list() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
         mvc.perform(get("/friends/010101/pending")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -249,7 +250,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Requested_student_of_one_student_is_returned_correctly() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         Student requestedStudent = new Student("010102", "reza");
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
         when(student.getRequested()).thenReturn(List.of(requestedStudent));
@@ -263,7 +264,7 @@ public class FriendshipControllerTest {
 
     @Test
     public void Student_with_no_requested_friends_returns_empty_list() throws Exception{
-        Student student = mock(Student.class);;
+        Student student = mock(Student.class);
         given(studentRepository.findByStudentNumber(new StudentNumber("010101"))).willReturn(Optional.of(student));
         mvc.perform(get("/friends/010101/requested")
                 .contentType(MediaType.APPLICATION_JSON))
