@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -12,10 +13,34 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 public class StudentTest {
+    private Student bebe;
+    private Course math1, phys1, prog, economy, maaref, andishe, math2;
+    private Major major;
+    Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+
+    @BeforeEach
+    void setUp() throws Exception{
+        bebe = new Student("810197000", "bebe");
+        math1 = new Course("4444444", "MATH1", 3);
+        phys1 = new Course("8888888", "PHYS1", 3);
+        prog = new Course("7777777", "PROG", 4);
+        economy = new Course("1111111", "ECO", 3);
+        maaref = new Course("5555555", "MAAREF", 2);
+        andishe = new Course("3333333", "ANDISHE", 2);
+        math2 = new Course("2222222", "MATH2", 3).withPre(math1);
+        major = new Major("123", "CE");
+        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        math1_1 = new Section(math1, "01");
+        math1_2 = new Section(math1, "02");
+        prog1_1 = new Section(prog, "01");
+        andishe1_1 = new Section(andishe, "01");
+        math2_1 = new Section(math2, "01");
+        math2_2 = new Section(math2, "02");
+        bebe.setMajor(major);
+    }
 
     @Test
     void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed() throws Exception {
-        Student bebe = new Student("810197546", "bebe");
         Course math1 = new Course("4444444", "MATH1", 3);
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
@@ -24,12 +49,6 @@ public class StudentTest {
 
     @Test
     void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed_But_Calculated_in_GPA() throws Exception {
-        Student bebe = new Student("810197546", "bebe");
-        Course math1 = new Course("4444444", "MATH1", 3);
-        Course phys1 = new Course("8888888", "PHYS1", 3);
-        Course prog = new Course("7777777", "PROG", 4);
-        Course economy = new Course("1111111", "ECO", 3);
-        Course maaref = new Course("5555555", "MAAREF", 2);
         bebe.setGrade("13981", math1, 15.5);
         bebe.setGrade("13981", phys1, 9);
         bebe.setGrade("13981", prog, 17.25);
@@ -41,16 +60,13 @@ public class StudentTest {
 
     @Test
     void Student_has_not_passed_records_that_are_not_in_grades_set()  throws Exception {
-        Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3);
-        assertThat(bebe.hasPassed(math1))
+        Student mockedStudent = mock(Student.class);
+        assertThat(mockedStudent.hasPassed(math1))
                 .isEqualTo(false);
     }
 
     @Test
     void Student_has_passed_records_that_are_in_grades_set()  throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
         bebe.setGrade("13981", math1, 19);
         assertThat(bebe.hasPassed(math1))
                 .isEqualTo(true);
@@ -58,8 +74,6 @@ public class StudentTest {
 
     @Test
     void Student_gpa_with_one_study_record_is_returned_correctly()  throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
         bebe.setGrade("13981", math1, 19);
         assertThat(bebe.calculateGPA().getGrade())
                 .isEqualTo(19);
@@ -67,95 +81,32 @@ public class StudentTest {
 
     @Test
     void Student_gpa_with_multiple_study_records_is_returned_correctly()  throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
         bebe.setGrade("13981", math1, 19);
         bebe.setGrade("13981", prog, 17);
         bebe.setGrade("13981", andishe, 19);
         assertThat(bebe.calculateGPA().getGrade())
-                .isEqualTo(18.25);
-    }
-
-    @Test
-    void Student_returns_takeable_courses_with_no_prerequisites_correctly() throws Exception{
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
-        assertThat(bebe.getTakeableCourses())
-                .isNotEmpty()
-                .hasSize(3)
-                .containsExactlyInAnyOrder(math1, prog, andishe);
-    }
-
-
-    @Test
-    void Student_does_not_return_passed_courses_as_takeable() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        bebe.setGrade("13981", math1, 20);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
-        assertThat(bebe.getTakeableCourses())
-                .isNotEmpty()
-                .hasSize(2)
-                .containsExactlyInAnyOrder(prog, andishe);
+                .isEqualTo(18.11);
     }
 
     @Test
     void Student_returns_courses_with_passed_prerequisites_as_takeable_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
         bebe.setGrade("13981", math1, 20);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
-                .hasSize(3)
-                .containsExactlyInAnyOrder(prog, andishe, math2);
+                .hasSize(6)
+                .containsExactlyInAnyOrder(prog, andishe, math2, economy, maaref, phys1);
     }
 
     @Test
     void Student_does_not_return_courses_which_prerequisites_are_not_passed_as_takeable_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
         assertThat(bebe.getTakeableCourses())
                 .isNotEmpty()
-                .hasSize(3)
-                .containsExactlyInAnyOrder(prog, andishe, math1);
+                .hasSize(6)
+                .containsExactlyInAnyOrder(prog, andishe, math1, economy, maaref, phys1);
     }
 
     @Test
     void Student_returns_takeable_sections_which_courses_have_no_prerequisites_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Section math1_1 = new Section(math1, "01");
-        Section math1_2 = new Section(math1, "02");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
         assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -164,18 +115,7 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_sections_which_their_courses_are_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
         bebe.setGrade("13981", math1, 20);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        bebe.setMajor(major);
-        Section math1_1 = new Section(math1, "01");
-        Section math1_2 = new Section(math1, "02");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
         assertThat(bebe.getTakeableSections(List.of(math1_1, math1_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(2)
@@ -184,20 +124,7 @@ public class StudentTest {
 
     @Test
     void Student_returns_sections_which_prerequisites_for_their_courses_have_been_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        Section math1_1 = new Section(math1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
-        Section math2_1 = new Section(math2, "01");
-        Section math2_2 = new Section(math2, "02");
         bebe.setGrade("13981", math1, 20);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(4)
@@ -206,19 +133,6 @@ public class StudentTest {
 
     @Test
     void Student_does_not_return_sections_which_prerequisites_for_their_courses_have_not_been_passed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
-        Course math1 = new Course("1111111", "MATH1", 3);
-        Course prog = new Course("2222222", "PROG", 3);
-        Course andishe = new Course("3333333", "ANDISHE", 2);
-        Course math2 = new Course("4444444", "MATH2", 3).withPre(math1);
-        Section math1_1 = new Section(math1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
-        Section math2_1 = new Section(math2, "01");
-        Section math2_2 = new Section(math2, "02");
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, math2, prog, andishe);
-        bebe.setMajor(major);
         assertThat(bebe.getTakeableSections(List.of(math1_1, math2_1, math2_2, prog1_1, andishe1_1)))
                 .isNotEmpty()
                 .hasSize(3)
@@ -228,9 +142,7 @@ public class StudentTest {
     @Test
     void Grade_of_course_with_valid_term_can_set_correctly() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         try {
-            Course math1 = new Course("1111111", "MATH1", 3);
             bebe.setGrade("13962", math1, 19.1);
         }catch (ExceptionList e) {
             error = e.toString();
@@ -241,9 +153,7 @@ public class StudentTest {
     @Test
     void Grade_of_course_with_invalid_season_cant_set_correctly() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         try {
-            Course math1 = new Course("1111111", "MATH1", 3);
             bebe.setGrade("13960", math1, 19.1);
         }catch (ExceptionList e) {
             error = e.toString();
@@ -322,7 +232,6 @@ public class StudentTest {
     @Test
     void Students_cannot_send_friendship_request_to_their_friends() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getFriends().add(friend);
 
@@ -337,7 +246,6 @@ public class StudentTest {
     @Test
     void Students_cannot_send_friendship_request_to_students_they_have_already_requested() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getRequested().add(friend);
 
@@ -352,7 +260,6 @@ public class StudentTest {
     @Test
     void Students_cannot_send_friendship_request_to_pending_students() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getPending().add(friend);
 
@@ -367,7 +274,6 @@ public class StudentTest {
     @Test
     void Students_cannot_send_friendship_request_to_blocked_students() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getBlocked().add(friend);
 
@@ -381,7 +287,6 @@ public class StudentTest {
 
     @Test
     void Student_can_send_friendship_request_to_others_if_they_are_not_found_in_any_of_her_lists() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Student friend1 = new Student("810197001", "pete");
         Student friend2 = new Student("810197002", "mike");
         Student friend3 = new Student("810197003", "noel");
@@ -399,7 +304,6 @@ public class StudentTest {
     @Test
     void Student_cannot_send_request_to_herself() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197000", "lily");
 
         try {
@@ -413,7 +317,6 @@ public class StudentTest {
     @Test
     void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         friend.getBlocked().add(bebe);
 
@@ -427,7 +330,6 @@ public class StudentTest {
 
     @Test
     void Friendships_are_removed_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Student friend1 = new Student("810197001", "pete");
         Student friend2 = new Student("810197002", "mike");
         Student friend3 = new Student("810197003", "kent");
@@ -445,7 +347,6 @@ public class StudentTest {
     @Test
     void Friendships_cannot_be_removed_without_any_relation() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
 
         try {
@@ -458,7 +359,6 @@ public class StudentTest {
 
     @Test
     void All_friends_are_returned_correctly() {
-        Student bebe = new Student("810197000", "bebe");
         Student friend1 = new Student("810197001", "pete");
         Student friend2 = new Student("810197002", "mike");
         Student friend3 = new Student("810197003", "kent");
@@ -472,7 +372,6 @@ public class StudentTest {
 
     @Test
     void Student_are_accepted_correctly() throws Exception {
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getRequested().add(friend);
         bebe.acceptRequest(friend);
@@ -482,7 +381,6 @@ public class StudentTest {
     @Test
     void Student_cannot_accept_friends_who_are_not_in_her_requested_list() {
         String error = "";
-        Student bebe = new Student("810197000", "bebe");
         Student friend = new Student("810197001", "pete");
         bebe.getBlocked().add(friend);
 
