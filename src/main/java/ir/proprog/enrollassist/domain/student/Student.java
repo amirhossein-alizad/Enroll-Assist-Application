@@ -50,15 +50,13 @@ public class Student {
         this.name = name;
     }
 
-    public Student(String studentNumber, String name, Major major, String educationGrade) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String educationGrade) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
         } catch (Exception e) { exceptionList.addNewException(e); }
         if (name.equals(""))
             exceptionList.addNewException(new Exception("Student name can not be empty."));
-        if (major == null)
-            exceptionList.addNewException(new Exception("Student major can not be null."));
         try {
             this.educationGrade = new EducationGrade(educationGrade);
         } catch (Exception e) { exceptionList.addNewException(e); }

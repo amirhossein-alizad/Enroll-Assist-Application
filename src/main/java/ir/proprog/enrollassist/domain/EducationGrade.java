@@ -21,6 +21,9 @@ public class EducationGrade {
     }
 
     public EducationGrade(String grade) throws Exception {
+        if (grade == null)
+            throw new Exception("Education grade can not be null.");
+
         if (grade.equals("Undergraduate"))
             this.minValidGPA = 10.0;
         else if (grade.equals("Masters"))
@@ -38,8 +41,8 @@ public class EducationGrade {
 
     @Override
     public boolean equals(Object o){
-        EducationGrade other = (EducationGrade) o;
         if (o == null || (this.getClass() != o.getClass())) return false;
+        EducationGrade other = (EducationGrade) o;
         return this.grade.equals(other.grade);
     }
 

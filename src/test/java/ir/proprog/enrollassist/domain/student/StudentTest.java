@@ -14,6 +14,32 @@ import static org.mockito.Mockito.*;
 public class StudentTest {
 
     @Test
+    void Student_with_invalid_data_cant_be_created() {
+        String error = "";
+        try {
+            Major major = mock(Major.class);
+            Student bebe = new Student("", "", major, "student");
+        }catch (ExceptionList exceptionList) {
+            error = exceptionList.toString();
+        }
+        assertEquals(error, "{\"1\":\"Student number can not be empty.\"," +
+                "\"2\":\"Student name can not be empty.\"," +
+                "\"3\":\"Education grade is not valid.\"}");
+    }
+
+    @Test
+    void Student_with_valid_data_cant_be_created() {
+        String error = "";
+        try {
+            Major major = mock(Major.class);
+            Student bebe = new Student("1234", "Mehrnaz", major, "PHD");
+        }catch (ExceptionList exceptionList) {
+            error = exceptionList.toString();
+        }
+        assertEquals(error, "");
+    }
+
+    @Test
     void a_Study_Record_With_Grade_Less_Than_Ten_is_Not_Passed() throws Exception {
         Major major = mock(Major.class);
         Student bebe = new Student("810197546", "bebe", major, "Undergraduate");
@@ -54,6 +80,16 @@ public class StudentTest {
         Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 19);
+        assertThat(bebe.hasPassed(math1))
+                .isEqualTo(true);
+    }
+
+    @Test
+    void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10()  throws Exception {
+        Major major = mock(Major.class);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        Course math1 = new Course("1111111", "MATH1", 3, "Masters");
+        bebe.setGrade("13981", math1, 11);
         assertThat(bebe.hasPassed(math1))
                 .isEqualTo(true);
     }
@@ -223,6 +259,25 @@ public class StudentTest {
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
     }
+
+    @Test
+    void Student_does_not_return_sections_which_are_not_for_her_education_grade() throws Exception {
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        Course prog = new Course("2222222", "PROG", 3, "PHD");
+        Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
+        Section math1_1 = new Section(math1, "01");
+        Section prog1_1 = new Section(prog, "01");
+        Section andishe1_1 = new Section(andishe, "01");
+        Major major = new Major("123", "CE");
+        major.addCourse(math1, prog, andishe);
+        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+
+        assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
+                .isNotEmpty()
+                .hasSize(1)
+                .containsExactlyInAnyOrder(math1_1);
+    }
+
 
     @Test
     void Grade_of_course_with_valid_term_can_set_correctly() {
