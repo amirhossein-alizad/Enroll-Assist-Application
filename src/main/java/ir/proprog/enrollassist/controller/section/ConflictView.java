@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.section;
 
 import lombok.Getter;
 

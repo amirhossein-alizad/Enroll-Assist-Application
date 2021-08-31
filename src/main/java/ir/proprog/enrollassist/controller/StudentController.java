@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
+import ir.proprog.enrollassist.controller.section.SectionView;
 import ir.proprog.enrollassist.domain.Major;
 import ir.proprog.enrollassist.domain.Section;
 import ir.proprog.enrollassist.domain.Student;

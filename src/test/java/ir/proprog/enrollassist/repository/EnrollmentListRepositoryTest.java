@@ -1,6 +1,6 @@
 package ir.proprog.enrollassist.repository;
 
-import ir.proprog.enrollassist.controller.SectionDemandView;
+import ir.proprog.enrollassist.controller.section.SectionDemandView;
 import ir.proprog.enrollassist.util.TestDataInitializer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.section;
 
 import ir.proprog.enrollassist.domain.CourseNumber;
 import ir.proprog.enrollassist.domain.ExamTime;

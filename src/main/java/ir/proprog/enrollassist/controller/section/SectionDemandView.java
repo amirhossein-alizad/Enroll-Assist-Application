@@ -1,13 +1,11 @@
-package ir.proprog.enrollassist.controller;
+package ir.proprog.enrollassist.controller.section;
 
 import ir.proprog.enrollassist.domain.Section;
-
-import java.util.List;
 
 public class SectionDemandView {
     private SectionView sectionView;
     private Long sectionId;
-    private long demand = 0;
+    private long demand;
 
     public SectionDemandView(Long sectionId, Long demand) {
         this.sectionId = sectionId;
