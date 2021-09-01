@@ -1,33 +1,50 @@
 package ir.proprog.enrollassist.domain;
 
 public enum GraduateLevel {
-    Undergraduate,
-    Masters,
-    PHD;
-
-    public double getMinValidGrade() {
-        if (this.equals(Undergraduate))
+    Undergraduate {
+        @Override
+        public double getMinValidGrade() {
             return 10.0;
-        else if (this.equals(Masters))
-            return 12.0;
-        else
-            return 14.0;
-    }
-
-    public int getMinValidTermCredit() {
-        if (this.equals(Undergraduate))
+        }
+        @Override
+        public int getMinValidTermCredit() {
             return 12;
-        else if (this.equals(Masters))
-            return 8;
-        else
-            return 6;
-    }
-
-    public int getMaxValidCredits() {
-        if (this.equals(Undergraduate))
+        }
+        @Override
+        public int getMaxValidCredits() {
             return 24;
-        else
+        }
+    },
+    Masters {
+        @Override
+        public double getMinValidGrade() {
+            return 12.0;
+        }
+        @Override
+        public int getMinValidTermCredit() {
+            return 8;
+        }
+        @Override
+        public int getMaxValidCredits() {
             return 12;
-    }
+        }
+    },
+    PHD {
+        @Override
+        public double getMinValidGrade() {
+            return 14.0;
+        }
+        @Override
+        public int getMinValidTermCredit() {
+            return 6;
+        }
+        @Override
+        public int getMaxValidCredits() {
+            return 12;
+        }
+    };
 
+    public abstract double getMinValidGrade();
+    public abstract int getMinValidTermCredit();
+    public abstract int getMaxValidCredits();
 }
