@@ -4,6 +4,8 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
+import ir.proprog.enrollassist.domain.GraduateLevel;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.course.Course;
@@ -91,6 +93,7 @@ public class EnrollmentListTest {
         Student bebe = mock(Student.class);
         when(bebe.calculateGPA()).thenReturn(new Grade(11.5));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1, ap_1, ds_1);
         assertThat(list.checkValidGPALimit())
@@ -115,6 +118,7 @@ public class EnrollmentListTest {
         Section signal_1 = new Section(signal, "01");
         when(bebe.calculateGPA()).thenReturn(new Grade(16));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1, ap_1, phys1_1, signal_1);
         assertThat(list.checkValidGPALimit())
@@ -141,6 +145,7 @@ public class EnrollmentListTest {
         Section ie_1 = new Section(ie, "01");
         when(bebe.calculateGPA()).thenReturn(new Grade(20));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math1_1, prog_1, eco_1, phys1_1, signal_1, ap_1, ie_1);
         assertThat(list.checkValidGPALimit())
@@ -155,6 +160,7 @@ public class EnrollmentListTest {
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.calculateGPA()).thenReturn(new Grade(20));
         when(bebe.getTotalTakenCredits()).thenReturn(1);
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
         list.addSections(math2_1, prog_1, phys1_1, signal_1, eco_1, ds_1, english_1, ds_1);
         ArrayList<EnrollmentRuleViolation> violations = (ArrayList<EnrollmentRuleViolation>) list.checkEnrollmentRules();
@@ -171,6 +177,7 @@ public class EnrollmentListTest {
     void New_students_cant_take_more_than_twenty_credits() {
         Student bebe = mock(Student.class);
         when(bebe.calculateGPA()).thenReturn(new Grade());
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog_1, ds_1, math1_2, signal_1, eco_1);
         assertThat(list1.checkValidGPALimit())
@@ -182,6 +189,7 @@ public class EnrollmentListTest {
     void Students_with_GPA_more_than_12_can_take_more_than_14_credits() throws Exception {
         Student bebe = mock(Student.class);
         when(bebe.calculateGPA()).thenReturn(new Grade(12.0));
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog_1, math1_1, ap_1);
         assertThat(list1.checkValidGPALimit())
@@ -197,6 +205,7 @@ public class EnrollmentListTest {
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.getTotalTakenCredits()).thenReturn(1);
         when(bebe.calculateGPA()).thenReturn(new Grade(17.01));
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys1_1, prog_1, maaref1_1, english_1, farsi_1);
         assertThat(list1.checkValidGPALimit())
@@ -309,7 +318,7 @@ public class EnrollmentListTest {
     @Test
     void Students_cant_take_less_than_twelve_credits() throws Exception {
         Course testCourse = new Course("1111111", "Test", 3, "Undergraduate");
-        Student testStudent = new Student("1", "ali");
+        Student testStudent = new Student("1", "ali", mock(Major.class), "Undergraduate");
         EnrollmentList list1 = new EnrollmentList("list", testStudent);
         list1.addSections(new Section(testCourse, "01"));
         assertThat(list1.checkValidGPALimit())
@@ -350,6 +359,7 @@ public class EnrollmentListTest {
         Section da_1 = new Section(da, "01", new ExamTime("2021-09-21T13:30", "2021-09-21T16:30"), Set.of(p3));
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         when(bebe.calculateGPA()).thenReturn(new Grade(18));
+        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         list1.addSections(ap1_1, phys2_1, da_1);
         assertThat(list1.checkEnrollmentRules())
                 .isNotNull()

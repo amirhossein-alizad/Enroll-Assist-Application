@@ -2,6 +2,7 @@ package ir.proprog.enrollassist.domain.enrollmentList;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.*;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.course.Course;
@@ -110,22 +111,27 @@ public class EnrollmentList {
 
     List<EnrollmentRuleViolation> checkValidGPALimit() {
         Grade GPA = owner.calculateGPA();
+        GraduateLevel ownerGraduateLevel = owner.getGraduateLevel();
         int credits = sections.stream().mapToInt(section -> section.getCourse().getCredits()).sum();
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        if(credits < 12)
-            violations.add(new MinCreditsRequiredNotMet(12));
-        if(GPA.equals(Grade.ZERO) && owner.getTotalTakenCredits() == 0 && credits > 20)
-            violations.add(new MaxCreditsLimitExceeded(20));
-        else if(owner.getTotalTakenCredits() > 0) {
-            if (credits > 14 && GPA.isLessThan(12))
+        if(credits < ownerGraduateLevel.getMinValidTermCredit())
+            violations.add(new MinCreditsRequiredNotMet(ownerGraduateLevel.getMinValidTermCredit()));
+
+        if (ownerGraduateLevel == GraduateLevel.Undergraduate) {
+            if(GPA.equals(Grade.ZERO) && owner.getTotalTakenCredits() == 0 && credits > 20)
+                violations.add(new MaxCreditsLimitExceeded(20));
+            else if (credits > 14 && GPA.isLessThan(12))
                 violations.add(new MaxCreditsLimitExceeded(14));
             else if (credits > 20 && GPA.isLessThan(17))
                 violations.add(new MaxCreditsLimitExceeded(20));
-            else if (credits > 24 && !GPA.isLessThan(17))
-                violations.add(new MaxCreditsLimitExceeded(24));
         }
+
+        if (credits > ownerGraduateLevel.getMaxValidCredits())
+            violations.add(new MaxCreditsLimitExceeded(ownerGraduateLevel.getMaxValidCredits()));
+
         return violations;
     }
+
 
     List<EnrollmentRuleViolation> checkExamTimeConflicts() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();

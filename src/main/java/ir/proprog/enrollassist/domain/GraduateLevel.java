@@ -14,4 +14,20 @@ public enum GraduateLevel {
             return 14.0;
     }
 
+    public int getMinValidTermCredit() {
+        if (this.equals(Undergraduate))
+            return 12;
+        else if (this.equals(Masters))
+            return 8;
+        else
+            return 6;
+    }
+
+    public int getMaxValidCredits() {
+        if (this.equals(Undergraduate))
+            return 24;
+        else
+            return 12;
+    }
+
 }

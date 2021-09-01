@@ -3,8 +3,10 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListController;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
+import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
@@ -56,9 +58,9 @@ public class EnrollmentListControllerTest {
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz"));
-        list2 = new EnrollmentList("list2", new Student("77777", "Sara"));
-        std = new Student("00000", "gina");
+        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz", mock(Major.class), "Undergraduate"));
+        list2 = new EnrollmentList("list2", new Student("77777", "Sara", mock(Major.class), "Undergraduate"));
+        std = new Student("00000", "gina", mock(Major.class), "Undergraduate");
         S1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01");
         S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
         S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
@@ -245,7 +247,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
-        EnrollmentList list = new EnrollmentList("list", new Student("1", "Std"));
+        EnrollmentList list = new EnrollmentList("list", new Student("1", "Std", mock(Major.class), "Undergraduate"));
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
@@ -277,7 +279,7 @@ public class EnrollmentListControllerTest {
 
         when(student.calculateGPA()).thenReturn(new Grade(11.99));
         when(student.getTotalTakenCredits()).thenReturn(1);
-
+        when(student.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
         List<String> err = new ArrayList<>(List.of("[3333333] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
         mvc.perform(get("/lists/1/check")
                         .contentType(MediaType.APPLICATION_JSON))
