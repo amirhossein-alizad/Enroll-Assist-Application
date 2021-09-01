@@ -1,9 +1,9 @@
 package ir.proprog.enrollassist.domain.course;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.EducationGrade;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.student.Student;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -20,16 +20,15 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String title;
+    private GraduateLevel graduateLevel;
     @Embedded
     private CourseNumber courseNumber;
-    @Embedded
-    private EducationGrade educationGrade;
     @Embedded
     private Credit credits;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
-    public Course(String courseNumber, String title, int credits, String educationGrade) throws ExceptionList {
+    public Course(String courseNumber, String title, int credits, String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if (title.equals("")) {
             exceptionList.addNewException(new Exception("Course must have a name."));
@@ -42,8 +41,8 @@ public class Course {
             this.credits = new Credit(credits);
         } catch (Exception e) { exceptionList.addNewException(e); }
         try {
-            this.educationGrade = new EducationGrade(educationGrade);
-        } catch (Exception e) { exceptionList.addNewException(e); }
+            this.graduateLevel = GraduateLevel.valueOf(graduateLevel);
+        } catch (Exception e) { exceptionList.addNewException(new Exception("Graduate level is not valid.")); }
 
         if (exceptionList.hasException())
             throw exceptionList;
@@ -56,8 +55,8 @@ public class Course {
         return this;
     }
 
-    public boolean equalsEducationGrade(EducationGrade otherEducationGrade) {
-        return this.educationGrade.equals(otherEducationGrade);
+    public boolean equalsEducationGrade(GraduateLevel graduateLevel) {
+        return this.graduateLevel.equals(graduateLevel);
     }
 
     @Override

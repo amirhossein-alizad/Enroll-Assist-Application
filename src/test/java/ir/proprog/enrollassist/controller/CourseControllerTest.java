@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseController;
 import ir.proprog.enrollassist.controller.course.CourseMajorView;
+import ir.proprog.enrollassist.controller.course.CourseView;
 import ir.proprog.enrollassist.domain.course.AddCourseService;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.course.CourseNumber;
@@ -121,10 +122,8 @@ public class CourseControllerTest {
         courseN.put("courseNumber", "1412121");
         JSONArray jArray = new JSONArray();
         jArray.put(1);
-        JSONObject courseG = new JSONObject();
-        courseG.put("grade", "Undergraduate");
 
-        request.put("educationGrade",courseG);
+        request.put("graduateLevel","Undergraduate");
         request.put("courseNumber", courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
@@ -193,10 +192,7 @@ public class CourseControllerTest {
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "1412121");
 
-        JSONObject courseG = new JSONObject();
-        courseG.put("grade", "Undergraduate");
-
-        request.put("educationGrade",courseG);
+        request.put("graduateLevel","Undergraduate");
         request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
         request.put("courseTitle", "C4");
@@ -226,10 +222,7 @@ public class CourseControllerTest {
         majors.put(10);
 
         JSONArray jArray = new JSONArray();
-        JSONObject courseG = new JSONObject();
-        courseG.put("grade", "Undergraduate");
-
-        request.put("educationGrade",courseG);
+        request.put("graduateLevel","Undergraduate");
         jArray.put(19);
         request.put("courseNumber",courseN);
         request.put("courseCredits", 3);
@@ -259,10 +252,8 @@ public class CourseControllerTest {
 
         JSONArray jArray = new JSONArray();
         jArray.put(12);
-        JSONObject courseG = new JSONObject();
-        courseG.put("grade", "Undergraduate");
 
-        request.put("educationGrade",courseG);
+        request.put("graduateLevel","Undergraduate");
         request.put("courseNumber",courseN);
         request.put("courseCredits", -1);
         request.put("courseTitle", "");

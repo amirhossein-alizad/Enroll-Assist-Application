@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.domain.student;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.EducationGrade;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
@@ -25,10 +25,9 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private GraduateLevel graduateLevel;
     @Embedded
     private StudentNumber studentNumber;
-    @Embedded
-    private EducationGrade educationGrade;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
     private String name;
@@ -50,7 +49,7 @@ public class Student {
         this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String educationGrade) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
@@ -58,8 +57,8 @@ public class Student {
         if (name.equals(""))
             exceptionList.addNewException(new Exception("Student name can not be empty."));
         try {
-            this.educationGrade = new EducationGrade(educationGrade);
-        } catch (Exception e) { exceptionList.addNewException(e); }
+            this.graduateLevel = GraduateLevel.valueOf(graduateLevel);
+        } catch (Exception e) { exceptionList.addNewException(new Exception("Graduate level is not valid.")); }
 
         if (exceptionList.hasException())
             throw exceptionList;
@@ -86,7 +85,7 @@ public class Student {
     public boolean hasPassed(Course course) {
         for (StudyRecord sr : grades) {
             if (sr.getCourse().equals(course))
-                return sr.isPassed(this.educationGrade);
+                return sr.isPassed(this.graduateLevel);
         }
         return false;
     }
@@ -113,8 +112,8 @@ public class Student {
 
     @VisibleForTesting
     List<Course> getTakeableCourses(){
-        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.educationGrade)).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.educationGrade));
+        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toList());
+        List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.graduateLevel));
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }

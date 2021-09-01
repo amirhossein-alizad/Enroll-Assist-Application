@@ -87,7 +87,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
-        request.put("educationGrade", "Undergraduate");
+        request.put("graduateLevel", "Undergraduate");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
@@ -104,7 +104,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
         request.put("majorId", 12L);
-        request.put("educationGrade", "Masters");
+        request.put("graduateLevel", "Masters");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.empty());
         mvc.perform(post("/student")
@@ -120,7 +120,7 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "");
         request.put("majorId", 12L);
-        request.put("educationGrade", "Masters");
+        request.put("graduateLevel", "Masters");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
         MvcResult result =  mvc.perform(post("/student")

@@ -36,7 +36,7 @@ public class AddCourseService {
             prerequisites = this.validatePrerequisites(input.getPrerequisites());
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
         try {
-            course = new Course(input.getCourseNumber().getCourseNumber(), input.getCourseTitle(), input.getCourseCredits(), input.getEducationGrade().getGrade());
+            course = new Course(input.getCourseNumber().getCourseNumber(), input.getCourseTitle(), input.getCourseCredits(), input.getGraduateLevel().toString());
             course.setPrerequisites(prerequisites);
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
 

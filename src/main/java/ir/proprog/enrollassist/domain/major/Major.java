@@ -2,7 +2,7 @@ package ir.proprog.enrollassist.domain.major;
 
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.EducationGrade;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import lombok.AccessLevel;
@@ -38,10 +38,10 @@ public class Major {
         this.majorNumber = majorNumber;
     }
 
-    public Set<Course> getCoursesByEducationGrade(EducationGrade educationGrade) {
+    public Set<Course> getCoursesByEducationGrade(GraduateLevel graduateLevel) {
         Set<Course> coursesOfEducationGrade = new HashSet<>();
         for (Course c: this.courses)
-            if (c.equalsEducationGrade(educationGrade))
+            if (c.equalsEducationGrade(graduateLevel))
                 coursesOfEducationGrade.add(c);
         return coursesOfEducationGrade;
     }

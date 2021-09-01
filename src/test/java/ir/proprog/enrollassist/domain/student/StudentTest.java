@@ -49,7 +49,7 @@ public class StudentTest {
         }
         assertEquals(error, "{\"1\":\"Student number can not be empty.\"," +
                 "\"2\":\"Student name can not be empty.\"," +
-                "\"3\":\"Education grade is not valid.\"}");
+                "\"3\":\"Graduate level is not valid.\"}");
     }
 
     @Test
@@ -185,7 +185,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_sections_which_are_not_for_her_education_grade() throws Exception {
+    void Student_does_not_return_sections_which_are_not_for_her_Graduate_level() throws Exception {
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "PHD");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");

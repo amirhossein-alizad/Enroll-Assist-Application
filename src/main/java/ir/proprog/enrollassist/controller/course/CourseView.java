@@ -10,7 +10,7 @@ import java.util.*;
 public class CourseView {
     private Long courseId;
     private CourseNumber courseNumber;
-    private EducationGrade educationGrade;
+    private GraduateLevel graduateLevel;
     private String courseTitle;
     private int courseCredits;
     private Set<Long> prerequisites = new HashSet<>();
@@ -23,7 +23,7 @@ public class CourseView {
         this.courseNumber = course.getCourseNumber();
         this.courseTitle = course.getTitle();
         this.courseCredits = course.getCredits();
-        this.educationGrade = course.getEducationGrade();
+        this.graduateLevel = course.getGraduateLevel();
         if(!course.getPrerequisites().isEmpty())
             for(Course c : course.getPrerequisites())
                 prerequisites.add(c.getId());
@@ -34,7 +34,7 @@ public class CourseView {
         this.courseNumber = course.getCourseNumber();
         this.courseTitle = course.getTitle();
         this.courseCredits = course.getCredits();
-        this.educationGrade = course.getEducationGrade();
+        this.graduateLevel = course.getGraduateLevel();
         this.prerequisites = prerequisites;
     }
 }

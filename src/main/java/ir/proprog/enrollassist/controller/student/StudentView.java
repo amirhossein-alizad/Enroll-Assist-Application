@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller.student;
 
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.student.Student;
 import lombok.Getter;
 
@@ -8,7 +9,7 @@ public class StudentView {
     @Getter private String studentNo;
     @Getter private String name;
     @Getter private Long majorId;
-    @Getter private String educationGrade;
+    @Getter private GraduateLevel graduateLevel;
 
     public StudentView() {
     }
@@ -19,8 +20,8 @@ public class StudentView {
         this.name = student.getName();
         if (student.getMajor() != null)
             this.majorId = student.getMajor().getId();
-        if (student.getEducationGrade() != null)
-            this.educationGrade = student.getEducationGrade().getGrade();
+        if (student.getGraduateLevel() != null)
+            this.graduateLevel = student.getGraduateLevel();
 
     }
 }

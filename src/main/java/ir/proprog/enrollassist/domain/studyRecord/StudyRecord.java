@@ -1,7 +1,7 @@
 package ir.proprog.enrollassist.domain.studyRecord;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.EducationGrade;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.course.Course;
 import lombok.AccessLevel;
@@ -49,9 +49,9 @@ public class StudyRecord {
         return grade.getGrade() * course.getCredits();
     }
 
-    public boolean isPassed(EducationGrade studentEducationGrade) {
-        return grade.isEqualMoreThan(studentEducationGrade.getMinValidGPA()) ||
-                grade.isEqualMoreThan(course.getEducationGrade().getMinValidGPA());
+    public boolean isPassed(GraduateLevel graduateLevel) {
+        return grade.isEqualMoreThan(graduateLevel.getMinValidGrade()) ||
+                grade.isEqualMoreThan(course.getGraduateLevel().getMinValidGrade());
     }
 
     @Override

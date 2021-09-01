@@ -109,7 +109,7 @@ public class CourseTest {
     @Test
     public void EducationGrade_compared_correctly() throws Exception {
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        assertTrue(math1.equalsEducationGrade(new EducationGrade("Undergraduate")));
-        assertFalse(math1.equalsEducationGrade(new EducationGrade("PHD")));
+        assertTrue(math1.equalsEducationGrade(GraduateLevel.valueOf("Undergraduate")));
+        assertFalse(math1.equalsEducationGrade(GraduateLevel.valueOf("PHD")));
     }
 }
