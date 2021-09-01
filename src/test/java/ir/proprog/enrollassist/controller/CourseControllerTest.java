@@ -117,31 +117,16 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_added_and_returned_correctly() throws Exception {
-        JSONObject request = new JSONObject();
-        JSONObject courseN = new JSONObject();
-        courseN.put("courseNumber", "1412121");
-        JSONArray jArray = new JSONArray();
-        jArray.put(1);
-
-        request.put("graduateLevel","Undergraduate");
-        request.put("courseNumber", courseN);
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        request.put("prerequisites", jArray);
-
-        JSONArray majors = new JSONArray();
-        majors.put(10);
-        majors.put(11);
-
-        request.put("majors", majors);
-
+        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(1L), Set.of(10L,11L));
+        ObjectMapper Obj = new ObjectMapper();
         given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
 
         given(major2.getId()).willReturn(11L);
         given(faculty.getMajors()).willReturn(Set.of(major1, major2));
 
         mvc.perform(post("/courses/1")
-                .content(request.toString())
+                .content(Obj.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
@@ -185,26 +170,17 @@ public class CourseControllerTest {
 
     @Test
     public void Course_with_duplicate_number_is_not_added_correctly() throws Exception{
-        JSONObject request = new JSONObject();
-        JSONArray majors = new JSONArray();
-        majors.put(10);
+        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
+        ObjectMapper Obj = new ObjectMapper();
 
-        JSONObject courseN = new JSONObject();
-        courseN.put("courseNumber", "1412121");
+        Course preCourse = new Course("1412121", "C5", 4, "Undergraduate");
 
-        request.put("graduateLevel","Undergraduate");
-        request.put("courseNumber",courseN);
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        request.put("majors", majors);
-
-        Course course = new Course("1412121", "C5", 4, "Undergraduate");
-
-        given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(course));
+        given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(preCourse));
 
         given(faculty.getMajors()).willReturn(Set.of(major1));
         MvcResult result =  mvc.perform(post("/courses/1")
-                .content(request.toString())
+                .content(Obj.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -214,26 +190,13 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-
-        JSONObject courseN = new JSONObject();
-        courseN.put("courseNumber", "1412121");
-        JSONObject request = new JSONObject();
-        JSONArray majors = new JSONArray();
-        majors.put(10);
-
-        JSONArray jArray = new JSONArray();
-        request.put("graduateLevel","Undergraduate");
-        jArray.put(19);
-        request.put("courseNumber",courseN);
-        request.put("courseCredits", 3);
-        request.put("courseTitle", "C4");
-        request.put("prerequisites", jArray);
-        request.put("majors", majors);
-
+        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(19L), Set.of(10L));
+        ObjectMapper Obj = new ObjectMapper();
         given(faculty.getMajors()).willReturn(Set.of(major1));
 
         MvcResult result =  mvc.perform(post("/courses/1")
-                            .content(request.toString())
+                            .content(Obj.writeValueAsString(courseMajorView))
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
                             .andReturn();
@@ -243,7 +206,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_courses_with_violation_are_returned_correctly() throws Exception{
-
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "");
         JSONObject request = new JSONObject();
