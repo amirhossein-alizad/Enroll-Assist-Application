@@ -237,8 +237,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_sections_on_the_same_day_and_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1234567", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("2345678", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1234567", "MATH1", 3, "Undergraduate");
+        Course phys2 = new Course("2345678", "PHYS2", 3, "Undergraduate");
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"),  Collections.emptySet());
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T14:00", "2021-06-21T17:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -251,8 +251,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate");
+        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate");
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"),  Collections.emptySet());
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T09:30", "2021-06-21T13:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -265,8 +265,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_may_have_sections_on_the_different_days_and_conflicting_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate");
+        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate");
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"),  Collections.emptySet());
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-23T09:30", "2021-06-23T13:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -279,8 +279,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_may_have_sections_intersecting_at_one_time() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1231231", "MATH1", 3, "Undergraduate");
+        Course phys2 = new Course("3453456", "PHYS2", 3, "Undergraduate");
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T13:00"),  Collections.emptySet());
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T13:00", "2021-06-21T16:00"),  Collections.emptySet());
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
@@ -293,9 +293,9 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course ap = new Course("2222222", "AP", 4, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        Course ap = new Course("2222222", "AP", 4, "Undergraduate");
+        Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate");
         Section math1_1 = new Section(math1, "01", new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"), Collections.emptySet());
         Section phys2_1 = new Section(phys2, "01", new ExamTime("2021-06-21T11:00", "2021-06-21T14:00"),  Collections.emptySet());
         Section ap1_1 = new Section(ap, "01", new ExamTime("2021-06-21T13:30", "2021-06-21T16:30"),  Collections.emptySet());
@@ -308,7 +308,7 @@ public class EnrollmentListTest {
 
     @Test
     void Students_cant_take_less_than_twelve_credits() throws Exception {
-        Course testCourse = new Course("1111111", "Test", 3, "Undergraduate").setHasExam(false);
+        Course testCourse = new Course("1111111", "Test", 3, "Undergraduate");
         Student testStudent = new Student("1", "ali");
         EnrollmentList list1 = new EnrollmentList("list", testStudent);
         list1.addSections(new Section(testCourse, "01"));
@@ -320,8 +320,8 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_cannot_have_conflict_in_section_schedules() throws Exception {
         Student bebe = mock(Student.class);
-        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate").setHasExam(true);
+        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
+        Course phys2 = new Course("3333333", "PHYS2", 3, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Monday", "11:00", "13:00");
@@ -339,9 +339,9 @@ public class EnrollmentListTest {
     @Test
     void Enrollment_list_with_no_violation_is_created_correctly() throws Exception {
         Student bebe = mock(Student.class);
-        Course ap = new Course("2222222", "AP", 4, "Undergraduate").setHasExam(true);
-        Course phys2 = new Course("3333333", "PHYS2", 4, "Undergraduate").setHasExam(true);
-        Course da = new Course("4444444", "DA", 4, "Undergraduate").setHasExam(true);
+        Course ap = new Course("2222222", "AP", 4, "Undergraduate");
+        Course phys2 = new Course("3333333", "PHYS2", 4, "Undergraduate");
+        Course da = new Course("4444444", "DA", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -359,9 +359,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_zero_when_examTime_set_to_time_that_has_no_conflicts_with_others() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4, "Undergraduate").setHasExam(true);
-        Course ds = new Course("7777777", "DS", 4, "Undergraduate").setHasExam(true);
-        Course dm = new Course("8888888", "DM", 4, "Undergraduate").setHasExam(true);
+        Course da = new Course("6666666", "DA", 4, "Undergraduate");
+        Course ds = new Course("7777777", "DS", 4, "Undergraduate");
+        Course dm = new Course("8888888", "DM", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -377,9 +377,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_not_zero_when_examTime_set_to_time_that_has_conflicts_with_others() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4, "Undergraduate").setHasExam(true);
-        Course ds = new Course("7777777", "DS", 4, "Undergraduate").setHasExam(true);
-        Course dm = new Course("8888888", "DM", 4, "Undergraduate").setHasExam(true);
+        Course da = new Course("6666666", "DA", 4, "Undergraduate");
+        Course ds = new Course("7777777", "DS", 4, "Undergraduate");
+        Course dm = new Course("8888888", "DM", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -395,9 +395,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_conflicts_with_others_1() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4, "Undergraduate").setHasExam(true);
-        Course ds = new Course("7777777", "DS", 4, "Undergraduate").setHasExam(true);
-        Course dm = new Course("8888888", "DM", 4, "Undergraduate").setHasExam(true);
+        Course da = new Course("6666666", "DA", 4, "Undergraduate");
+        Course ds = new Course("7777777", "DS", 4, "Undergraduate");
+        Course dm = new Course("8888888", "DM", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Tuesday", "10:30", "12:00");
@@ -414,9 +414,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_not_zero_when_Schedule_set_to_time_that_has_conflicts_with_others_2() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4, "Undergraduate").setHasExam(true);
-        Course ds = new Course("7777777", "DS", 4, "Undergraduate").setHasExam(true);
-        Course dm = new Course("8888888", "DM", 4, "Undergraduate").setHasExam(true);
+        Course da = new Course("6666666", "DA", 4, "Undergraduate");
+        Course ds = new Course("7777777", "DS", 4, "Undergraduate");
+        Course dm = new Course("8888888", "DM", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Monday", "10:00", "11:00");
@@ -432,9 +432,9 @@ public class EnrollmentListTest {
     @Test
     void Number_of_new_conflicts_are_zero_when_Schedule_set_to_time_that_has_no_conflicts_with_others() throws Exception {
         Student bebe = mock(Student.class);
-        Course da = new Course("6666666", "DA", 4, "Undergraduate").setHasExam(true);
-        Course ds = new Course("7777777", "DS", 4, "Undergraduate").setHasExam(true);
-        Course dm = new Course("8888888", "DM", 4, "Undergraduate").setHasExam(true);
+        Course da = new Course("6666666", "DA", 4, "Undergraduate");
+        Course ds = new Course("7777777", "DS", 4, "Undergraduate");
+        Course dm = new Course("8888888", "DM", 4, "Undergraduate");
         PresentationSchedule p1 = new PresentationSchedule("Monday", "10:30", "12:00");
         PresentationSchedule p2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         PresentationSchedule p3 = new PresentationSchedule("Monday", "10:00", "11:00");

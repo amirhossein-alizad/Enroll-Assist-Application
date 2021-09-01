@@ -26,7 +26,6 @@ public class Course {
     private EducationGrade educationGrade;
     @Embedded
     private Credit credits;
-    private boolean hasExam = false;
     @ManyToMany
     private Set<Course> prerequisites = new HashSet<>();
 
@@ -82,13 +81,6 @@ public class Course {
     public void setPrerequisites(Set<Course> prerequisites) {
         this.prerequisites = prerequisites;
     }
-
-    public Course setHasExam(boolean hasExam) {
-        this.hasExam = hasExam;
-        return this;
-    }
-
-    public boolean getHasExam() { return hasExam; }
 
     public List<EnrollmentRuleViolation> canBeTakenBy(Student student) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();

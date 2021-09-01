@@ -131,11 +131,11 @@ public class EnrollmentList {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (int i = 0; i < sections.size(); i++) {
             Section s1 = sections.get(i);
-            if (!s1.getCourse().getHasExam())
+            if (s1.getExamTime() == null)
                 continue;
             for (int j = i + 1; j < sections.size(); j++) {
                 Section s2 = sections.get(j);
-                if (!s2.getCourse().getHasExam())
+                if (s2.getExamTime() == null)
                     continue;
                 if (s1 != s2 && s1.getExamTime().hasTimeConflict(s2.getExamTime()))
                     violations.add(new ExamTimeCollision(s1, s2));

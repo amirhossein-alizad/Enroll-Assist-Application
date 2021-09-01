@@ -45,7 +45,7 @@ public class DataInitializer {
         Course maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
         Course farsi = new Course("1212121", "FA", 2, "Undergraduate");
         Course english = new Course("1010101", "EN", 2, "Undergraduate");
-        Course akhlagh = new Course("1111110", "AKHLAGH", 2, "Undergraduate").setHasExam(true);
+        Course akhlagh = new Course("1111110", "AKHLAGH", 2, "Undergraduate");
         Course karafarini = new Course("1313131", "KAR", 3, "Undergraduate");
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
