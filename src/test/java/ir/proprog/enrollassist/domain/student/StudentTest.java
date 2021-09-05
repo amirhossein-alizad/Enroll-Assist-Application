@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class StudentTest {
     private Student bebe;
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
-    private Major major;
     Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
 
     @BeforeEach
@@ -27,7 +27,7 @@ public class StudentTest {
         maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
-        major = new Major("123", "CE");
+        Major major = new Major("123", "CE");
         major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new Student("810197000", "bebe", major, "Undergraduate");
         math1_1 = new Section(math1, "01");
@@ -40,25 +40,24 @@ public class StudentTest {
 
     @Test
     void Student_with_invalid_data_cant_be_created() {
-        String error = "";
-        try {
-            Major major = mock(Major.class);
-            Student bebe = new Student("", "", major, "student");
-        }catch (ExceptionList exceptionList) {
-            error = exceptionList.toString();
-        }
-        assertEquals(error, "{\"1\":\"Student number can not be empty.\"," +
+        Throwable error = assertThrows(
+                ExceptionList.class, () -> {
+                    Major major = mock(Major.class);
+                    Student bebe = new Student("", "", major, "student");
+                }
+        );
+        assertEquals(error.toString(), "{\"1\":\"Student number can not be empty.\"," +
                 "\"2\":\"Student name can not be empty.\"," +
                 "\"3\":\"Graduate level is not valid.\"}");
     }
 
     @Test
-    void Student_with_valid_data_cant_be_created() {
+    void Student_with_valid_data_can_be_created() {
         String error = "";
         try {
             Major major = mock(Major.class);
             Student bebe = new Student("1234", "Mehrnaz", major, "PHD");
-        }catch (ExceptionList exceptionList) {
+        } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
         assertEquals(error, "");
@@ -185,7 +184,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_sections_which_are_not_for_her_Graduate_level() throws Exception {
+    void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "PHD");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
@@ -215,14 +214,11 @@ public class StudentTest {
     }
 
     @Test
-    void Grade_of_course_with_invalid_season_cant_set_correctly() {
-        String error = "";
-        try {
-            bebe.setGrade("13960", math1, 19.1);
-        }catch (ExceptionList e) {
-            error = e.toString();
-        }
-        assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
+    void Grade_of_course_with_invalid_season_throws_error() {
+        Throwable error = assertThrows(
+                ExceptionList.class, () -> bebe.setGrade("13960", math1, 19.1)
+        );
+        assertEquals(error.toString(), "{\"1\":\"Season of term is not valid.\"}");
     }
 
     @Test
