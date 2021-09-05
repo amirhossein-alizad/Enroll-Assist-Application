@@ -113,7 +113,7 @@ public class Student {
     @VisibleForTesting
     List<Course> getTakeableCourses(){
         List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.graduateLevel));
+        List<Course> all = new ArrayList<>(major.getCoursesByGraduateLevel(this.graduateLevel));
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
