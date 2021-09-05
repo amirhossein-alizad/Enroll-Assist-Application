@@ -170,6 +170,8 @@ public class EnrollmentList {
         this.sections.get(index).setExamTime(examTime);
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkExamTimeConflicts();
         this.sections.get(index).setExamTime(preExamTime);
+        if (enrollmentRuleViolations.size() == 0)
+            return false;
         return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
     }
 
@@ -180,6 +182,8 @@ public class EnrollmentList {
         this.sections.get(index).setPresentationSchedule(new HashSet<>(schedule));
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkSectionScheduleConflicts();
         this.sections.get(index).setPresentationSchedule(prePresentationSchedule);
+        if (enrollmentRuleViolations.size() == 0)
+            return false;
         return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
     }
 }

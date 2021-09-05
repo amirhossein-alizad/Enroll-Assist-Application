@@ -25,8 +25,9 @@ public class EnrollmentListTest {
     private Section math1_1, math1_2, prog_1, ap_1, ds_1, phys1_1, maaref1_1, english_1, phys2_1;
     private Student bebe;
     private PresentationSchedule schedule1, schedule2, schedule3;
+    ExamTime examTime1, examTime2, examTime3;
     @BeforeEach
-    void setUp() throws ExceptionList {
+    void setUp() throws Exception {
         bebe = mock(Student.class);
 
         math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
@@ -51,6 +52,10 @@ public class EnrollmentListTest {
         schedule1 = new PresentationSchedule("Monday", "10:30", "12:00");
         schedule2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
         schedule3 = new PresentationSchedule("Monday", "11:00", "13:00");
+
+        examTime1 = new ExamTime("2021-06-21T11:00", "2021-06-21T13:00");
+        examTime2 = new ExamTime("2021-06-21T13:00", "2021-06-21T16:00");
+        examTime3 = new ExamTime("2021-06-21T12:00", "2021-06-21T14:00");
     }
 
     @Test
@@ -200,9 +205,9 @@ public class EnrollmentListTest {
 
 
     @Test
-    void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_time() throws Exception {
-        math1_1.setExamTime(new ExamTime("2021-06-21T08:00", "2021-06-21T11:00"));
-        phys1_1.setExamTime(new ExamTime("2021-06-21T09:30", "2021-06-21T13:00"));
+    void Enrollment_list_cannot_have_sections_on_the_same_day_and_conflicting_exam_time() throws Exception {
+        math1_1.setExamTime(examTime1);
+        phys1_1.setExamTime(examTime3);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys1_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -211,9 +216,9 @@ public class EnrollmentListTest {
     }
 
     @Test
-    void Enrollment_list_may_have_sections_intersecting_at_one_time() throws Exception {
-        math1_1.setExamTime(new ExamTime("2021-06-21T11:00", "2021-06-21T13:00"));
-        phys1_1.setExamTime(new ExamTime("2021-06-21T13:00", "2021-06-21T16:00"));
+    void Enrollment_list_may_have_sections_intersecting_at_one_exam_time() throws Exception {
+        math1_1.setExamTime(examTime1);
+        phys1_1.setExamTime(examTime2);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, phys1_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -223,9 +228,9 @@ public class EnrollmentListTest {
 
     @Test
     void Enrollment_list_cannot_have_one_section_when_its_exam_time_is_colliding_with_two_other_sections() throws Exception {
-        math1_1.setExamTime(new ExamTime("2021-06-21T08:00", "2021-06-21T11:30"));
-        phys1_1.setExamTime(new ExamTime("2021-06-21T11:00", "2021-06-21T14:00"));
-        prog_1.setExamTime(new ExamTime("2021-06-21T13:30", "2021-06-21T16:30"));
+        math1_1.setExamTime(examTime1);
+        phys1_1.setExamTime(examTime2);
+        prog_1.setExamTime(examTime3);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(math1_1, prog_1, phys1_1);
         assertThat(list1.checkExamTimeConflicts())
@@ -259,23 +264,21 @@ public class EnrollmentListTest {
 
     @Test
     void Number_of_new_conflicts_are_zero_when_examTime_set_to_time_that_has_no_conflicts_with_others() throws Exception {
-        prog_1.setExamTime( new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"));
-        math1_1.setExamTime( new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"));
-        phys1_1.setExamTime( new ExamTime("2021-08-21T11:00", "2021-08-21T13:00"));
+        prog_1.setExamTime(examTime1);
+        math1_1.setExamTime(examTime3);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(prog_1, math1_1, phys1_1);
-        assertThat(list.makeExamTimeConflict(prog_1, new ExamTime("2021-08-21T08:00", "2021-08-21T10:00")))
+        list.addSections(prog_1, math1_1);
+        assertThat(list.makeExamTimeConflict(math1_1, examTime2))
                 .isEqualTo(false);
     }
 
     @Test
     void Number_of_new_conflicts_are_not_zero_when_examTime_set_to_time_that_has_conflicts_with_others() throws Exception {
-        prog_1.setExamTime(new ExamTime("2021-07-21T11:00", "2021-07-21T14:00"));
-        math1_1.setExamTime(new ExamTime("2021-08-21T13:30", "2021-08-21T16:30"));
-        phys1_1.setExamTime(new ExamTime("2021-08-21T11:00", "2021-08-21T13:00"));
+        prog_1.setExamTime(examTime1);
+        math1_1.setExamTime(examTime2);
         EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(prog_1, math1_1, phys1_1);
-        assertThat(list.makeExamTimeConflict(prog_1, new ExamTime("2021-08-21T13:30", "2021-08-21T16:30")))
+        list.addSections(prog_1, math1_1);
+        assertThat(list.makeExamTimeConflict(prog_1, examTime2))
                 .isEqualTo(true);
     }
 
