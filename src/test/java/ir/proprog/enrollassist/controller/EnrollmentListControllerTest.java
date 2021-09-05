@@ -1,17 +1,16 @@
 package ir.proprog.enrollassist.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListController;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
-import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
-import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -51,23 +50,15 @@ public class EnrollmentListControllerTest {
     @MockBean
     private StudentRepository studentRepository;
 
-    List<EnrollmentList> lists;
-    EnrollmentList list1, list2;
-    private Section S1, S2, S3, S4;
+    EnrollmentList list1;
     private Student std;
     private Course course;
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz", mock(Major.class), "Undergraduate"));
-        list2 = new EnrollmentList("list2", new Student("77777", "Sara", mock(Major.class), "Undergraduate"));
         std = new Student("00000", "gina", mock(Major.class), "Undergraduate");
+        list1 = new EnrollmentList("list1", std);
         course = new Course("1111111", "C1", 3, "Undergraduate");
-        S1 = new Section(course, "01");
-        S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
-        S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
-        S4 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
-        this.lists = List.of(this.list1, this.list2);
 
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(studentRepository.findByStudentNumber(new StudentNumber("00000"))).willReturn(Optional.of(std));
@@ -75,13 +66,12 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_lists_are_returned_correctly() throws Exception {
-        given(enrollmentListRepository.findAll()).willReturn(this.lists);
+        given(enrollmentListRepository.findAll()).willReturn(List.of(list1));
         mvc.perform(get("/lists")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].enrollmentListName", is(this.lists.get(0).getListName())))
-                .andExpect(jsonPath("$[1].enrollmentListName", is(this.lists.get(1).getListName())));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].enrollmentListName", is(this.list1.getListName())));
     }
 
     @Test
@@ -94,14 +84,14 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void New_list_is_added_correctly() throws Exception {
-        JSONObject req = new JSONObject();
-        req.put("enrollmentListName", "new_list");
+        EnrollmentList newEnrollmentList = new EnrollmentList("new_list", std);
+        ObjectMapper Obj = new ObjectMapper();
         mvc.perform(post("/lists/00000")
-                .content(req.toString())
+                .content(Obj.writeValueAsString(new EnrollmentListView(newEnrollmentList)))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.enrollmentListName", is("new_list")));
-//        verify checking
+        verify(enrollmentListRepository, times(1)).save(newEnrollmentList);
     }
 
     @Test
@@ -164,11 +154,11 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        this.list1.addSections(S1, S2, S3);
+        this.list1.addSections(new Section(course, "01"));
         mvc.perform(get("/lists/12/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[0].courseTitle", is("C1")))
@@ -205,6 +195,7 @@ public class EnrollmentListControllerTest {
         mvc.perform(MockMvcRequestBuilders.put("/lists/12/sections/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
 
     @Test
@@ -213,6 +204,7 @@ public class EnrollmentListControllerTest {
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
 
     @Test
@@ -236,5 +228,6 @@ public class EnrollmentListControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
 }
