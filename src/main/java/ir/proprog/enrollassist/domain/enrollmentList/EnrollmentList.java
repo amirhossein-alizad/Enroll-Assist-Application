@@ -156,7 +156,7 @@ public class EnrollmentList {
             for (int j=i+1; j<this.sections.size(); j++) {
                 if (this.sections.get(i).equals(this.sections.get(j)))
                     continue;
-                if (this.sections.get(i).hasConflict(this.sections.get(j)))
+                if (this.sections.get(i).hasScheduleConflict(this.sections.get(j)))
                     violations.add(new ConflictOfClassSchedule(this.sections.get(i), this.sections.get(j)));
             }
         }
