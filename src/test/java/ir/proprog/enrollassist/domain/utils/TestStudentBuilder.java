@@ -1,15 +1,12 @@
 package ir.proprog.enrollassist.domain.utils;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.student.Student;
-import ir.proprog.enrollassist.domain.student.StudentNumber;
 
 import static org.mockito.Mockito.mock;
 
 public class TestStudentBuilder {
-    private static String STUDENT_ID;
     private String name;
     private Major major;
     private String graduateLevel;
