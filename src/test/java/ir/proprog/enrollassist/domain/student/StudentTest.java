@@ -114,9 +114,6 @@ public class StudentTest {
 
     @Test
     void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10() throws Exception {
-        Student bebe = new TestStudentBuilder()
-                .withGraduateLevel("Undergraduate")
-                .build();
         Course math1 = new Course("1111111", "MATH1", 3, "Masters");
         bebe.setGrade("13981", math1, 11);
         assertThat(bebe.hasPassed(math1))
@@ -210,27 +207,20 @@ public class StudentTest {
 
 
     @Test
-    void Grade_of_course_with_valid_term_can_set_correctly() {
-        String error = "";
-        try {
-            bebe.setGrade("13962", math1, 19.1);
-        }catch (ExceptionList e) {
-            error = e.toString();
-        }
-        assertEquals(error, "");
+    void Grade_of_course_with_valid_term_can_set_correctly() throws ExceptionList {
+        bebe.setGrade("13962", math1, 19.1);
+        assertThat(bebe.getGrades()).hasSize(1);
     }
 
     @Test
     void Grade_of_course_with_invalid_season_throws_error() {
-        Throwable error = assertThrows(
-                ExceptionList.class, () -> bebe.setGrade("13960", math1, 19.1)
-        );
+        Throwable error = assertThrows(ExceptionList.class, () -> bebe.setGrade("13960", math1, 19.1));
         assertEquals(error.toString(), "{\"1\":\"Season of term is not valid.\"}");
     }
 
     @Test
     void Student_can_block_her_friend() throws Exception {
-        Student friend = new Student("123960", "sarina");
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
         bebe.addFriend(friend);
         bebe.blockFriend(friend);
         assertThat(bebe.getBlocked()).hasSize(1);
