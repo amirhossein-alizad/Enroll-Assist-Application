@@ -39,7 +39,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_with_invalid_data_cant_be_created() {
+    void Student_with_multiple_invalid_fields_cannot_be_created() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
                     Major major = mock(Major.class);
@@ -65,7 +65,6 @@ public class StudentTest {
 
     @Test
     void Course_with_grade_less_than_ten_is_not_passed() throws Exception {
-        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
                 .isFalse();
