@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -43,7 +44,12 @@ public class StudentTest {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
                     Major major = mock(Major.class);
-                    Student bebe = new Student("", "", major, "student");
+                    Student bebe = new TestStudentBuilder()
+                            .withName("")
+                            .withStudentNumber("")
+                            .withMajor(major)
+                            .withGraduateLevel("student")
+                            .build();
                 }
         );
         assertEquals(error.toString(), "{\"1\":\"Student number can not be empty.\"," +
@@ -55,8 +61,7 @@ public class StudentTest {
     void Student_with_valid_data_can_be_created() {
         String error = "";
         try {
-            Major major = mock(Major.class);
-            Student bebe = new Student("1234", "Mehrnaz", major, "PHD");
+            Student bebe = new TestStudentBuilder().build();
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
@@ -97,8 +102,7 @@ public class StudentTest {
 
     @Test
     void PHD_student_has_not_passed_course_when_her_grade_is_less_than_14()  throws Exception {
-        Major major = mock(Major.class);
-        Student bebe = new Student("810197000", "bebe", major, "PHD");
+        Student bebe = new TestStudentBuilder().build();
         Course math1 = new Course("1111111", "MATH1", 3, "PHD");
         bebe.setGrade("13981", math1, 13.5);
         assertThat(bebe.hasPassed(math1))

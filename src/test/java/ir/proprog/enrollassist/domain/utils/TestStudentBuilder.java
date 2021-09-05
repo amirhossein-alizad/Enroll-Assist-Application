@@ -18,27 +18,27 @@ public class TestStudentBuilder {
     public TestStudentBuilder()
     {
         name = "bebe";
-        major = null;
-        graduateLevel = "Bs.c";
+        major = mock(Major.class);
+        graduateLevel = "PHD";
         studentNumber = "810190000";
     }
 
-    public TestStudentBuilder byGraduateLevel(String _graduateLevel) {
+    public TestStudentBuilder withGraduateLevel(String _graduateLevel) {
         graduateLevel = _graduateLevel;
         return this;
     }
 
-    public TestStudentBuilder byName(String _name) {
+    public TestStudentBuilder withName(String _name) {
         name = _name;
         return this;
     }
 
-    public TestStudentBuilder byStudentNumber(String _studentNumber) {
+    public TestStudentBuilder withStudentNumber(String _studentNumber) {
         studentNumber = _studentNumber;
         return this;
     }
 
-    public TestStudentBuilder byMajor(Major _major) {
+    public TestStudentBuilder withMajor(Major _major) {
         major = _major;
         return this;
     }
