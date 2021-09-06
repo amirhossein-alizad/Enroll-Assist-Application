@@ -56,7 +56,7 @@ public class MajorTest {
     }
 
     @Test
-    public void Exceptions_are_returned_correctly_if_input_was_incorrect(){
+    public void Major_name_and_major_number_can_not_be_empty(){
         Throwable error = assertThrows(ExceptionList.class, () ->
                 major = majorBuilder
                         .majorName("")
