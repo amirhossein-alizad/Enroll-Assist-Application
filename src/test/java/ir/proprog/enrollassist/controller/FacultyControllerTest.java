@@ -91,7 +91,7 @@ public class FacultyControllerTest {
     }
 
     @Test
-    public void Faculty_with_the_same_name_cannot_be_added() throws Exception{
+    public void Faculties_which_their_name_already_exist_are_not_added() throws Exception{
         Faculty faculty = mock(Faculty.class);
 
         body.put("facultyId", "0");
