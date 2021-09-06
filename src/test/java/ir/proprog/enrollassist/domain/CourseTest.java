@@ -44,7 +44,7 @@ public class CourseTest {
     }
 
     @Test
-    void Course_with_empty_field_cant_be_created() {
+    void Course_number_and_course_title_can_not_be_empty() {
         try {
             Course math1 = new TestCourseBuilder()
                     .courseNumber("")
@@ -60,7 +60,7 @@ public class CourseTest {
     }
 
     @Test
-    void Course_with_empty_invalid_course_number_cant_be_created() {
+    void Course_number_cannot_be_less_than_7_digits_and_credits_can_not_have_a_negative_value() {
         try {
             Course math1 = new TestCourseBuilder()
                     .courseNumber("1")
@@ -124,7 +124,7 @@ public class CourseTest {
     }
 
     @Test
-    void Course_with_two_prerequisites_can_be_taken_by_who_has_passed_both_pres() {
+    void Course_with_two_prerequisites_can_be_taken_by_anyone_who_has_passed_both_prerequisites() {
         when(bebe.hasPassed(any(Course.class))).thenReturn(true);
         assertThat(phys2.canBeTakenBy(bebe))
                 .isNotNull()
@@ -132,7 +132,7 @@ public class CourseTest {
     }
 
     @Test
-    void Course_with_two_prerequisites_cannot_be_taken_if_one_has_not_been_passed() {
+    void Course_with_two_prerequisites_cannot_be_taken_if_one_prerequisite_has_not_been_passed() {
         when(bebe.hasPassed(math1)).thenReturn(true);
         when(bebe.hasPassed(phys1)).thenReturn(false);
         assertThat(phys2.canBeTakenBy(bebe))
@@ -150,7 +150,7 @@ public class CourseTest {
     }
 
     @Test
-    public void EducationGrade_compared_correctly() throws Exception {
+    void Education_grades_with_equal_values_are_detected_as_equals() throws Exception {
         Course math1 = new TestCourseBuilder()
                 .courseNumber("1111111")
                 .title("MATH1")
