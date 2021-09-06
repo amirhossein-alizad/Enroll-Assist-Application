@@ -89,7 +89,7 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void Major_courses_is_returned_correctly() throws Exception{
+    public void All_courses_of_a_major_are_returned_correctly() throws Exception{
         setUpWithTestBuilders();
         major1.addCourse(course1, course2);
         given(majorRepository.findById(1L)).willReturn(java.util.Optional.of(major1));
@@ -102,7 +102,7 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void Valid_major_is_added_correctly() throws Exception{
+    public void Major_with_acceptable_values_is_added_correctly() throws Exception{
         setUpWithMock();
         request.put("majorName", "CHEM");
         request.put("majorNumber", "8102");
@@ -117,7 +117,7 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void Major_cannot_be_added_if_name_already_exists() throws Exception{
+    public void Major_with_a_name_that_already_exists_is_not_added() throws Exception{
         setUpWithMock();
         request.put("majorName", "EE");
         request.put("majorNumber", "8101");
@@ -132,7 +132,7 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void Major_cannot_be_added_if_faculty_does_not_exists() throws Exception{
+    public void Major_can_not_be_added_to_a_faculty_that_does_not_exist() throws Exception{
         setUpWithMock();
         request.put("majorName", "EE");
         request.put("majorNumber", "8101");
@@ -144,7 +144,7 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void Major_name_and_number_cannot_be_empty() throws Exception{
+    public void Major_name_and_major_number_cannot_be_empty() throws Exception{
         setUpWithMock();
         request.put("majorName", "");
         request.put("majorNumber", "");
