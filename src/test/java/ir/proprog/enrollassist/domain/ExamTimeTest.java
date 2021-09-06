@@ -1,10 +1,7 @@
 package ir.proprog.enrollassist.domain;
-
-import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ExamTimeTest {
@@ -31,68 +28,33 @@ public class ExamTimeTest {
 
     @Test
     public void Exams_dates_must_be_of_correct_format() {
-        String exception = "";
-        try {
-            ExamTime time1 = new ExamTime("2021/06/21T8:00", "2021/06/21T11:00");
-        } catch(Exception e) {
-            exception = e.getMessage();
-        }
-        assertEquals(exception, "Dates must be of the format yyyy-MM-ddTHH:mm");
+        Throwable error = assertThrows(Exception.class, () -> { ExamTime time1 = new ExamTime("2021/06/21T8:00", "2021/06/21T11:00"); });
+        assertEquals(error.getMessage(), "Dates must be of the format yyyy-MM-ddTHH:mm");
     }
 
     @Test
     public void Exams_start_date_cannot_be_after_end_date() throws Exception {
-        ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-21T10:00");
-        String exception = "";
-        try {
-            time1.validate();
-        }catch (ExceptionList e) {
-            exception = e.toString();
-        }
-        assertEquals(exception,"{\"1\":\"Exam start should be before its end.\"}");
+        ExamTime exam = new ExamTime("2021-06-21T11:00", "2021-06-21T10:00");
+        Throwable error = assertThrows(Exception.class, exam::validate);
+        assertEquals(error.toString(),"{\"1\":\"Exam start should be before its end.\"}");
     }
 
     @Test
     public void Exams_start_and_finish_date_cannot_be_on_different_days() throws Exception {
-        ExamTime time1 = new ExamTime("2021-06-21T11:00", "2021-06-22T12:00");
-        String exception = "";
-        try {
-            time1.validate();
-        }catch (ExceptionList e) {
-            exception = e.toString();
-        }
-        assertEquals(exception,"{\"1\":\"Exam cannot take more than one day.\"}");
+        ExamTime exam = new ExamTime("2021-06-21T11:00", "2021-06-22T12:00");
+        Throwable error = assertThrows(Exception.class, exam::validate);
+        assertEquals(error.toString(),"{\"1\":\"Exam cannot take more than one day.\"}");
     }
 
     @Test
     public void Exam_date_should_be_on_valid_days(){
-        String exception = "";
-        try {
-            ExamTime time1 = new ExamTime("2021-06-34T11:00", "2021-06-34T12:00");
-        } catch(Exception e) {
-            exception = e.getMessage();
-        }
-        assertEquals(exception, "Dates must be of the format yyyy-MM-ddTHH:mm");
+        Throwable error = assertThrows(Exception.class, () -> { ExamTime examTime = new ExamTime("2021-06-34T11:00", "2021-06-34T12:00"); });
+        assertEquals(error.getMessage(), "Dates must be of the format yyyy-MM-ddTHH:mm");
     }
 
     @Test
     public void Exam_date_should_be_on_valid_months(){
-        String exception = "";
-        try {
-            ExamTime time1 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
-        } catch(Exception e) {
-            exception = e.getMessage();
-        }
-        assertEquals(exception, "Dates must be of the format yyyy-MM-ddTHH:mm");
-    }
-
-    @Test
-    public void Equals_method_works_correctly() {
-        try {
-            ExamTime time1 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
-            ExamTime time2 = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00");
-            assertTrue(time1.equals(time2));
-        } catch(Exception ignored) {
-        }
+        Throwable error = assertThrows(Exception.class, () -> { ExamTime examTime = new ExamTime("2021-13-11T11:00", "2021-13-11T12:00"); });
+        assertEquals(error.getMessage(), "Dates must be of the format yyyy-MM-ddTHH:mm");
     }
 }
