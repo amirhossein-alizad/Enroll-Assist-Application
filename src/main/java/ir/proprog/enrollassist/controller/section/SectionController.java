@@ -116,8 +116,7 @@ public class SectionController {
         }
         if(exceptionList.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
-        Set<PresentationSchedule> presentationScheduleSet = new HashSet<>(schedule);
-        section.setPresentationSchedule(presentationScheduleSet);
+        section.setPresentationSchedule(new HashSet<>(schedule));
         sectionRepository.save(section);
         return new SectionView(section);
     }

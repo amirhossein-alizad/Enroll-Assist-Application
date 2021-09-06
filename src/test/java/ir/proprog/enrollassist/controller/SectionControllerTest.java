@@ -13,27 +13,21 @@ import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.anyOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -49,13 +43,13 @@ public class SectionControllerTest {
     private EnrollmentListRepository enrollmentListRepository;
     @MockBean
     private CourseRepository courseRepository;
-    private ExamTime exam1, exam2;
+    private ExamTime exam2;
     private Section section;
     private Course course;
 
     @BeforeEach
     public void setUp() throws Exception {
-        exam1 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
+        ExamTime exam1 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");
         exam2 = new ExamTime("2021-08-10T09:00", "2021-08-10T11:00");
         course = new Course("1111111", "C1", 3, "Undergraduate");
         section = new Section(course, "01", exam1, Collections.emptySet());
@@ -138,7 +132,6 @@ public class SectionControllerTest {
 
     @Test
     public void Section_with_invalid_section_number_is_not_added_correctly() throws Exception {
-        given(this.sectionRepository.findOneSectionOfSpecialCourse(2L, "dm")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
         req.put("sectionNo", "dm");
         req.put("courseId", "2");
@@ -150,7 +143,6 @@ public class SectionControllerTest {
 
     @Test
     public void Valid_section_is_added_correctly() throws Exception {
-        given(this.sectionRepository.findOneSectionOfSpecialCourse(2L, "01")).willReturn(Collections.emptyList());
         JSONObject req = new JSONObject();
         req.put("sectionNo", "01");
         req.put("courseId", "2");
@@ -187,22 +179,22 @@ public class SectionControllerTest {
     }
 
     @Test
-    public void ExamTime_cannot_be_changed_if_section_does_not_exist() throws Exception {
-        JSONObject jsonExam = new JSONObject();
-        jsonExam.put("start", "2020-08-10T09:00");
-        jsonExam.put("end", "2020-08-10T11:00");
-        mvc.perform(MockMvcRequestBuilders.put("/sections/47/setExamTime")
-                .content(jsonExam.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     public void Schedule_is_not_set_if_section_is_not_found() throws Exception {
         mvc.perform(put("/sections/15/setSchedule")
                 .contentType(MediaType.APPLICATION_JSON)
                         .content("[\n{\n\"dayOfWeek\": \"Sunday\",\n\"endTime\": \"10:00\",\n\"startTime\": \"12:00\"\n}\n]"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void New_valid_schedule_can_set() throws Exception {
+        PresentationSchedule schedule1 = new PresentationSchedule("Monday", "09:00", "11:00");
+        ObjectMapper Obj = new ObjectMapper();
+        mvc.perform(put("/sections/1/setSchedule")
+                .content(Obj.writeValueAsString(List.of(schedule1)))
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        verify(sectionRepository, times(1)).save(section);
     }
 
     @Test
