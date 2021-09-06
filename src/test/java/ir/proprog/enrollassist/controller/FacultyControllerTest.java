@@ -3,9 +3,11 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.controller.faculty.FacultyController;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.utils.TestFacultyBuilder;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,12 +37,23 @@ public class FacultyControllerTest {
     private MajorRepository majorRepository;
     @MockBean
     private FacultyRepository facultyRepository;
+    private JSONObject body, response;
+    private TestFacultyBuilder testFacultyBuilder = new TestFacultyBuilder();
+
+    @BeforeEach
+    void setUp(){
+        body = new JSONObject();
+        response = new JSONObject();
+    }
 
     @Test
     public void All_faculties_are_returned_correctly() throws Exception{
-        Faculty f1 = new Faculty("ECE");
-        Faculty f2 = new Faculty("ART");
-        Faculty f3 = new Faculty("MED");
+        Faculty f1 = testFacultyBuilder.facultyName("ECE")
+                .build();
+        Faculty f2 = testFacultyBuilder.facultyName("ART")
+                .build();
+        Faculty f3 = testFacultyBuilder.facultyName("MED")
+                .build();
         given(facultyRepository.findAll()).willReturn(List.of(f1, f2, f3));
         mvc.perform(get("/faculties")
                 .contentType(MediaType.APPLICATION_JSON))
@@ -53,7 +66,6 @@ public class FacultyControllerTest {
 
     @Test
     public void Valid_faculty_is_added_correctly() throws Exception{
-        JSONObject body = new JSONObject();
         body.put("facultyId", "0");
         body.put("facultyName", "ECE");
 
@@ -66,10 +78,8 @@ public class FacultyControllerTest {
 
     @Test
     public void Faculty_with_empty_names_cannot_be_added() throws Exception{
-        JSONObject response = new JSONObject();
         response.put("1", "Faculty name can not be Empty.");
 
-        JSONObject body = new JSONObject();
         body.put("facultyId", "0");
         body.put("facultyName", "");
 
@@ -84,11 +94,9 @@ public class FacultyControllerTest {
     public void Faculty_with_the_same_name_cannot_be_added() throws Exception{
         Faculty faculty = mock(Faculty.class);
 
-        JSONObject body = new JSONObject();
         body.put("facultyId", "0");
         body.put("facultyName", "ECE");
 
-        JSONObject response = new JSONObject();
         response.put("1", "Faculty with name ECE exists.");
 
         given(facultyRepository.findByFacultyName("ECE")).willReturn(java.util.Optional.ofNullable(faculty));
