@@ -77,18 +77,18 @@ public class CourseControllerTest {
         courseRepository.saveAll(of(course1, course2));
         courses.addAll(of(course1, course2));
         major1 = mock(Major.class);
-        given(major1.getId()).willReturn(10L);
         major2 = mock(Major.class);
         faculty= mock(Faculty.class);
         addCourseService = mock(AddCourseService.class);
 
+        given(major1.getId()).willReturn(10L);
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
         given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
     }
 
     @Test
-    public void All_courses_are_returned_correctly() throws Exception {
+    void All_courses_are_returned_correctly() throws Exception {
         given(courseRepository.findAll()).willReturn(courses);
         mvc.perform(get("/courses")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -99,7 +99,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void Requested_course_is_returned_correctly() throws Exception {
+    void Requested_course_is_returned_correctly() throws Exception {
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
         mvc.perform(get("/courses/1")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -111,7 +111,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void Requested_with_prerequisite_course_is_returned_correctly() throws Exception {
+    void Requested_course_with_prerequisites_is_returned_correctly() throws Exception {
         given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(course2));
         mvc.perform(get("/courses/2")
                         .contentType(MediaType.APPLICATION_JSON))
@@ -123,14 +123,14 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void Course_that_doesnt_exist_is_not_found() throws Exception {
+    void Course_that_doesnt_exist_is_not_found() throws Exception {
         mvc.perform(get("/courses/34")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void New_course_is_added_and_returned_correctly() throws Exception {
+    void New_course_is_added_and_returned_correctly() throws Exception {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(1L), Set.of(10L,11L));
         ObjectMapper Obj = new ObjectMapper();
         given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
@@ -149,7 +149,7 @@ public class CourseControllerTest {
 
 
     @Test
-    public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
+    void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
         JSONObject request = new JSONObject();
 
         mvc.perform(post("/courses/90")
@@ -161,7 +161,7 @@ public class CourseControllerTest {
 
 
     @Test
-    public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
+    void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
         ExceptionList exceptionList = new ExceptionList();
@@ -181,11 +181,16 @@ public class CourseControllerTest {
 
 
     @Test
-    public void Course_with_duplicate_number_is_not_added_correctly() throws Exception{
+    void Courses_which_their_course_numbers_already_exist_are_not_added() throws Exception{
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
 
-        Course preCourse = new Course("1412121", "C5", 4, "Undergraduate");
+        Course preCourse = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("C5")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
 
         given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(preCourse));
 
@@ -200,7 +205,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
+    void New_course_is_not_added_if_its_prerequisites_are_not_found() throws Exception{
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(19L), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
         given(faculty.getMajors()).willReturn(Set.of(major1));
@@ -215,7 +220,7 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void New_courses_with_violation_are_returned_correctly() throws Exception{
+    void All_violations_of_a_new_course_are_returned_correctly() throws Exception{
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "");
         JSONObject request = new JSONObject();
@@ -248,8 +253,7 @@ public class CourseControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
-        String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
+        assertEquals(result.getResponse().getErrorMessage(), "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
                 "\"2\":\"Course must have a name.\"," +
                 "\"3\":\"Course number cannot be empty.\"," +
                 "\"4\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
