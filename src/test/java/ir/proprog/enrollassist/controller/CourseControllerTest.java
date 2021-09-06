@@ -10,6 +10,7 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.course.CourseNumber;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,11 +55,25 @@ public class CourseControllerTest {
 
     @BeforeEach
     void SetUp() throws Exception {
-        course1 = new Course("1111111", "C1", 3, "Undergraduate");
-        course2 = new Course("2222222", "C2", 3, "Undergraduate");
-        course2.withPre(course1);
-        course3 = new Course("3333333", "C3", 4, "Undergraduate");
-        course2.withPre(course1);
+        course1 = new TestCourseBuilder()
+                .courseNumber("1111111")
+                .title("C1")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
+        course2 = new TestCourseBuilder()
+                .courseNumber("2222222")
+                .title("C2")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build()
+                .withPre(course1);
+        course3 = new TestCourseBuilder()
+                .courseNumber("3333333")
+                .title("C3")
+                .credits(4)
+                .graduateLevel("Undergraduate")
+                .build();
         courseRepository.saveAll(of(course1, course2, course3));
         courses.addAll(of(course1, course2, course3));
         major1 = mock(Major.class);
@@ -76,7 +91,7 @@ public class CourseControllerTest {
     public void All_courses_are_returned_correctly() throws Exception {
         given(courseRepository.findAll()).willReturn(courses);
         mvc.perform(get("/courses")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
@@ -88,7 +103,7 @@ public class CourseControllerTest {
     public void Requested_course_is_returned_correctly() throws Exception {
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
         mvc.perform(get("/courses/1")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
@@ -100,7 +115,7 @@ public class CourseControllerTest {
     public void Requested_with_prerequisite_course_is_returned_correctly() throws Exception {
         given(courseRepository.findById(2L)).willReturn(java.util.Optional.of(course2));
         mvc.perform(get("/courses/2")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseNumber.courseNumber", is("2222222")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
@@ -111,13 +126,18 @@ public class CourseControllerTest {
     @Test
     public void Course_that_doesnt_exist_is_not_found() throws Exception {
         mvc.perform(get("/courses/34")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void New_course_is_added_and_returned_correctly() throws Exception {
-        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        Course course = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("C4")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(1L), Set.of(10L,11L));
         ObjectMapper Obj = new ObjectMapper();
         given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
@@ -126,8 +146,8 @@ public class CourseControllerTest {
         given(faculty.getMajors()).willReturn(Set.of(major1, major2));
 
         mvc.perform(post("/courses/1")
-                .content(Obj.writeValueAsString(courseMajorView))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(Obj.writeValueAsString(courseMajorView))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
@@ -140,8 +160,8 @@ public class CourseControllerTest {
         JSONObject request = new JSONObject();
 
         mvc.perform(post("/courses/90")
-                .content(request.toString())
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(request.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Faculty not found"));
     }
@@ -149,7 +169,12 @@ public class CourseControllerTest {
 
     @Test
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
-        Course course = new Course("1212121", "AP", 3, "Undergraduate");
+        Course course = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("AP")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
         ExceptionList exceptionList = new ExceptionList();
@@ -159,8 +184,8 @@ public class CourseControllerTest {
 
         ObjectMapper objectMapper = new ObjectMapper();
         MvcResult result =  mvc.perform(post("/courses/1")
-                .content(objectMapper.writeValueAsString(courseMajorView))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(objectMapper.writeValueAsString(courseMajorView))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
         String content = result.getResponse().getErrorMessage();
@@ -170,7 +195,12 @@ public class CourseControllerTest {
 
     @Test
     public void Course_with_duplicate_number_is_not_added_correctly() throws Exception{
-        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        Course course = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("C4")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
 
@@ -180,8 +210,8 @@ public class CourseControllerTest {
 
         given(faculty.getMajors()).willReturn(Set.of(major1));
         MvcResult result =  mvc.perform(post("/courses/1")
-                .content(Obj.writeValueAsString(courseMajorView))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .content(Obj.writeValueAsString(courseMajorView))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andReturn();
         String content = result.getResponse().getErrorMessage();
@@ -190,16 +220,21 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-        Course course = new Course("1412121", "C4", 3, "Undergraduate");
+        Course course = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("C4")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(19L), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
         given(faculty.getMajors()).willReturn(Set.of(major1));
 
         MvcResult result =  mvc.perform(post("/courses/1")
-                            .content(Obj.writeValueAsString(courseMajorView))
-                            .contentType(MediaType.APPLICATION_JSON))
-                            .andExpect(status().isBadRequest())
-                            .andReturn();
+                        .content(Obj.writeValueAsString(courseMajorView))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
         String content = result.getResponse().getErrorMessage();
         assertEquals(content, "{\"1\":\"Course with id = 19 was not found.\"}");
     }
@@ -234,14 +269,14 @@ public class CourseControllerTest {
         when(mockedCourse2.getPrerequisites()).thenReturn(set1);
         when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
         MvcResult result =  mvc.perform(post("/courses/1")
-                            .content(request.toString())
-                            .contentType(MediaType.APPLICATION_JSON))
-                            .andExpect(status().isBadRequest())
-                            .andReturn();
+                        .content(request.toString())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn();
         String content = result.getResponse().getErrorMessage();
         assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
-                                    "\"2\":\"Course must have a name.\"," +
-                                    "\"3\":\"Course number cannot be empty.\"," +
-                                    "\"4\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
+                "\"2\":\"Course must have a name.\"," +
+                "\"3\":\"Course number cannot be empty.\"," +
+                "\"4\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
     }
 }
