@@ -71,6 +71,8 @@ public class MajorControllerTest {
         major1 = mock(Major.class);
         request = new JSONObject();
         response = new JSONObject();
+        given(majorRepository.findByMajorName("EE")).willReturn(java.util.Optional.ofNullable(major1));
+
     }
     @Test
     public void All_majors_are_returned_correctly() throws Exception{
@@ -104,6 +106,7 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "CHEM");
         request.put("majorNumber", "8102");
+
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
         mvc.perform(post("/majors/1")
                 .content(request.toString())
@@ -118,11 +121,9 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "EE");
         request.put("majorNumber", "8101");
-
         response.put("1", "Major with name EE exists.");
 
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
-        given(majorRepository.findByMajorName("EE")).willReturn(java.util.Optional.ofNullable(major1));
         mvc.perform(post("/majors/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -135,7 +136,6 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "EE");
         request.put("majorNumber", "8101");
-        given(majorRepository.findByMajorName("EE")).willReturn(java.util.Optional.ofNullable(major1));
         mvc.perform(post("/majors/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
