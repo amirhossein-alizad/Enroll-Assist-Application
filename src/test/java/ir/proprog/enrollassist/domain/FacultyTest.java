@@ -31,7 +31,7 @@ public class FacultyTest {
     }
 
     @Test
-    public void Exceptions_are_returned_correctly_if_input_was_incorrect() {
+    public void Faculty_name_can_not_be_empty() {
         Throwable error = assertThrows(ExceptionList.class, () ->
                 faculty = testFacultyBuilder.facultyName("")
                         .build());
@@ -52,7 +52,7 @@ public class FacultyTest {
     }
 
     @Test
-    public void Majors_changed_correctly() throws ExceptionList {
+    public void Faculty_majors_change_correctly() throws ExceptionList {
         major1 = testMajorBuilder.majorName("M1")
                 .build();
 
