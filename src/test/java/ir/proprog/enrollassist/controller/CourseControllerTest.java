@@ -48,13 +48,19 @@ public class CourseControllerTest {
     @MockBean
     private MajorRepository majorRepository;
     private AddCourseService addCourseService;
-    private Course course1, course2, course3;
+    private Course course, course1, course2;
     private Major major1, major2;
     private Faculty faculty;
     private final List<Course> courses = new ArrayList<>();
 
     @BeforeEach
     void SetUp() throws Exception {
+        course = new TestCourseBuilder()
+                .courseNumber("1412121")
+                .title("C4")
+                .credits(3)
+                .graduateLevel("Undergraduate")
+                .build();
         course1 = new TestCourseBuilder()
                 .courseNumber("1111111")
                 .title("C1")
@@ -68,14 +74,8 @@ public class CourseControllerTest {
                 .graduateLevel("Undergraduate")
                 .build()
                 .withPre(course1);
-        course3 = new TestCourseBuilder()
-                .courseNumber("3333333")
-                .title("C3")
-                .credits(4)
-                .graduateLevel("Undergraduate")
-                .build();
-        courseRepository.saveAll(of(course1, course2, course3));
-        courses.addAll(of(course1, course2, course3));
+        courseRepository.saveAll(of(course1, course2));
+        courses.addAll(of(course1, course2));
         major1 = mock(Major.class);
         given(major1.getId()).willReturn(10L);
         major2 = mock(Major.class);
@@ -93,10 +93,9 @@ public class CourseControllerTest {
         mvc.perform(get("/courses")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
-                .andExpect(jsonPath("$[1].courseTitle", is("C2")))
-                .andExpect(jsonPath("$[2].courseCredits", is(4)));
+                .andExpect(jsonPath("$[1].courseTitle", is("C2")));
     }
 
     @Test
@@ -132,12 +131,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_added_and_returned_correctly() throws Exception {
-        Course course = new TestCourseBuilder()
-                .courseNumber("1412121")
-                .title("C4")
-                .credits(3)
-                .graduateLevel("Undergraduate")
-                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(1L), Set.of(10L,11L));
         ObjectMapper Obj = new ObjectMapper();
         given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
@@ -169,12 +162,6 @@ public class CourseControllerTest {
 
     @Test
     public void Course_cannot_be_added_if_major_does_not_exist() throws Exception {
-        Course course = new TestCourseBuilder()
-                .courseNumber("1412121")
-                .title("AP")
-                .credits(3)
-                .graduateLevel("Undergraduate")
-                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
         ExceptionList exceptionList = new ExceptionList();
@@ -195,12 +182,6 @@ public class CourseControllerTest {
 
     @Test
     public void Course_with_duplicate_number_is_not_added_correctly() throws Exception{
-        Course course = new TestCourseBuilder()
-                .courseNumber("1412121")
-                .title("C4")
-                .credits(3)
-                .graduateLevel("Undergraduate")
-                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
 
@@ -220,12 +201,6 @@ public class CourseControllerTest {
 
     @Test
     public void New_course_is_not_added_if_prerequisite_is_not_found() throws Exception{
-        Course course = new TestCourseBuilder()
-                .courseNumber("1412121")
-                .title("C4")
-                .credits(3)
-                .graduateLevel("Undergraduate")
-                .build();
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(19L), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
         given(faculty.getMajors()).willReturn(Set.of(major1));
