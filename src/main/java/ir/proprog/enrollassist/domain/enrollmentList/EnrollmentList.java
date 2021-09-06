@@ -170,20 +170,20 @@ public class EnrollmentList {
         this.sections.get(index).setExamTime(examTime);
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkExamTimeConflicts();
         this.sections.get(index).setExamTime(preExamTime);
-        if (enrollmentRuleViolations.size() == 0)
+        if ((enrollmentRuleViolations.size() == 0) || (enrollmentRuleViolations.equals(preEnrollmentRuleViolations)))
             return false;
-        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+        return enrollmentRuleViolations.size() >= preEnrollmentRuleViolations.size();
     }
 
     public boolean makePresentationScheduleConflict(Section section, List<PresentationSchedule> schedule) {
         int index = this.sections.indexOf(section);
-        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkHasNotAlreadyPassedCourses();
+        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkSectionScheduleConflicts();
         Set<PresentationSchedule> prePresentationSchedule = this.sections.get(index).getPresentationSchedule();
         this.sections.get(index).setPresentationSchedule(new HashSet<>(schedule));
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkSectionScheduleConflicts();
         this.sections.get(index).setPresentationSchedule(prePresentationSchedule);
-        if (enrollmentRuleViolations.size() == 0)
+        if ((enrollmentRuleViolations.size() == 0) || (enrollmentRuleViolations.equals(preEnrollmentRuleViolations)))
             return false;
-        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+        return enrollmentRuleViolations.size() >= preEnrollmentRuleViolations.size();
     }
 }
