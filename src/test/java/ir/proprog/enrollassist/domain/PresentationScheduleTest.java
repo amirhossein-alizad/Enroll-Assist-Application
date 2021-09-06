@@ -17,7 +17,7 @@ public class PresentationScheduleTest {
     SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
 
     @Test
-    public void Correct_input_create_presentationSchedule_correctly() {
+    public void Presentation_schedule_with_given_valid_weekday_and_time_is_created_correctly() {
         ExceptionList exceptionList = new ExceptionList();
         try {
             PresentationSchedule presentationSchedule = new PresentationSchedule("Sunday", "10:00", "12:00");
@@ -29,7 +29,7 @@ public class PresentationScheduleTest {
     }
 
     @Test
-    public void Incorrect_input_does_not_create_presentationSchedule_correctly() {
+    public void Presentation_schedule_with_invalid_weekday_and_time_returns_errors() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
                     PresentationSchedule presentationSchedule = new PresentationSchedule("Sun", "10", "12");
@@ -40,7 +40,7 @@ public class PresentationScheduleTest {
     }
 
     @Test
-    public void presentationSchedule_is_not_created_with_endTime_that_is_less_than_startTime() {
+    public void Presentation_schedule_cannot_be_created_if_start_time_is_later_than_finish_time() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
                     PresentationSchedule presentationSchedule = new PresentationSchedule("Monday", "10:00", "08:00");
@@ -50,7 +50,7 @@ public class PresentationScheduleTest {
     }
 
     @Test
-    public void Conflict_of_two_presentationSchedule_with_overlap_is_diagnosed_correctly() throws ExceptionList {
+    public void Overlapping_presentation_schedules_are_detected_correctly() throws ExceptionList {
         PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
         PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Sunday", "09:00", "11:00");
         assertTrue(coursePresentationSchedule1.hasConflict(coursePresentationSchedule2));
@@ -58,14 +58,14 @@ public class PresentationScheduleTest {
 
 
     @Test
-    public void No_conflict_is_diagnosed_correctly_1() throws ExceptionList {
+    public void Presentation_schedules_on_different_days_do_not_overlap() throws ExceptionList {
         PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
         PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Wednesday", "10:00", "12:00");
         assertFalse(coursePresentationSchedule1.hasConflict(coursePresentationSchedule2));
     }
 
     @Test
-    public void No_conflict_is_diagnosed_correctly_2() throws ExceptionList {
+    public void Presentation_schedules_on_same_day_and_with_no_overlap_in_time_do_not_collide() throws ExceptionList {
         PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
         PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Sunday", "12:00", "14:00");
         assertFalse(coursePresentationSchedule1.hasConflict(coursePresentationSchedule2));
