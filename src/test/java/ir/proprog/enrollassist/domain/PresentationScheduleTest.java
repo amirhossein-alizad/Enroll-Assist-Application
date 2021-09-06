@@ -13,9 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 
 public class PresentationScheduleTest {
-
-    SimpleDateFormat dataFormat = new SimpleDateFormat("HH:mm");
-
     @Test
     public void Presentation_schedule_with_given_valid_weekday_and_time_is_created_correctly() {
         ExceptionList exceptionList = new ExceptionList();
@@ -69,12 +66,5 @@ public class PresentationScheduleTest {
         PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
         PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Sunday", "12:00", "14:00");
         assertFalse(coursePresentationSchedule1.hasConflict(coursePresentationSchedule2));
-    }
-
-    @Test
-    public void Equals_method_works_correctly_for_two_identical_instances_of_PresentationSchedule_class() throws ExceptionList {
-        PresentationSchedule coursePresentationSchedule1 = new PresentationSchedule("Sunday", "10:00", "12:00");
-        PresentationSchedule coursePresentationSchedule2 = new PresentationSchedule("Sunday", "10:00", "12:00");
-        assertEquals(coursePresentationSchedule1, coursePresentationSchedule2);
     }
 }
