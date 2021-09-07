@@ -34,7 +34,6 @@ public class StudentTest {
         Program p = new MajorProgram(major, "Undergraduate", 140, 140);
         p.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
-                .withMajor(major)
                 .withGraduateLevel("Undergraduate")
                 .build()
                 .addProgram(p);
@@ -50,11 +49,9 @@ public class StudentTest {
     void Student_with_multiple_invalid_fields_cannot_be_created() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
-                    Major major = mock(Major.class);
                     Student bebe = new TestStudentBuilder()
                             .withName("")
                             .withStudentNumber("")
-                            .withMajor(major)
                             .withGraduateLevel("student")
                             .build();
                 }

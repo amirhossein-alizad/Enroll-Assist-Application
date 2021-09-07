@@ -3,6 +3,8 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.controller.student.StudentController;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.program.MajorProgram;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
@@ -86,7 +88,6 @@ public class StudentControllerTest {
         Major major = mock(Major.class);
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
-        request.put("majorId", 12L);
         request.put("graduateLevel", "Undergraduate");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
@@ -99,27 +100,11 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void Student_cannot_be_added_if_her_major_is_not_found() throws Exception {
-        JSONObject request = new JSONObject();
-        request.put("studentNo", "81818181");
-        request.put("name", "Sara");
-        request.put("majorId", 12L);
-        request.put("graduateLevel", "Masters");
-        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
-        given(this.majorRepository.findById(12L)).willReturn(Optional.empty());
-        mvc.perform(post("/student")
-                .content(request.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     public void Student_with_invalid_info_is_not_added() throws Exception {
         JSONObject request = new JSONObject();
         Major major = mock(Major.class);
         request.put("studentNo", "81818181");
         request.put("name", "");
-        request.put("majorId", 12L);
         request.put("graduateLevel", "Masters");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
@@ -148,12 +133,14 @@ public class StudentControllerTest {
         Course math2 = new Course("4666644", "MATH2", 3, "Undergraduate").withPre(math1);
 
         Major cs = new Major("1", "CS");
+        Program p = new MajorProgram(cs, "Undergraduate", 140, 140);
+        p.addCourse(math1, math2);
 
         Student student = new TestStudentBuilder()
-                .withMajor(cs)
                 .withGraduateLevel("Undergraduate")
                 .build()
-                .setGrade("13981", math1, 20.0);
+                .setGrade("13981", math1, 20.0)
+                .addProgram(p);
 
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");

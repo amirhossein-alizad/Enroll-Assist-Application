@@ -3,6 +3,8 @@ package ir.proprog.enrollassist.util;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.program.MajorProgram;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
@@ -44,6 +46,9 @@ public class TestDataInitializer {
 
         Major ce = new Major("8101", "CE");
         majorRepository.save(ce);
+
+        Program p = new MajorProgram(ce, "Undergraduate", 140, 140);
+        p.addCourse();
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate")
                 .setGrade("13981", math1, 10)
