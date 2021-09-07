@@ -23,6 +23,12 @@ public class CreditRange {
         this.maximum = max;
     }
 
+    public CreditRange() {
+        this.minimum = 0;
+        this.maximum = 140;
+    }
+
+
     @Override
     public int hashCode() { return Objects.hash(minimum, maximum); }
 

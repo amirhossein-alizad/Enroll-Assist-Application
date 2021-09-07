@@ -11,9 +11,6 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @PrimaryKeyJoinColumn(name = "parentId")
 public class MinorProgram extends Program{
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
 
     public MinorProgram(Major major, String graduateLevel, int minimum, int maximum) throws ExceptionList {
         super(major, graduateLevel, minimum, maximum);
