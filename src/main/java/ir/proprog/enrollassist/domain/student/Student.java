@@ -33,8 +33,6 @@ public class Student {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
     private String name;
-    @ManyToOne
-    Major major;
     @ManyToMany
     private Set<Program> programs = new HashSet<>();
 
@@ -53,7 +51,7 @@ public class Student {
         this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String graduateLevel) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
@@ -68,7 +66,6 @@ public class Student {
             throw exceptionList;
 
         this.name = name;
-        this.major = major;
     }
 
 
@@ -93,6 +90,8 @@ public class Student {
         }
         return false;
     }
+
+    public void addProgram(Program program) { this.programs.add(program); }
 
     public Student setGrade(String term, Course course, double grade) throws ExceptionList {
         grades.add(new StudyRecord(term, course, grade));
@@ -128,10 +127,6 @@ public class Student {
         List<Course> courses = getTakeableCourses();
         List<Section> all = StreamSupport.stream(allSections.spliterator(), false).collect(Collectors.toList());
         return all.stream().filter(section -> courses.contains(section.getCourse())).collect(Collectors.toList());
-    }
-
-    public void setMajor(Major major) {
-        this.major = major;
     }
 
     public void sendFriendshipRequest(Student other) throws Exception {

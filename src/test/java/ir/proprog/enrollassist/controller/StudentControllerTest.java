@@ -148,7 +148,6 @@ public class StudentControllerTest {
         Course math2 = new Course("4666644", "MATH2", 3, "Undergraduate").withPre(math1);
 
         Major cs = new Major("1", "CS");
-        cs.addCourse(math1, math2);
 
         Student student = new TestStudentBuilder()
                 .withMajor(cs)
