@@ -53,4 +53,8 @@ public class Program {
             throw exceptionList;
         this.courses.addAll(Arrays.asList(course));
     }
+
+    public boolean hasCourse(Course course) {
+        return this.courses.contains(course);
+    }
 }

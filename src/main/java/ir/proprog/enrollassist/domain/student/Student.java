@@ -2,9 +2,11 @@ package ir.proprog.enrollassist.domain.student;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.MajorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
@@ -130,6 +132,15 @@ public class Student {
         List<Course> courses = getTakeableCourses();
         List<Section> all = StreamSupport.stream(allSections.spliterator(), false).collect(Collectors.toList());
         return all.stream().filter(section -> courses.contains(section.getCourse())).collect(Collectors.toList());
+    }
+
+    public List<EnrollmentRuleViolation> canTake(Course course) {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        for (Program p: this.programs)
+            if (p.hasCourse(course) && p instanceof MajorProgram)
+                return course.canBeTakenBy(this);
+
+        return violations;
     }
 
     public void sendFriendshipRequest(Student other) throws Exception {
