@@ -3,6 +3,8 @@ package ir.proprog.enrollassist.domain.student;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.MajorProgram;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,11 +31,13 @@ public class StudentTest {
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
         Major major = new Major("123", "CE");
-//        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        Program p = new MajorProgram(major, "Undergraduate", 140, 140);
+        p.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
                 .withMajor(major)
                 .withGraduateLevel("Undergraduate")
-                .build();
+                .build()
+                .addProgram(p);
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
@@ -185,24 +189,6 @@ public class StudentTest {
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
-    }
-
-    @Test
-    void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
-        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        Course prog = new Course("2222222", "PROG", 3, "PHD");
-        Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
-        Section math1_1 = new Section(math1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
-        Major major = new Major("123", "CE");
-//        major.addCourse(math1, prog, andishe);
-        Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();
-
-        assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
-                .isNotEmpty()
-                .hasSize(1)
-                .containsExactlyInAnyOrder(math1_1);
     }
 
 

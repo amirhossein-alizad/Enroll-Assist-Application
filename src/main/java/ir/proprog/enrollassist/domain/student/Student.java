@@ -91,7 +91,10 @@ public class Student {
         return false;
     }
 
-    public void addProgram(Program program) { this.programs.add(program); }
+    public Student addProgram(Program program) {
+        this.programs.add(program);
+        return this;
+    }
 
     public Student setGrade(String term, Course course, double grade) throws ExceptionList {
         grades.add(new StudyRecord(term, course, grade));
