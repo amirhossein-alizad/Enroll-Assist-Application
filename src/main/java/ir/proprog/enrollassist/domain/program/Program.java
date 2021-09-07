@@ -4,11 +4,8 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
-import ir.proprog.enrollassist.domain.student.StudentNumber;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.checkerframework.checker.units.qual.C;
 
 import javax.persistence.*;
 import java.util.Arrays;
@@ -19,14 +16,14 @@ import java.util.List;
 public abstract class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    protected Long id;
     @ManyToOne
-    private Major major;
-    private GraduateLevel graduateLevel;
+    protected Major major;
+    protected GraduateLevel graduateLevel;
     @ManyToMany
-    private List<Course> courses;
+    protected List<Course> courses;
     @Embedded
-    private CreditRange creditRange;
+    protected CreditRange creditRange;
 
     public Program(Major major, String graduateLevel, int minimum, int maximum) throws ExceptionList {
         this.major = major;
