@@ -8,6 +8,7 @@ import ir.proprog.enrollassist.domain.faculty.Faculty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Value;
 
 import javax.persistence.*;
 import java.util.*;
@@ -21,10 +22,6 @@ public class Major {
     private Long id;
     private String majorNumber;
     private String majorName;
-    @ManyToMany
-    Set<Course> courses = new HashSet<>();
-    @ManyToOne(cascade = CascadeType.MERGE)
-    Faculty faculty;
 
     public Major(String majorNumber, String majorName) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
@@ -38,14 +35,6 @@ public class Major {
         this.majorNumber = majorNumber;
     }
 
-    public Set<Course> getCoursesByEducationGrade(GraduateLevel graduateLevel) {
-        Set<Course> coursesOfEducationGrade = new HashSet<>();
-        for (Course c: this.courses)
-            if (c.equalsEducationGrade(graduateLevel))
-                coursesOfEducationGrade.add(c);
-        return coursesOfEducationGrade;
-    }
-
     @Override
     public boolean equals(Object o){
         if (this == o) return true;
@@ -56,8 +45,4 @@ public class Major {
 
     @Override
     public int hashCode() { return Objects.hash(majorNumber, majorName); }
-
-    public void addCourse(Course ... course){
-        this.courses.addAll(Arrays.asList(course));
-    }
 }

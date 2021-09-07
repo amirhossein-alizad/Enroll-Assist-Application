@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -21,7 +23,7 @@ public abstract class Program {
     protected Major major;
     protected GraduateLevel graduateLevel;
     @ManyToMany
-    protected List<Course> courses;
+    protected Set<Course> courses = new HashSet<>();
     @Embedded
     protected CreditRange creditRange;
 
