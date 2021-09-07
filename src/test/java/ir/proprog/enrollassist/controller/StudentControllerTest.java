@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
+import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -45,8 +46,7 @@ public class StudentControllerTest {
     private MajorRepository majorRepository;
 
     @Test
-    public void Student_that_doesnt_exist_is_not_found() throws Exception {
-        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+    public void Student_that_does_not_exist_is_not_found() throws Exception {
         mvc.perform(get("/student/81818181")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -64,7 +64,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void One_student_is_not_added_again() throws Exception {
+    public void Student_with_same_student_number_cannot_be_added_again() throws Exception {
         JSONObject request = new JSONObject();
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
@@ -99,7 +99,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void Student_with_unreal_major_is_not_added_correctly() throws Exception {
+    public void Student_cannot_be_added_if_her_major_is_not_found() throws Exception {
         JSONObject request = new JSONObject();
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
@@ -114,7 +114,7 @@ public class StudentControllerTest {
     }
 
     @Test
-    public void invalid_student_is_not_added_correctly() throws Exception {
+    public void Student_with_invalid_info_is_not_added() throws Exception {
         JSONObject request = new JSONObject();
         Major major = mock(Major.class);
         request.put("studentNo", "81818181");
@@ -134,7 +134,7 @@ public class StudentControllerTest {
 
 
     @Test
-    public void Takeable_sections_is_not_returned_if_student_is_not_found() throws Exception{
+    public void Takeable_sections_are_not_returned_if_student_is_not_found() throws Exception{
         mvc.perform(get("/student/1/takeableByMajor")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -150,7 +150,11 @@ public class StudentControllerTest {
         Major cs = new Major("1", "CS");
         cs.addCourse(math1, math2);
 
-        Student student = new Student("010101", "ali", cs, "Undergraduate").setGrade("13981", math1, 20.0);
+        Student student = new TestStudentBuilder()
+                .withMajor(cs)
+                .withGraduateLevel("Undergraduate")
+                .build()
+                .setGrade("13981", math1, 20.0);
 
         Section math2_1 = new Section(math2, "01");
         Section math2_2 = new Section(math2, "02");
@@ -168,11 +172,7 @@ public class StudentControllerTest {
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("4666644")))
                 .andExpect(jsonPath("$[0].courseTitle", is("MATH2")))
-                .andExpect(jsonPath("$[0].courseCredits", is(3)))
-                .andExpect(jsonPath("$[1].sectionNo", is("02")))
-                .andExpect(jsonPath("$[1].courseNumber.courseNumber", is("4666644")))
-                .andExpect(jsonPath("$[1].courseTitle", is("MATH2")))
-                .andExpect(jsonPath("$[1].courseCredits", is(3)));
+                .andExpect(jsonPath("$[0].courseCredits", is(3)));
 
     }
 }
