@@ -3,9 +3,11 @@ package ir.proprog.enrollassist.domain.program;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import lombok.Value;
 
+import javax.persistence.Embeddable;
 import java.util.Objects;
 
 @Value
+@Embeddable
 public class CreditRange {
     int minimum;
     int maximum;
