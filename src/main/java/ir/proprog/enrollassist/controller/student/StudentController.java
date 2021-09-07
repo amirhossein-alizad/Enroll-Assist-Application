@@ -26,7 +26,6 @@ public class StudentController {
     private CourseRepository courseRepository;
     private SectionRepository sectionRepository;
     private EnrollmentListRepository enrollmentListRepository;
-    private MajorRepository majorRepository;
 
     @GetMapping("/all")
     public Iterable<StudentView> all() {
@@ -44,13 +43,10 @@ public class StudentController {
     public StudentView addStudent(@RequestBody StudentView studentView) {
         Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentView.getStudentNo()));
 
-        Major major = this.majorRepository.findById(studentView.getMajorId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
-
         if (student.isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         try {
-            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName(), major, studentView.getGraduateLevel().toString());
+            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName(), studentView.getGraduateLevel().toString());
             this.studentRepository.save(newStudent);
             return new StudentView(newStudent);
         } catch (ExceptionList exceptionList) {
