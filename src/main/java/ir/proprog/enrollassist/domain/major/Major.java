@@ -22,6 +22,8 @@ public class Major {
     private Long id;
     private String majorNumber;
     private String majorName;
+    @ManyToOne
+    private Faculty faculty;
 
     public Major(String majorNumber, String majorName) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();

@@ -5,6 +5,7 @@ import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public abstract class Program {
     @ManyToOne
     protected Major major;
     protected GraduateLevel graduateLevel;
+    @Getter
     @ManyToMany
     protected Set<Course> courses = new HashSet<>();
     @Embedded

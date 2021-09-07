@@ -5,6 +5,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.studyRecord.StudyRecord;
@@ -16,6 +17,7 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Entity
@@ -33,6 +35,8 @@ public class Student {
     private String name;
     @ManyToOne
     Major major;
+    @ManyToMany
+    private Set<Program> programs = new HashSet<>();
 
     @OneToMany
     private List<Student> pending = new ArrayList<>();
@@ -112,8 +116,10 @@ public class Student {
 
     @VisibleForTesting
     List<Course> getTakeableCourses(){
-        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> all = new ArrayList<>(major.getCoursesByEducationGrade(this.graduateLevel));
+        Set<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toSet());
+        Set<Course> all = new HashSet<>();
+        for (Program p: programs)
+            all.addAll(p.getCourses());
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
