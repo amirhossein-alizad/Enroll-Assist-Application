@@ -4,18 +4,19 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 public class StudentTest {
     private Student bebe;
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
-    private Major major;
     Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
 
     @BeforeEach
@@ -27,9 +28,12 @@ public class StudentTest {
         maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
-        major = new Major("123", "CE");
+        Major major = new Major("123", "CE");
         major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
-        bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        bebe = new TestStudentBuilder()
+                .withMajor(major)
+                .withGraduateLevel("Undergraduate")
+                .build();
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
@@ -39,26 +43,29 @@ public class StudentTest {
     }
 
     @Test
-    void Student_with_invalid_data_cant_be_created() {
-        String error = "";
-        try {
-            Major major = mock(Major.class);
-            Student bebe = new Student("", "", major, "student");
-        }catch (ExceptionList exceptionList) {
-            error = exceptionList.toString();
-        }
-        assertEquals(error, "{\"1\":\"Student number can not be empty.\"," +
+    void Student_with_multiple_invalid_fields_cannot_be_created() {
+        Throwable error = assertThrows(
+                ExceptionList.class, () -> {
+                    Major major = mock(Major.class);
+                    Student bebe = new TestStudentBuilder()
+                            .withName("")
+                            .withStudentNumber("")
+                            .withMajor(major)
+                            .withGraduateLevel("student")
+                            .build();
+                }
+        );
+        assertEquals(error.toString(), "{\"1\":\"Student number can not be empty.\"," +
                 "\"2\":\"Student name can not be empty.\"," +
                 "\"3\":\"Graduate level is not valid.\"}");
     }
 
     @Test
-    void Student_with_valid_data_cant_be_created() {
+    void Student_with_valid_data_can_be_created() {
         String error = "";
         try {
-            Major major = mock(Major.class);
-            Student bebe = new Student("1234", "Mehrnaz", major, "PHD");
-        }catch (ExceptionList exceptionList) {
+            Student bebe = new TestStudentBuilder().build();
+        } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
         assertEquals(error, "");
@@ -66,7 +73,6 @@ public class StudentTest {
 
     @Test
     void Course_with_grade_less_than_ten_is_not_passed() throws Exception {
-        Course math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
         bebe.setGrade("13981", math1, 9.99);
         assertThat(bebe.hasPassed(math1))
                 .isFalse();
@@ -85,8 +91,8 @@ public class StudentTest {
 
     @Test
     void Student_has_not_passed_records_that_are_not_in_grades_set() {
-        Student mockedStudent = mock(Student.class);
-        assertThat(mockedStudent.hasPassed(math1))
+        Student student = new TestStudentBuilder().buildMock();
+        assertThat(student.hasPassed(math1))
                 .isEqualTo(false);
     }
 
@@ -98,9 +104,8 @@ public class StudentTest {
     }
 
     @Test
-    void PHD_student_has_not_passed_course_when_her_grade_is_less_than_14()  throws Exception {
-        Major major = mock(Major.class);
-        Student bebe = new Student("810197000", "bebe", major, "PHD");
+    void PHD_student_has_not_passed_course_when_her_grade_is_less_than_14() throws Exception {
+        Student bebe = new TestStudentBuilder().build();
         Course math1 = new Course("1111111", "MATH1", 3, "PHD");
         bebe.setGrade("13981", math1, 13.5);
         assertThat(bebe.hasPassed(math1))
@@ -108,9 +113,7 @@ public class StudentTest {
     }
 
     @Test
-    void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10()  throws Exception {
-        Major major = mock(Major.class);
-        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+    void Undergraduate_student_has_passed_masters_course_br_grade_less_than_12_and_more_than_10() throws Exception {
         Course math1 = new Course("1111111", "MATH1", 3, "Masters");
         bebe.setGrade("13981", math1, 11);
         assertThat(bebe.hasPassed(math1))
@@ -118,7 +121,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_gpa_with_one_study_record_is_returned_correctly()  throws Exception {
+    void Student_gpa_with_one_study_record_is_returned_correctly() throws Exception {
         bebe.setGrade("13981", math1, 19);
         assertThat(bebe.calculateGPA().getGrade())
                 .isEqualTo(19);
@@ -185,7 +188,7 @@ public class StudentTest {
     }
 
     @Test
-    void Student_does_not_return_sections_which_are_not_for_her_Graduate_level() throws Exception {
+    void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
         Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
         Course prog = new Course("2222222", "PROG", 3, "PHD");
         Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
@@ -194,7 +197,7 @@ public class StudentTest {
         Section andishe1_1 = new Section(andishe, "01");
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
-        Student bebe = new Student("810197000", "bebe", major, "Undergraduate");
+        Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();
 
         assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
                 .isNotEmpty()
@@ -204,157 +207,96 @@ public class StudentTest {
 
 
     @Test
-    void Grade_of_course_with_valid_term_can_set_correctly() {
-        String error = "";
-        try {
-            bebe.setGrade("13962", math1, 19.1);
-        }catch (ExceptionList e) {
-            error = e.toString();
-        }
-        assertEquals(error, "");
+    void Grade_of_course_with_valid_term_can_set_correctly() throws ExceptionList {
+        bebe.setGrade("13962", math1, 19.1);
+        assertThat(bebe.getGrades()).hasSize(1);
     }
 
     @Test
-    void Grade_of_course_with_invalid_season_cant_set_correctly() {
-        String error = "";
-        try {
-            bebe.setGrade("13960", math1, 19.1);
-        }catch (ExceptionList e) {
-            error = e.toString();
-        }
-        assertEquals(error, "{\"1\":\"Season of term is not valid.\"}");
+    void Grade_of_course_with_invalid_season_throws_error() {
+        Throwable error = assertThrows(ExceptionList.class, () -> bebe.setGrade("13960", math1, 19.1));
+        assertEquals(error.toString(), "{\"1\":\"Season of term is not valid.\"}");
     }
 
     @Test
-    void Student_can_block_her_friend() {
-        Student student = new Student("143960", "sara");
-        Student friend = new Student("123960", "sarina");
-        student.addFriend(friend);
-        String error = "";
-        try {
-            student.blockFriend(friend);
-        } catch (Exception exception) {
-            error = exception.getMessage();
-        }
-        assertEquals(error, "");
+    void Student_can_block_her_friend() throws Exception {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        bebe.addFriend(friend);
+        bebe.blockFriend(friend);
+        assertThat(bebe.getBlocked()).hasSize(1);
     }
 
 
     @Test
-    void Student_cant_block_other_student_who_is_not_her_friend() {
-        Student student = new Student("143960", "sara");
-        Student friend = new Student("123960", "sarina");
-        String error = "";
-        try {
-            student.blockFriend(friend);
-        } catch (Exception exception) {
-            error = exception.getMessage();
-        }
-        assertEquals(error, "This student is not your friend.");
+    void Student_cant_block_other_student_who_is_not_her_friend() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("123960").build();
+        Throwable error = assertThrows(Exception.class, () -> bebe.blockFriend(friend));
+        assertEquals(error.getMessage(), "This student is not your friend.");
     }
 
     @Test
-    void Student_can_unblock_the_blocked_student() {
-        Student student = new Student("143960", "sara");
-        Student friend = new Student("123960", "sarina");
-        student.getBlocked().add(friend);
-        String error = "";
-        try {
-            student.unblockFriend(friend);
-        } catch (Exception exception) {
-            error = exception.getMessage();
-        }
-        assertEquals(error, "");
-    }
-
-    @Test
-    void Student_cant_unblocked_the_student_who_is_not_blocked() {
-        Student student = new Student("143960", "sara");
-        Student friend = new Student("123960", "sarina");
-        String error = "";
-        try {
-            student.unblockFriend(friend);
-        } catch (Exception exception) {
-            error = exception.getMessage();
-        }
-        assertEquals(error, "This user is not blocked.");
-    }
-
-    @Test
-    void Students_friends_who_dont_block_student_return_correctly() {
-        Student student = new Student("143960", "sara");
-        Student friend1 = new Student("143961", "sarina");
-        Student friend2 = new Student("143962", "saber");
-        student.getFriends().add(friend1);
-        student.getFriends().add(friend2);
-        friend1.getFriends().add(student);
-        friend2.getBlocked().add(student);
-        List<Student> friends = student.getFriendsWhoDoesntBlock();
-        assertEquals(friends.size(), 1);
-        assertEquals(friends.get(0), friend1);
-    }
-    @Test
-    void Students_cannot_send_friendship_request_to_their_friends() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
-        bebe.getFriends().add(friend);
-
-        try {
-            bebe.sendFriendshipRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "This user is already your friend.");
-    }
-
-    @Test
-    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
-        bebe.getRequested().add(friend);
-
-        try {
-            bebe.sendFriendshipRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "You requested to this user before.");
-    }
-
-    @Test
-    void Students_cannot_send_friendship_request_to_pending_students() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
-        bebe.getPending().add(friend);
-
-        try {
-            bebe.sendFriendshipRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "This user requested first.");
-    }
-
-    @Test
-    void Students_cannot_send_friendship_request_to_blocked_students() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
+    void Student_can_unblock_the_blocked_student_correctly() throws Exception {
+        Student friend = new TestStudentBuilder().withStudentNumber("123960").build();
         bebe.getBlocked().add(friend);
+        bebe.unblockFriend(friend);
+        assertThat(bebe.getBlocked()).isEmpty();
+    }
 
-        try {
-            bebe.sendFriendshipRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "You have blocked this user.");
+    @Test
+    void Student_cant_unblocked_the_student_who_is_not_blocked() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("123960").build();
+        Throwable error = assertThrows(Exception.class, () -> bebe.unblockFriend(friend));
+        assertEquals(error.getMessage(), "This user is not blocked.");
+    }
+
+    @Test
+    void Students_friends_who_dont_block_student_return_correctly() throws ExceptionList {
+        Student friend1 = new TestStudentBuilder().withStudentNumber("123960").build();
+        Student friend2 = new TestStudentBuilder().withStudentNumber("123961").build();
+        bebe.getFriends().add(friend1);
+        bebe.getFriends().add(friend2);
+        friend1.getFriends().add(bebe);
+        friend2.getBlocked().add(bebe);
+        assertThat(bebe.getFriendsWhoDoesntBlock()).hasSize(1).contains(friend1);
+    }
+    @Test
+    void Students_cannot_send_friendship_request_to_their_friends() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        bebe.getFriends().add(friend);
+        Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
+        assertEquals(error.getMessage(), "This user is already your friend.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        bebe.getRequested().add(friend);
+        Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
+        assertEquals(error.getMessage(), "You requested to this user before.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_pending_students() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        bebe.getPending().add(friend);
+        Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
+        assertEquals(error.getMessage(), "This user requested first.");
+    }
+
+    @Test
+    void Students_cannot_send_friendship_request_to_blocked_students() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        bebe.getBlocked().add(friend);
+        Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
+        assertEquals(error.getMessage(), "You have blocked this user.");
     }
 
     @Test
     void Student_can_send_friendship_request_to_others_if_they_are_not_found_in_any_of_her_lists() throws Exception {
-        Student friend1 = new Student("810197001", "pete");
-        Student friend2 = new Student("810197002", "mike");
-        Student friend3 = new Student("810197003", "noel");
-        Student friend4 = new Student("810197004", "jack");
+        Student friend1 = new TestStudentBuilder().withStudentNumber("810197001").build();
+        Student friend2 = new TestStudentBuilder().withStudentNumber("810197002").build();
+        Student friend3 = new TestStudentBuilder().withStudentNumber("810197003").build();
+        Student friend4 = new TestStudentBuilder().withStudentNumber("810197004").build();
 
         bebe.getFriends().add(friend1);
         bebe.getFriends().add(friend2);
@@ -366,38 +308,26 @@ public class StudentTest {
     }
 
     @Test
-    void Student_cannot_send_request_to_herself() {
-        String error = "";
-        Student friend = new Student("810197000", "lily");
-
-        try {
-            bebe.sendFriendshipRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "You cannot send friendship request to yourself.");
+    void Student_cannot_send_request_to_herself() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810190000").build();
+        Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
+        assertEquals(error.getMessage(), "You cannot send friendship request to yourself.");
     }
 
     @Test
-    void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
+    void Students_cannot_receive_friendship_request_if_they_have_blocked_the_other_student() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
         friend.getBlocked().add(bebe);
-
-        try {
-            friend.receiveFriendshipRequest(bebe);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "You have been blocked by this user.");
+        Throwable error = assertThrows(Exception.class, () -> friend.receiveFriendshipRequest(bebe));
+        assertEquals(error.getMessage(), "You have been blocked by this user.");
     }
 
     @Test
     void Friendships_are_removed_correctly() throws Exception {
-        Student friend1 = new Student("810197001", "pete");
-        Student friend2 = new Student("810197002", "mike");
-        Student friend3 = new Student("810197003", "kent");
-        Student friend4 = new Student("810197004", "nile");
+        Student friend1 = new TestStudentBuilder().withStudentNumber("810197001").build();
+        Student friend2 = new TestStudentBuilder().withStudentNumber("810197002").build();
+        Student friend3 = new TestStudentBuilder().withStudentNumber("810197003").build();
+        Student friend4 = new TestStudentBuilder().withStudentNumber("810197004").build();
         bebe.getFriends().add(friend1);
         bebe.getRequested().add(friend2);
         bebe.getBlocked().add(friend3);
@@ -409,24 +339,18 @@ public class StudentTest {
     }
 
     @Test
-    void Friendships_cannot_be_removed_without_any_relation() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
-
-        try {
-            friend.removeFriend(bebe);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "There is no relation between these students.");
+    void Friendships_cannot_be_removed_without_any_relation() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
+        Throwable error = assertThrows(Exception.class, () -> bebe.removeFriend(friend));
+        assertEquals(error.getMessage(), "There is no relation between these students.");
     }
 
     @Test
-    void All_friends_are_returned_correctly() {
-        Student friend1 = new Student("810197001", "pete");
-        Student friend2 = new Student("810197002", "mike");
-        Student friend3 = new Student("810197003", "kent");
-        Student friend4 = new Student("810197004", "nile");
+    void All_friends_are_returned_correctly() throws ExceptionList {
+        Student friend1 = new TestStudentBuilder().withStudentNumber("810197001").build();
+        Student friend2 = new TestStudentBuilder().withStudentNumber("810197002").build();
+        Student friend3 = new TestStudentBuilder().withStudentNumber("810197003").build();
+        Student friend4 = new TestStudentBuilder().withStudentNumber("810197004").build();
         bebe.getFriends().add(friend1);
         bebe.getRequested().add(friend2);
         bebe.getBlocked().add(friend3);
@@ -436,24 +360,18 @@ public class StudentTest {
 
     @Test
     void Student_are_accepted_correctly() throws Exception {
-        Student friend = new Student("810197001", "pete");
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
         bebe.getRequested().add(friend);
         bebe.acceptRequest(friend);
         assertThat(bebe.getFriends()).hasSize(1);
     }
 
     @Test
-    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() {
-        String error = "";
-        Student friend = new Student("810197001", "pete");
+    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() throws ExceptionList {
+        Student friend = new TestStudentBuilder().withStudentNumber("810197001").build();
         bebe.getBlocked().add(friend);
-
-        try {
-            bebe.acceptRequest(friend);
-        } catch (Exception e) {
-            error = e.getMessage();
-        }
-        assertEquals(error, "This user did not request to be your friend.");
+        Throwable error = assertThrows(Exception.class, () -> bebe.acceptRequest(friend));
+        assertEquals(error.getMessage(), "This user did not request to be your friend.");
     }
 
 }
