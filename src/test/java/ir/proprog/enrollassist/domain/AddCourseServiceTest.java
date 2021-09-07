@@ -37,8 +37,8 @@ public class AddCourseServiceTest {
         given(courseRepository.findAll()).willReturn(List.of(course1, course2));
         Major ce = new Major("1", "CE");
         Major ee = new Major("2", "EE");
-        ce.addCourse(course1);
-        ee.addCourse(course2);
+//        ce.addCourse(course1);
+//        ee.addCourse(course2);
         given(majorRepository.findAll()).willReturn(List.of(ce, ee));
         given(majorRepository.findById(67L)).willReturn(Optional.of(ee));
         faculty = new Faculty("ece");

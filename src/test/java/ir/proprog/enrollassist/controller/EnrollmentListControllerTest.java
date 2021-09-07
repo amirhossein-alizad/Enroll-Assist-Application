@@ -58,9 +58,9 @@ public class EnrollmentListControllerTest {
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz", mock(Major.class), "Undergraduate"));
-        list2 = new EnrollmentList("list2", new Student("77777", "Sara", mock(Major.class), "Undergraduate"));
-        std = new Student("00000", "gina", mock(Major.class), "Undergraduate");
+        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz", "Undergraduate"));
+        list2 = new EnrollmentList("list2", new Student("77777", "Sara", "Undergraduate"));
+        std = new Student("00000", "gina", "Undergraduate");
         S1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01");
         S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
         S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
@@ -247,7 +247,7 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
-        EnrollmentList list = new EnrollmentList("list", new Student("1", "Std", mock(Major.class), "Undergraduate"));
+        EnrollmentList list = new EnrollmentList("list", new Student("1", "Std", "Undergraduate"));
         list.addSections(S1, S2, S3, S4);
 
         given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));

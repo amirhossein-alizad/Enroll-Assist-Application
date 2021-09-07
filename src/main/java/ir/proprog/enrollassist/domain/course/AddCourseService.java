@@ -44,17 +44,12 @@ public class AddCourseService {
             throw exceptionList;
 
 
-        addCourseToMajors(course, majors, faculty);
+        addCourseToMajors(course, faculty);
         return course;
     }
 
-    private void addCourseToMajors(Course course, Set<Major> majors, Faculty faculty) {
+    private void addCourseToMajors(Course course, Faculty faculty) {
         this.courseRepository.save(course);
-        for (Major major: majors) {
-            major.addCourse(course);
-            faculty.changeMajor(major);
-            this.majorRepository.save(major);
-        }
         this.facultyRepository.save(faculty);
     }
 

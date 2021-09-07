@@ -9,12 +9,13 @@ import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
-//@Component
+@Component
 public class DataInitializer {
     StudentRepository studentRepository;
     CourseRepository courseRepository;
@@ -50,9 +51,9 @@ public class DataInitializer {
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
         Major ce = new Major("8101", "CE");
-        ce.addCourse(math1, math2, phys1, phys2);
+//        ce.addCourse(math1, math2, phys1, phys2);
         Major ee = new Major("8101", "EE");
-        ee.addCourse(math1, math2, phys1, phys2);
+//        ee.addCourse(math1, math2, phys1, phys2);
         majorRepository.saveAll(List.of(ce, ee));
 
         Faculty ece = new Faculty("ECE");
@@ -65,7 +66,7 @@ public class DataInitializer {
                 .setGrade("11112", prog, 16.3)
                 .setGrade("11112", farsi, 18.5)
                 .setGrade("11112", akhlagh, 15);
-        mahsa.setMajor(ce);
+//        mahsa.setMajor(ce);
         studentRepository.save(mahsa);
         Student changiz = new Student("810199998", "Changiz Changizi")
                 .setGrade("11112", math1, 13.2)
@@ -73,7 +74,7 @@ public class DataInitializer {
                 .setGrade("11112", prog, 10.5)
                 .setGrade("11112", english, 11)
                 .setGrade("11112", akhlagh, 16);
-        changiz.setMajor(ee);
+//        changiz.setMajor(ee);
         studentRepository.save(changiz);
 
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");

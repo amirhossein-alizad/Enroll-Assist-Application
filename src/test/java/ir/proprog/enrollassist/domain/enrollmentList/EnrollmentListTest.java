@@ -318,7 +318,7 @@ public class EnrollmentListTest {
     @Test
     void Students_cant_take_less_than_twelve_credits() throws Exception {
         Course testCourse = new Course("1111111", "Test", 3, "Undergraduate");
-        Student testStudent = new Student("1", "ali", mock(Major.class), "Undergraduate");
+        Student testStudent = new Student("1", "ali", "Undergraduate");
         EnrollmentList list1 = new EnrollmentList("list", testStudent);
         list1.addSections(new Section(testCourse, "01"));
         assertThat(list1.checkValidGPALimit())

@@ -29,7 +29,7 @@ public class StudentTest {
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
         Major major = new Major("123", "CE");
-        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+//        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
                 .withMajor(major)
                 .withGraduateLevel("Undergraduate")
@@ -196,7 +196,7 @@ public class StudentTest {
         Section prog1_1 = new Section(prog, "01");
         Section andishe1_1 = new Section(andishe, "01");
         Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
+//        major.addCourse(math1, prog, andishe);
         Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();
 
         assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))

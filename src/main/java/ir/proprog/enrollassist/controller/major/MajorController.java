@@ -26,12 +26,12 @@ public class MajorController {
         return StreamSupport.stream(majorRepository.findAll().spliterator(), false).map(MajorView::new).collect(Collectors.toList());
     }
 
-    @GetMapping("/{id}/courses")
-    public Iterable<CourseView> getCourses(@PathVariable Long id) {
-        Major major = majorRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
-        return major.getCourses().stream().map(CourseView::new).collect(Collectors.toList());
-    }
+//    @GetMapping("/{id}/courses")
+//    public Iterable<CourseView> getCourses(@PathVariable Long id) {
+//        Major major = majorRepository.findById(id)
+//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Major not found"));
+//        return major.getCourses().stream().map(CourseView::new).collect(Collectors.toList());
+//    }
 
     @PostMapping(value = "/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public MajorView addOne(@PathVariable Long facultyId, @RequestBody MajorView majorView) {

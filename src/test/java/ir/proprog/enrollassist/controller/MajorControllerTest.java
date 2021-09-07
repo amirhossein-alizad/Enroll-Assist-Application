@@ -56,7 +56,7 @@ public class MajorControllerTest {
         Course c1 = new Course("1111111", "C1", 3, "Undergraduate");
         Course c2 = new Course("1111112", "C2", 3, "Undergraduate");
         Course c3 = new Course("1111113", "C3", 3, "Undergraduate");
-        major1.addCourse(c1, c2, c3);
+//        major1.addCourse(c1, c2, c3);
         given(majorRepository.findById(1L)).willReturn(java.util.Optional.of(major1));
         mvc.perform(get("/majors/1/courses")
                 .contentType(MediaType.APPLICATION_JSON))
