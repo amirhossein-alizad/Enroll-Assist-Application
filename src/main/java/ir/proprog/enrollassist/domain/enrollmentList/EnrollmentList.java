@@ -156,7 +156,7 @@ public class EnrollmentList {
             for (int j=i+1; j<this.sections.size(); j++) {
                 if (this.sections.get(i).equals(this.sections.get(j)))
                     continue;
-                if (this.sections.get(i).hasConflict(this.sections.get(j)))
+                if (this.sections.get(i).hasScheduleConflict(this.sections.get(j)))
                     violations.add(new ConflictOfClassSchedule(this.sections.get(i), this.sections.get(j)));
             }
         }
@@ -170,16 +170,20 @@ public class EnrollmentList {
         this.sections.get(index).setExamTime(examTime);
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkExamTimeConflicts();
         this.sections.get(index).setExamTime(preExamTime);
-        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+        if ((enrollmentRuleViolations.size() == 0) || (enrollmentRuleViolations.equals(preEnrollmentRuleViolations)))
+            return false;
+        return enrollmentRuleViolations.size() >= preEnrollmentRuleViolations.size();
     }
 
     public boolean makePresentationScheduleConflict(Section section, List<PresentationSchedule> schedule) {
         int index = this.sections.indexOf(section);
-        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkHasNotAlreadyPassedCourses();
+        List<EnrollmentRuleViolation> preEnrollmentRuleViolations = this.checkSectionScheduleConflicts();
         Set<PresentationSchedule> prePresentationSchedule = this.sections.get(index).getPresentationSchedule();
         this.sections.get(index).setPresentationSchedule(new HashSet<>(schedule));
         List<EnrollmentRuleViolation> enrollmentRuleViolations = this.checkSectionScheduleConflicts();
         this.sections.get(index).setPresentationSchedule(prePresentationSchedule);
-        return !enrollmentRuleViolations.equals(preEnrollmentRuleViolations);
+        if ((enrollmentRuleViolations.size() == 0) || (enrollmentRuleViolations.equals(preEnrollmentRuleViolations)))
+            return false;
+        return enrollmentRuleViolations.size() >= preEnrollmentRuleViolations.size();
     }
 }

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 
 public class SectionTest {
@@ -36,5 +36,17 @@ public class SectionTest {
                 .isNotEmpty()
                 .hasSize(2)
                 .containsExactlyInAnyOrder("Sunday 10:00 - 12:00", "Wednesday 10:00 - 12:00");
+    }
+
+    @Test
+    public void Conflict_of_schedules_find_correctly() throws Exception {
+        Course course = new Course("1111111", "MATH1", 3, "Undergraduate");
+        PresentationSchedule p1 = new PresentationSchedule("Sunday", "10:00", "12:00");
+        PresentationSchedule p2 = new PresentationSchedule("Sunday", "11:00", "13:00");
+        Section section1 = new Section(course, "01");
+        Section section2 = new Section(course, "02");
+        section1.setPresentationSchedule(Set.of(p1));
+        section2.setPresentationSchedule(Set.of(p2));
+        assertTrue(section1.hasScheduleConflict(section2));
     }
 }

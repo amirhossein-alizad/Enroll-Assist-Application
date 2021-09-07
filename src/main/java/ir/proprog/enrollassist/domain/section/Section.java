@@ -82,7 +82,7 @@ public class Section {
         this.presentationSchedule = schedule;
     }
 
-    public boolean hasConflict(Section otherSection) {
+    public boolean hasScheduleConflict(Section otherSection) {
         for (PresentationSchedule thisSectionSchedule: this.presentationSchedule) {
             for (PresentationSchedule otherSectionSchedule: otherSection.presentationSchedule) {
                 if (thisSectionSchedule.hasConflict(otherSectionSchedule))

@@ -1,16 +1,16 @@
 package ir.proprog.enrollassist.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListController;
 import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
-import ir.proprog.enrollassist.domain.GraduateLevel;
+import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
-import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -30,11 +30,10 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -51,35 +50,28 @@ public class EnrollmentListControllerTest {
     @MockBean
     private StudentRepository studentRepository;
 
-    List<EnrollmentList> lists;
-    EnrollmentList list1, list2;
-    private Section S1, S2, S3, S4;
+    EnrollmentList list1;
     private Student std;
+    private Course course;
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        list1 = new EnrollmentList("list1", new Student("88888", "Mehrnaz", mock(Major.class), "Undergraduate"));
-        list2 = new EnrollmentList("list2", new Student("77777", "Sara", mock(Major.class), "Undergraduate"));
         std = new Student("00000", "gina", mock(Major.class), "Undergraduate");
-        S1 = new Section(new Course("1111111", "C1", 3, "Undergraduate"), "01");
-        S2 = new Section(new Course("2222222", "C2", 3, "Undergraduate"), "02");
-        S3 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
-        S4 = new Section(new Course("3333333", "C3", 3, "Undergraduate"), "01");
-        this.lists = List.of(this.list1, this.list2);
+        list1 = new EnrollmentList("list1", std);
+        course = new Course("1111111", "C1", 3, "Undergraduate");
 
-        given(enrollmentListRepository.findAll()).willReturn(this.lists);
         given(enrollmentListRepository.findById(12L)).willReturn(Optional.of(this.list1));
         given(studentRepository.findByStudentNumber(new StudentNumber("00000"))).willReturn(Optional.of(std));
     }
 
     @Test
     public void All_lists_are_returned_correctly() throws Exception {
+        given(enrollmentListRepository.findAll()).willReturn(List.of(list1));
         mvc.perform(get("/lists")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].enrollmentListName", is("list1")))
-                .andExpect(jsonPath("$[1].enrollmentListName", is("list2")));
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].enrollmentListName", is(this.list1.getListName())));
     }
 
     @Test
@@ -92,13 +84,14 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void New_list_is_added_correctly() throws Exception {
-        JSONObject req = new JSONObject();
-        req.put("enrollmentListName", "new_list");
+        EnrollmentList newEnrollmentList = new EnrollmentList("new_list", std);
+        ObjectMapper Obj = new ObjectMapper();
         mvc.perform(post("/lists/00000")
-                .content(req.toString())
+                .content(Obj.writeValueAsString(new EnrollmentListView(newEnrollmentList)))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.enrollmentListName", is("new_list")));
+        verify(enrollmentListRepository, times(1)).save(newEnrollmentList);
     }
 
     @Test
@@ -140,10 +133,8 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Enrollment_lists_with_same_name_cannot_be_added() throws Exception {
-        EnrollmentList list = new EnrollmentList("Mahsa's List", std);
-        List<EnrollmentListView> lists = new ArrayList<>();
-        lists.add(new EnrollmentListView(list));
-        given(studentRepository.findAllListsForStudent("00000")).willReturn(lists);
+        EnrollmentListView enrollmentListView = new EnrollmentListView(new EnrollmentList("Mahsa's List", std));
+        given(studentRepository.findAllListsForStudent("00000")).willReturn(List.of(enrollmentListView));
         JSONObject req = new JSONObject();
         req.put("enrollmentListName", "Mahsa's List");
         mvc.perform(post("/lists/00000")
@@ -155,12 +146,19 @@ public class EnrollmentListControllerTest {
     }
 
     @Test
+    public void EnrollmentList_check_is_not_found_if_it_doesnt_exist() throws Exception{
+        mvc.perform(get("/lists/1/check")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     public void All_sections_of_list_are_returned_correctly() throws Exception {
-        this.list1.addSections(S1, S2, S3);
+        this.list1.addSections(new Section(course, "01"));
         mvc.perform(get("/lists/12/sections")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].sectionNo", is("01")))
                 .andExpect(jsonPath("$[0].courseNumber.courseNumber", is("1111111")))
                 .andExpect(jsonPath("$[0].courseTitle", is("C1")))
@@ -169,9 +167,10 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void No_violations_are_returned_for_a_valid_list() throws Exception {
-        Section section = new Section(new Course("4444444", "dm", 3, "Undergraduate"), "01");
-        this.list1.addSections(S1, S2, S3, section);
-        mvc.perform(get("/lists/12/check")
+        EnrollmentList enrollmentList = mock(EnrollmentList.class);
+        given(enrollmentListRepository.findById(15L)).willReturn(Optional.of(enrollmentList));
+        when(enrollmentList.checkEnrollmentRules()).thenReturn(List.of());
+        mvc.perform(get("/lists/15/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.violationMessages", hasSize(0)));
@@ -179,52 +178,38 @@ public class EnrollmentListControllerTest {
 
     @Test
     public void Violations_of_unacceptable_list_are_returned_correctly() throws Exception {
-        Course ap = new Course("1111111", "ap", 4, "Undergraduate");
-        Course dm = new Course("2222222", "dm", 4, "Undergraduate");
-        Section ap_1 = new Section(ap, "01");
-        Section ap_2 = new Section(ap, "02");
-        Section dm_1 = new Section(dm, "01");
-        this.list1.addSections(ap_1, ap_2, dm_1);
-        String error = String.format("%s is requested to be taken twice", ap);
-        mvc.perform(get("/lists/12/check")
+        EnrollmentList enrollmentList = mock(EnrollmentList.class);
+        given(enrollmentListRepository.findById(15L)).willReturn(Optional.of(enrollmentList));
+        CourseRequestedTwice violation = new CourseRequestedTwice(course);
+        when(enrollmentList.checkEnrollmentRules()).thenReturn(List.of(violation));
+        mvc.perform(get("/lists/15/check")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.violationMessages", hasSize(1)))
-                .andExpect(jsonPath("$.violationMessages[0]", is(error)));
+                .andExpect(jsonPath("$.violationMessages[0]", is(violation.toString())));
     }
 
     @Test
     public void Section_is_added_correctly_to_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
-        given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
-
+        given(sectionRepository.findById(2L)).willReturn(Optional.of(new Section(course, "02")));
         mvc.perform(MockMvcRequestBuilders.put("/lists/12/sections/2")
-                        .contentType(MediaType.APPLICATION_JSON))
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-    }
-
-    @Test
-    public void EnrollmentList_section_is_not_returned_if_enrollmentList_is_not_Found() throws Exception{
-        mvc.perform(get("/lists/1/sections")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
 
     @Test
     public void Section_is_removed_correctly_from_the_requested_list() throws Exception {
-        Section newSec = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
-        given(sectionRepository.findById(2L)).willReturn(Optional.of(newSec));
-
+        given(sectionRepository.findById(2L)).willReturn(Optional.of(new Section(course, "02")));
         mvc.perform(MockMvcRequestBuilders.delete("/lists/12/sections/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
 
     @Test
     public void Section_cannot_be_removed_from_list_if_requested_list_does_not_exist() throws Exception {
-        Section section = new Section(new Course("2222222", "dm", 3, "Undergraduate"), "01");
-        given(sectionRepository.findById(2L)).willReturn(Optional.of(section));
-
+        given(sectionRepository.findById(2L)).willReturn(Optional.of(new Section(course, "02")));
         mvc.perform(MockMvcRequestBuilders.delete("/lists/10/sections/2")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
@@ -243,49 +228,6 @@ public class EnrollmentListControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+        verify(enrollmentListRepository, times(1)).save(list1);
     }
-
-    @Test
-    public void EnrollmentList_check_is_returned_correctly_when_there_is_violation() throws Exception{
-        EnrollmentList list = new EnrollmentList("list", new Student("1", "Std", mock(Major.class), "Undergraduate"));
-        list.addSections(S1, S2, S3, S4);
-
-        given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
-
-        List<String> err = new ArrayList<>();
-        err.add("[3333333] C3 is requested to be taken twice");
-        mvc.perform(get("/lists/1/check")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.violationMessages", hasSize(1)))
-                .andExpect(jsonPath("$.violationMessages", is(err)));
-    }
-
-    @Test
-    public void EnrollmentList_check_is_not_found_if_it_doesnt_exist() throws Exception{
-        mvc.perform(get("/lists/1/check")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void EnrollmentList_check_is_returned_correctly_with_more_than_one_violations() throws Exception{
-        Student student = mock(Student.class);
-        EnrollmentList list = new EnrollmentList("list", student);
-        Section S5 = new Section(new Course("5555555", "dm", 3, "Undergraduate"), "01");
-        list.addSections(S1, S2, S3, S4, S5);
-
-        given(enrollmentListRepository.findById(1L)).willReturn(java.util.Optional.of(list));
-
-        when(student.calculateGPA()).thenReturn(new Grade(11.99));
-        when(student.getTotalTakenCredits()).thenReturn(1);
-        when(student.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
-        List<String> err = new ArrayList<>(List.of("[3333333] C3 is requested to be taken twice", "Maximum number of credits(14) exceeded."));
-        mvc.perform(get("/lists/1/check")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.violationMessages", hasSize(2)))
-                .andExpect(jsonPath("$.violationMessages", is(err)));
-    }
-
 }

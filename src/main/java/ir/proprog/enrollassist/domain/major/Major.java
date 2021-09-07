@@ -38,7 +38,7 @@ public class Major {
         this.majorNumber = majorNumber;
     }
 
-    public Set<Course> getCoursesByEducationGrade(GraduateLevel graduateLevel) {
+    public Set<Course> getCoursesByGraduateLevel(GraduateLevel graduateLevel) {
         Set<Course> coursesOfEducationGrade = new HashSet<>();
         for (Course c: this.courses)
             if (c.equalsEducationGrade(graduateLevel))
