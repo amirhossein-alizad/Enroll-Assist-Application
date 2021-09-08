@@ -43,15 +43,16 @@ public class Program {
             throw exceptionList;
     }
 
-    public void addCourse(Course ... course) throws ExceptionList {
+    public Program addCourse(Course ... course) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         for (Course c: course) {
             if (!c.getGraduateLevel().equals(this.graduateLevel))
-                exceptionList.addNewException(new Exception(String.format("Course with course number %s must have the same graduate level as program.", c.getCourseNumber())));
+                exceptionList.addNewException(new Exception(String.format("Course with course number %s must have the same graduate level as program.", c.getCourseNumber().getCourseNumber())));
         }
         if (exceptionList.hasException())
             throw exceptionList;
         this.courses.addAll(Arrays.asList(course));
+        return this;
     }
 
     public boolean hasCourse(Course course) {
