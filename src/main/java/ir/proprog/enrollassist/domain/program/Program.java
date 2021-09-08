@@ -14,11 +14,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    protected Long parentId;
     @ManyToOne
     protected Major major;
     @Getter
@@ -51,5 +52,9 @@ public class Program {
         if (exceptionList.hasException())
             throw exceptionList;
         this.courses.addAll(Arrays.asList(course));
+    }
+
+    public boolean hasCourse(Course course) {
+        return this.courses.contains(course);
     }
 }

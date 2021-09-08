@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
+import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
@@ -217,10 +218,9 @@ public class EnrollmentListTest {
     void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules() throws Exception {
         Student bebe = mock(Student.class);
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(prog_1, maaref1_1, eco_1, maaref1_1, phys2_1);
+        list1.addSections(prog_1, maaref1_1, maaref1_1, phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(false);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1), new PrerequisiteNotTaken(phys2, math1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(2);
@@ -236,8 +236,7 @@ public class EnrollmentListTest {
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(true);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(1);
