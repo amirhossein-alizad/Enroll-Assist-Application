@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.program.MajorProgram;
+import ir.proprog.enrollassist.domain.program.MinorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
@@ -19,7 +20,9 @@ import static org.mockito.Mockito.*;
 public class StudentTest {
     private Student bebe;
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
-    Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Major major;
+    private Program program;
 
     @BeforeEach
     void setUp() throws Exception{
@@ -30,13 +33,13 @@ public class StudentTest {
         maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
-        Major major = new Major("123", "CE");
-        Program p = new MajorProgram(major, "Undergraduate", 140, 140);
-        p.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        major = new Major("123", "CE");
+        program = new MajorProgram(major, "Undergraduate", 140, 140);
+        program.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
                 .withGraduateLevel("Undergraduate")
                 .build()
-                .addProgram(p);
+                .addProgram(program);
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
@@ -135,6 +138,38 @@ public class StudentTest {
         bebe.setGrade("13981", andishe, 19);
         assertThat(bebe.calculateGPA().getGrade())
                 .isEqualTo(18.11);
+    }
+
+    @Test
+    void Student_cannot_add_programs_with_different_graduate_level()  throws Exception {
+        Program minor = new MinorProgram(major, "Masters", 20, 32);
+        Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(minor));
+        assertEquals(error.toString(), "{\"1\":\"You must take programs with the same graduate level.\"}");
+    }
+
+    @Test
+    void Student_cannot_have_more_than_one_major_program()  throws Exception {
+        Program program = new MajorProgram(major, "Undergraduate", 60, 70);
+        Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(program));
+        assertEquals(error.toString(), "{\"1\":\"You cannot take more than one major or minor program.\"}");
+    }
+
+    @Test
+    void Student_cannot_add_programs_with_multiple_errors()  throws Exception {
+        Program program = new MajorProgram(major, "PHD", 60, 70);
+        Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(program));
+        assertEquals(error.toString(),
+                "{\"1\":\"You must take programs with the same graduate level.\"" +
+                ",\"2\":\"You cannot take more than one major or minor program.\"}");
+    }
+
+    @Test
+    void Student_can_add_programs_correctly() throws Exception {
+        Program minor = new MinorProgram(major, "Undergraduate", 20, 32);
+        bebe.addProgram(minor);
+        assertThat(bebe.getPrograms())
+                .hasSize(2)
+                .containsExactlyInAnyOrder(program, minor);
     }
 
     @Test

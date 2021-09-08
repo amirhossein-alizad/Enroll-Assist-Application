@@ -96,7 +96,7 @@ public class Student {
         if (!program.getGraduateLevel().equals(graduateLevel))
             exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
         if (programs.stream().map(Program::getClass).collect(Collectors.toSet()).contains(program.getClass()))
-            exceptionList.addNewException(new Exception("You cannot take more than one major/minor program."));
+            exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
         if (exceptionList.hasException())
             throw exceptionList;
         this.programs.add(program);
