@@ -3,7 +3,6 @@ package ir.proprog.enrollassist.domain.student;
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.GraduateLevel;
-import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
@@ -17,7 +16,6 @@ import lombok.NonNull;
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Entity
@@ -91,7 +89,14 @@ public class Student {
         return false;
     }
 
-    public Student addProgram(Program program) {
+    public Student addProgram(Program program) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        if (!program.getGraduateLevel().equals(graduateLevel))
+            exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
+        if (programs.stream().map(Program::getClass).collect(Collectors.toSet()).contains(program.getClass()))
+            exceptionList.addNewException(new Exception("You cannot take more than one major/minor program."));
+        if (exceptionList.hasException())
+            throw exceptionList;
         this.programs.add(program);
         return this;
     }

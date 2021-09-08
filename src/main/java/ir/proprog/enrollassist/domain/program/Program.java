@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,6 +21,7 @@ public class Program {
     protected Long id;
     @ManyToOne
     protected Major major;
+    @Getter
     protected GraduateLevel graduateLevel;
     @Getter
     @ManyToMany
