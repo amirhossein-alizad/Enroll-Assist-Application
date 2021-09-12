@@ -395,9 +395,10 @@ public class StudentTest {
 
     @Test
     void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws ExceptionList {
-        Student student = new TestStudentBuilder().withStudentNumber("810197001").build();
-        Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math1);
-        assertEquals(student.canTake(math1), List.of());
+        Student student = new TestStudentBuilder().withStudentNumber("810197001").withGraduateLevel("Undergraduate").build();
+        Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math2);
+        student.addProgram(p);
+        assertEquals(student.canTake(math2), List.of());
     }
 
 
