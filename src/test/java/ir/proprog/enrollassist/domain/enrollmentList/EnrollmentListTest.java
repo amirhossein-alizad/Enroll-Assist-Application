@@ -13,6 +13,7 @@ import ir.proprog.enrollassist.domain.section.PresentationSchedule;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.domain.utils.TestPresentationScheduleBuilder;
+import ir.proprog.enrollassist.domain.utils.TestSectionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,6 +26,7 @@ import static org.mockito.Mockito.when;
 public class EnrollmentListTest {
     private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
     private TestPresentationScheduleBuilder testPresentationScheduleBuilder = new TestPresentationScheduleBuilder();
+    private TestSectionBuilder testSectionBuilder = new TestSectionBuilder();
     private Course math1, prog, ap , ds, phys1, maaref, english, phys2;
     private Section math1_1, math1_2, prog_1, ap_1, ds_1, phys1_1, maaref1_1, english_1, phys2_1;
     private Student bebe;
@@ -64,15 +66,34 @@ public class EnrollmentListTest {
                 .build()
                 .withPre(phys1, math1);
 
-        prog_1 = new Section(prog, "01");
-        maaref1_1 = new Section(maaref, "01");
-        english_1 = new Section(english, "01");
-        math1_1 = new Section(math1, "01");
-        math1_2 = new Section(math1, "02");
-        phys1_1 = new Section(phys1, "01");
-        phys2_1 = new Section(phys2, "01");
-        ds_1 = new Section(ds, "01");
-        ap_1 = new Section(ap, "01");
+        prog_1 = testSectionBuilder
+                .course(prog)
+                .build();
+        maaref1_1 = testSectionBuilder
+                .course(maaref)
+                .build();
+        english_1 = testSectionBuilder
+                .course(english)
+                .build();
+        math1_1 = testSectionBuilder
+                .course(math1)
+                .build();
+        math1_2 = testSectionBuilder
+                .course(math1)
+                .sectionNumber("02")
+                .build();
+        phys1_1 = testSectionBuilder
+                .course(phys1)
+                .build();
+        phys2_1 = testSectionBuilder
+                .course(phys2)
+                .build();
+        ds_1 = testSectionBuilder
+                .course(ds)
+                .build();
+        ap_1 = testSectionBuilder
+                .course(ap)
+                .build();
 
         schedule1 = testPresentationScheduleBuilder
                 .build();
