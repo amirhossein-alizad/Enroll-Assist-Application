@@ -32,10 +32,17 @@ public class EnrollmentListTest {
     private Student bebe;
     private PresentationSchedule schedule1, schedule2, schedule3;
     ExamTime examTime1, examTime2, examTime3;
+
     @BeforeEach
     void setUp() throws Exception {
         bebe = mock(Student.class);
+        setUpCourse();
+        setUpSection();
+        setUpSchedule();
+        setUpExamTime();
+    }
 
+    void setUpCourse() throws Exception{
         math1 = testCourseBuilder
                 .courseNumber("1111111")
                 .build();
@@ -65,7 +72,9 @@ public class EnrollmentListTest {
                 .courseNumber("1111120")
                 .build()
                 .withPre(phys1, math1);
+    }
 
+    void setUpSection() throws Exception{
         prog_1 = testSectionBuilder
                 .course(prog)
                 .build();
@@ -84,6 +93,7 @@ public class EnrollmentListTest {
                 .build();
         phys1_1 = testSectionBuilder
                 .course(phys1)
+                .sectionNumber("01")
                 .build();
         phys2_1 = testSectionBuilder
                 .course(phys2)
@@ -94,7 +104,9 @@ public class EnrollmentListTest {
         ap_1 = testSectionBuilder
                 .course(ap)
                 .build();
+    }
 
+    void setUpSchedule() throws Exception{
         schedule1 = testPresentationScheduleBuilder
                 .build();
         schedule2 = testPresentationScheduleBuilder
@@ -105,7 +117,9 @@ public class EnrollmentListTest {
                 .startTime("11:30")
                 .endTime("13:00")
                 .build();
+    }
 
+    void setUpExamTime() throws Exception{
         examTime1 = new ExamTime("2021-06-21T11:00", "2021-06-21T13:00");
         examTime2 = new ExamTime("2021-06-21T13:00", "2021-06-21T16:00");
         examTime3 = new ExamTime("2021-06-21T12:00", "2021-06-21T14:00");
