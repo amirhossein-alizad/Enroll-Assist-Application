@@ -5,14 +5,12 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
-import ir.proprog.enrollassist.domain.program.MajorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -27,7 +25,6 @@ public class DataInitializer {
     EnrollmentListRepository enrollmentListRepository;
     MajorRepository majorRepository;
     FacultyRepository facultyRepository;
-    MajorProgramRepository majorProgramRepository;
     ProgramRepository programRepository;
 
     @PostConstruct
@@ -56,11 +53,11 @@ public class DataInitializer {
         ece.addMajor(ee, ce);
         facultyRepository.save(ece);
 
-        Program ceProgram = new MajorProgram(ce, "Undergraduate", 140, 140);
+        Program ceProgram = new Program(ce, "Undergraduate", 140, 140);
         ceProgram.addCourse(math1, math2, phys1, phys2);
-        Program eeProgram = new MajorProgram(ee, "Undergraduate", 140, 140);
+        Program eeProgram = new Program(ee, "Undergraduate", 140, 140);
         eeProgram.addCourse(math1, math2, phys1, phys2);
-        majorProgramRepository.saveAll(List.of(ceProgram, eeProgram));
+        programRepository.saveAll(List.of(ceProgram, eeProgram));
 
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei")

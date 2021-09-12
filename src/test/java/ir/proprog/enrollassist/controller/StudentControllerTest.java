@@ -3,7 +3,6 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.controller.student.StudentController;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
-import ir.proprog.enrollassist.domain.program.MajorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
@@ -15,11 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 

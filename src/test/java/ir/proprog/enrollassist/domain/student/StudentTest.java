@@ -3,8 +3,6 @@ package ir.proprog.enrollassist.domain.student;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
-import ir.proprog.enrollassist.domain.program.MajorProgram;
-import ir.proprog.enrollassist.domain.program.MinorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
@@ -15,7 +13,6 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
 
 public class StudentTest {
     private Student bebe;

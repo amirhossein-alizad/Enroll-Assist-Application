@@ -5,7 +5,6 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
-import ir.proprog.enrollassist.domain.program.MajorProgram;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
