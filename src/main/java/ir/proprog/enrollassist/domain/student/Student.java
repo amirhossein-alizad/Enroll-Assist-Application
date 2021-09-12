@@ -6,6 +6,7 @@ import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.program.Program;
+import ir.proprog.enrollassist.domain.program.ProgramType;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.studyRecord.StudyRecord;
@@ -141,7 +142,7 @@ public class Student {
     public List<EnrollmentRuleViolation> canTake(Course course) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Program p: this.programs)
-            if (p.hasCourse(course) && p instanceof MajorProgram)
+            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Minor))
                 return course.canBeTakenBy(this);
 
         return violations;

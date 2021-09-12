@@ -31,7 +31,7 @@ public class StudentTest {
         andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
         math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
         major = new Major("123", "CE");
-        program = new MajorProgram(major, "Undergraduate", 140, 140);
+        program = new Program(major, "Undergraduate", 140, 140);
         program.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
                 .withGraduateLevel("Undergraduate")
@@ -139,21 +139,21 @@ public class StudentTest {
 
     @Test
     void Student_cannot_add_programs_with_different_graduate_level()  throws Exception {
-        Program minor = new MinorProgram(major, "Masters", 20, 32);
+        Program minor = new Program(major, "Masters", 20, 32);
         Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(minor));
         assertEquals(error.toString(), "{\"1\":\"You must take programs with the same graduate level.\"}");
     }
 
     @Test
     void Student_cannot_have_more_than_one_major_program()  throws Exception {
-        Program program = new MajorProgram(major, "Undergraduate", 60, 70);
+        Program program = new Program(major, "Undergraduate", 60, 70);
         Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(program));
         assertEquals(error.toString(), "{\"1\":\"You cannot take more than one major or minor program.\"}");
     }
 
     @Test
     void Student_cannot_add_programs_with_multiple_errors()  throws Exception {
-        Program program = new MajorProgram(major, "PHD", 60, 70);
+        Program program = new Program(major, "PHD", 60, 70);
         Throwable error = assertThrows(ExceptionList.class, () -> bebe.addProgram(program));
         assertEquals(error.toString(),
                 "{\"1\":\"You must take programs with the same graduate level.\"" +
@@ -162,7 +162,7 @@ public class StudentTest {
 
     @Test
     void Student_can_add_programs_correctly() throws Exception {
-        Program minor = new MinorProgram(major, "Undergraduate", 20, 32);
+        Program minor = new Program(major, "Undergraduate", 20, 32);
         bebe.addProgram(minor);
         assertThat(bebe.getPrograms())
                 .hasSize(2)

@@ -19,16 +19,17 @@ import java.util.Set;
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long parentId;
+    private Long id;
     @ManyToOne
-    protected Major major;
+    private Major major;
     @Getter
-    protected GraduateLevel graduateLevel;
+    private GraduateLevel graduateLevel;
     @Getter
     @ManyToMany
-    protected Set<Course> courses = new HashSet<>();
+    private Set<Course> courses = new HashSet<>();
     @Embedded
-    protected CreditRange creditRange;
+    private CreditRange creditRange;
+    @Getter private ProgramType programType;
 
     public Program(Major major, String graduateLevel, int minimum, int maximum) throws ExceptionList {
         this.major = major;
