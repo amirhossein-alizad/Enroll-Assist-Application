@@ -11,12 +11,13 @@ import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
-//@Component
+@Component
 @AllArgsConstructor
 public class DataInitializer {
     StudentRepository studentRepository;
@@ -60,7 +61,7 @@ public class DataInitializer {
         programRepository.saveAll(List.of(ceProgram, eeProgram));
 
 
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei")
+        Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate")
                 .setGrade("11112", math1, 10)
                 .setGrade("11112", phys1, 12)
                 .setGrade("11112", prog, 16.3)
@@ -68,13 +69,13 @@ public class DataInitializer {
                 .setGrade("11112", akhlagh, 15);
         mahsa.addProgram(ceProgram);
         studentRepository.save(mahsa);
-        Student changiz = new Student("810199998", "Changiz Changizi")
+        Student changiz = new Student("810199998", "Changiz Changizi", "Undergraduate")
                 .setGrade("11112", math1, 13.2)
                 .setGrade("11112", phys1, 8.3)
                 .setGrade("11112", prog, 10.5)
                 .setGrade("11112", english, 11)
                 .setGrade("11112", akhlagh, 16);
-        mahsa.addProgram(eeProgram);
+        changiz.addProgram(eeProgram);
         studentRepository.save(changiz);
 
         ExamTime exam0 = new ExamTime("2021-07-10T09:00", "2021-07-10T11:00");

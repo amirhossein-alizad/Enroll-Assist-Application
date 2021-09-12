@@ -2,7 +2,9 @@ package ir.proprog.enrollassist.controller.program;
 
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.program.Program;
+import lombok.Getter;
 
+@Getter
 public class ProgramView {
     private String majorName;
     private String majorNumber;
