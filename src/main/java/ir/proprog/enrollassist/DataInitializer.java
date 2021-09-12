@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
-@Component
+//@Component
 @AllArgsConstructor
 public class DataInitializer {
     StudentRepository studentRepository;
