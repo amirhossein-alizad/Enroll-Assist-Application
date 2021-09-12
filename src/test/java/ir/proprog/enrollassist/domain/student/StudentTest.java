@@ -1,9 +1,11 @@
 package ir.proprog.enrollassist.domain.student;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.program.Program;
+import ir.proprog.enrollassist.domain.program.ProgramType;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StudentTest {
     private Student bebe;
@@ -388,5 +392,13 @@ public class StudentTest {
         Throwable error = assertThrows(Exception.class, () -> bebe.acceptRequest(friend));
         assertEquals(error.getMessage(), "This user did not request to be your friend.");
     }
+
+    @Test
+    void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws ExceptionList {
+        Student student = new TestStudentBuilder().withStudentNumber("810197001").build();
+        Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math1);
+        assertEquals(student.canTake(math1), List.of());
+    }
+
 
 }
