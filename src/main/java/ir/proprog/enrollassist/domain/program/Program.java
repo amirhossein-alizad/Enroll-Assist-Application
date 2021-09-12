@@ -17,13 +17,13 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class Program {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
     private Major major;
-    @Getter
     private GraduateLevel graduateLevel;
     @Getter
     @ManyToMany
