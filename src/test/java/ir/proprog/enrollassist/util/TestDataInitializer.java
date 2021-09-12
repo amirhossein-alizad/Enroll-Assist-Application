@@ -46,7 +46,7 @@ public class TestDataInitializer {
         Major ce = new Major("8101", "CE");
         majorRepository.save(ce);
 
-        Program p = new Program(ce, "Undergraduate", 140, 140);
+        Program p = new Program(ce, "Undergraduate", 140, 140, "Major");
         p.addCourse();
 
         Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate")

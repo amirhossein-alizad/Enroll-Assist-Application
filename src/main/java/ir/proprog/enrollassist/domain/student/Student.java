@@ -95,8 +95,9 @@ public class Student {
         ExceptionList exceptionList = new ExceptionList();
         if (!program.getGraduateLevel().equals(graduateLevel))
             exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
-        if (programs.stream().map(Program::getClass).collect(Collectors.toSet()).contains(program.getClass()))
-            exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
+        for (Program p: this.programs)
+            if (p.getProgramType().equals(program.getProgramType()))
+                exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
         if (exceptionList.hasException())
             throw exceptionList;
         this.programs.add(program);
@@ -142,7 +143,7 @@ public class Student {
     public List<EnrollmentRuleViolation> canTake(Course course) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Program p: this.programs)
-            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Minor))
+            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Major))
                 return course.canBeTakenBy(this);
 
         return violations;

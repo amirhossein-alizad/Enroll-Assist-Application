@@ -17,7 +17,7 @@ public class ProgramTest {
     public void Program_with_invalid_inputs_cant_be_created() {
         String error = "";
         try {
-            Program program = new Program(mock(Major.class), "Undergrad", 20, 12);
+            Program program = new Program(mock(Major.class), "Undergrad", 20, 12, "Major");
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
@@ -32,7 +32,7 @@ public class ProgramTest {
             Course ap = mock(Course.class);
             when(ap.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
             when(ap.getCourseNumber()).thenReturn(new CourseNumber("1111222"));
-            Program program = new Program(mock(Major.class), "PHD", 140, 142).addCourse(ap);
+            Program program = new Program(mock(Major.class), "PHD", 140, 142, "Major").addCourse(ap);
         } catch (Exception exception) {
             error = exception.toString();
         }

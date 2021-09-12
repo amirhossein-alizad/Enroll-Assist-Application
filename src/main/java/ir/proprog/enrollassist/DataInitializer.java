@@ -53,9 +53,9 @@ public class DataInitializer {
         ece.addMajor(ee, ce);
         facultyRepository.save(ece);
 
-        Program ceProgram = new Program(ce, "Undergraduate", 140, 140);
+        Program ceProgram = new Program(ce, "Undergraduate", 140, 140, "Major");
         ceProgram.addCourse(math1, math2, phys1, phys2);
-        Program eeProgram = new Program(ee, "Undergraduate", 140, 140);
+        Program eeProgram = new Program(ee, "Undergraduate", 140, 140, "Major");
         eeProgram.addCourse(math1, math2, phys1, phys2);
         programRepository.saveAll(List.of(ceProgram, eeProgram));
 

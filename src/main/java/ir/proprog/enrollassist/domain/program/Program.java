@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.student.Student;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,9 +30,10 @@ public class Program {
     private Set<Course> courses = new HashSet<>();
     @Embedded
     private CreditRange creditRange;
-    @Getter private ProgramType programType;
+    @Getter
+    private ProgramType programType;
 
-    public Program(Major major, String graduateLevel, int minimum, int maximum) throws ExceptionList {
+    public Program(Major major, String graduateLevel, int minimum, int maximum, String programType) throws ExceptionList {
         this.major = major;
         ExceptionList exceptionList = new ExceptionList();
         try {
@@ -40,8 +42,19 @@ public class Program {
         try {
             this.creditRange = new CreditRange(minimum, maximum);
         } catch (Exception e) { exceptionList.addNewException(e); }
+        try {
+            this.programType = ProgramType.valueOf(programType);
+        } catch (Exception e) { exceptionList.addNewException(new Exception("Program type is not valid.")); }
         if (exceptionList.hasException())
             throw exceptionList;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Program program = (Program) o;
+        return this.major.equals(program.major) && this.programType.equals(program.programType);
     }
 
     public Program addCourse(Course ... course) throws ExceptionList {
