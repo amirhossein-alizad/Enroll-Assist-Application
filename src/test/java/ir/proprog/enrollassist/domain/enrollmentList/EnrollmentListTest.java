@@ -12,6 +12,7 @@ import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
+import ir.proprog.enrollassist.domain.utils.TestPresentationScheduleBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
     private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
+    private TestPresentationScheduleBuilder testPresentationScheduleBuilder = new TestPresentationScheduleBuilder();
     private Course math1, prog, ap , ds, phys1, maaref, english, phys2;
     private Section math1_1, math1_2, prog_1, ap_1, ds_1, phys1_1, maaref1_1, english_1, phys2_1;
     private Student bebe;
@@ -72,9 +74,16 @@ public class EnrollmentListTest {
         ds_1 = new Section(ds, "01");
         ap_1 = new Section(ap, "01");
 
-        schedule1 = new PresentationSchedule("Monday", "10:30", "12:00");
-        schedule2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
-        schedule3 = new PresentationSchedule("Monday", "11:00", "13:00");
+        schedule1 = testPresentationScheduleBuilder
+                .build();
+        schedule2 = testPresentationScheduleBuilder
+                .dayOfWeek("Wednesday")
+                .build();
+        schedule3 = testPresentationScheduleBuilder
+                .dayOfWeek("Monday")
+                .startTime("11:30")
+                .endTime("13:00")
+                .build();
 
         examTime1 = new ExamTime("2021-06-21T11:00", "2021-06-21T13:00");
         examTime2 = new ExamTime("2021-06-21T13:00", "2021-06-21T16:00");
