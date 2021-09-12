@@ -11,6 +11,7 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
+    private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
     private Course math1, prog, ap , ds, phys1, maaref, english, phys2;
     private Section math1_1, math1_2, prog_1, ap_1, ds_1, phys1_1, maaref1_1, english_1, phys2_1;
     private Student bebe;
@@ -30,14 +32,35 @@ public class EnrollmentListTest {
     void setUp() throws Exception {
         bebe = mock(Student.class);
 
-        math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        prog = new Course("2222222", "PROG", 4, "Undergraduate");
-        ap = new Course("3333333", "AP", 3, "Undergraduate").withPre(prog);
-        ds = new Course("6666666", "DS", 3, "Undergraduate");
-        phys1 = new Course("7777777", "PHYS1", 4, "Undergraduate");
-        maaref = new Course("9999999", "MAAREF", 4, "Undergraduate");
-        english = new Course("1010101", "EN", 4, "Undergraduate");
-        phys2 = new Course("1313131", "PHYS2", 3, "Undergraduate").withPre(phys1, math1);
+        math1 = testCourseBuilder
+                .courseNumber("1111111")
+                .build();
+        prog = testCourseBuilder
+                .courseNumber("1111112")
+                .credits(4)
+                .build();
+        ap = testCourseBuilder
+                .courseNumber("1111113")
+                .credits(3)
+                .build()
+                .withPre(prog);
+        ds = testCourseBuilder
+                .courseNumber("1111116")
+                .build();
+        phys1 = testCourseBuilder
+                .courseNumber("1111117")
+                .credits(4)
+                .build();
+        maaref = testCourseBuilder
+                .courseNumber("1111118")
+                .build();
+        english = testCourseBuilder
+                .courseNumber("1111119")
+                .build();
+        phys2 = testCourseBuilder
+                .courseNumber("1111120")
+                .build()
+                .withPre(phys1, math1);
 
         prog_1 = new Section(prog, "01");
         maaref1_1 = new Section(maaref, "01");
