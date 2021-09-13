@@ -23,12 +23,15 @@ public class FriendshipController {
     private StudentRepository studentRepository;
     private EnrollmentListRepository enrollmentListRepository;
 
+    private Student getStudent(String studentNo) {
+        return studentRepository.findByStudentNumber(new StudentNumber(studentNo))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
+    }
+
     @PutMapping("/{studentNo}")
     public void sendFriendshipRequest(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
+        Student student = getStudent(studentNo);
+        Student friend = getStudent(friendStudentNo);
 
         try {
             student.sendFriendshipRequest(friend);
@@ -42,10 +45,8 @@ public class FriendshipController {
 
     @DeleteMapping("/{studentNo}")
     public void removeFriendship(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
+        Student student = getStudent(studentNo);
+        Student friend = getStudent(friendStudentNo);
 
         try {
             student.removeFriend(friend);
@@ -60,52 +61,41 @@ public class FriendshipController {
 
     @GetMapping("/{studentNo}")
     public List<StudentView> getAllFriends(@PathVariable String studentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-
+        Student student = getStudent(studentNo);
         return student.getAllFriends().stream().map(StudentView::new).collect(Collectors.toList());
     }
 
     @GetMapping("/{studentNo}/friends")
     public List<StudentView> getFriends(@PathVariable String studentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-
+        Student s = getStudent(studentNo);
         return s.getFriends().stream().map(StudentView::new).collect(Collectors.toList());
     }
 
 
     @GetMapping("/{studentNo}/blocked")
     public List<StudentView> getBlockedFriends(@PathVariable String studentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-
+        Student s = getStudent(studentNo);
         return s.getBlocked().stream().map(StudentView::new).collect(Collectors.toList());
     }
 
     @GetMapping("/{studentNo}/pending")
     public List<StudentView> getPendingFriends(@PathVariable String studentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
+        Student s = getStudent(studentNo);
 
         return s.getPending().stream().map(StudentView::new).collect(Collectors.toList());
     }
 
     @GetMapping("/{studentNo}/requested")
     public List<StudentView> getRequestedFriends(@PathVariable String studentNo) {
-        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-
+        Student s = getStudent(studentNo);
         return s.getRequested().stream().map(StudentView::new).collect(Collectors.toList());
     }
 
 
     @PutMapping("/{studentNo}/accept")
     public void acceptFriendship(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
+        Student student = getStudent(studentNo);
+        Student friend = getStudent(friendStudentNo);
 
         try {
             student.acceptRequest(friend);
@@ -120,10 +110,8 @@ public class FriendshipController {
 
     @PutMapping("/{studentNo}/block")
     public void blockFriend(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
+        Student student = getStudent(studentNo);
+        Student friend = getStudent(friendStudentNo);
 
         try {
             studentRepository.save(student.blockFriend(friend));
@@ -134,10 +122,8 @@ public class FriendshipController {
 
     @PutMapping("/{studentNo}/unblock")
     public void unblockFriend(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
+        Student student = getStudent(studentNo);
+        Student friend = getStudent(friendStudentNo);
 
         try {
             studentRepository.save(student.unblockFriend(friend));
@@ -148,9 +134,7 @@ public class FriendshipController {
 
     @GetMapping("/{studentNo}/enrollmentLists")
     public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable String studentNo) {
-        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-
+        Student student = getStudent(studentNo);
         List<Student> friends = student.getFriendsWhoDoesntBlock();
         List<EnrollmentList> lists = new ArrayList<>();
         for (Student s : friends)
