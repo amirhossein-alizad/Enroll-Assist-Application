@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,18 +17,36 @@ import static org.mockito.Mockito.*;
 
 public class StudentTest {
     private Student bebe;
+    private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
     Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
 
     @BeforeEach
     void setUp() throws Exception{
-        math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
-        phys1 = new Course("8888888", "PHYS1", 3, "Undergraduate");
-        prog = new Course("7777777", "PROG", 4, "Undergraduate");
-        economy = new Course("1111111", "ECO", 3, "Undergraduate");
-        maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
-        andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
-        math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
+        math1 = testCourseBuilder
+                .build();
+        phys1 = testCourseBuilder
+                .courseNumber("1111112")
+                .build();
+        prog = testCourseBuilder
+                .courseNumber("1111113")
+                .credits(4)
+                .build();
+        economy = testCourseBuilder
+                .courseNumber("1111114")
+                .credits(3)
+                .build();
+        maaref = testCourseBuilder
+                .courseNumber("1111115")
+                .credits(2)
+                .build();
+        andishe = testCourseBuilder
+                .courseNumber("1111116")
+                .build();
+        math2 = testCourseBuilder
+                .courseNumber("1111117")
+                .credits(3)
+                .build().withPre(math1);
         Major major = new Major("123", "CE");
         major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
@@ -189,12 +208,14 @@ public class StudentTest {
 
     @Test
     void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
-        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        Course prog = new Course("2222222", "PROG", 3, "PHD");
-        Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
-        Section math1_1 = new Section(math1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
+        prog = testCourseBuilder
+                .courseNumber("1111112")
+                .graduateLevel("PHD")
+                .build();
+        andishe = testCourseBuilder
+                .courseNumber("1111113")
+                .graduateLevel("Masters")
+                .build();
         Major major = new Major("123", "CE");
         major.addCourse(math1, prog, andishe);
         Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();

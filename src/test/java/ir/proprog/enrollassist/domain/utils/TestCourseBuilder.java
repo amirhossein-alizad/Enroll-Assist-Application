@@ -12,7 +12,7 @@ public class TestCourseBuilder {
 
     public TestCourseBuilder(){
         title = "course";
-        graduateLevel = "PHD";
+        graduateLevel = "Undergraduate";
         courseNumber = "8101546";
         credits = 3;
     }
