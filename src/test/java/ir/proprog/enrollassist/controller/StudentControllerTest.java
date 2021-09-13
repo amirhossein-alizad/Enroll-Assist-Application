@@ -109,7 +109,7 @@ public class StudentControllerTest {
         request.put("name", "");
         request.put("graduateLevel", "Masters");
         request.put("userId", 1L);
-        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user")));
+        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user", "12")));
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
         MvcResult result =  mvc.perform(post("/student")
