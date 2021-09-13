@@ -25,4 +25,8 @@ public class StudentView {
             this.graduateLevel = student.getGraduateLevel();
 
     }
+
+    public void setUserId(Long id){
+        userId = id;
+    }
 }
