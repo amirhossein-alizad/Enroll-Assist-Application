@@ -1,151 +1,129 @@
-//package ir.proprog.enrollassist.controller.friendship;
-//
-//import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
-//import ir.proprog.enrollassist.controller.student.StudentView;
-//import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-//import ir.proprog.enrollassist.domain.student.Student;
-//import ir.proprog.enrollassist.domain.student.StudentNumber;
-//import ir.proprog.enrollassist.repository.EnrollmentListRepository;
-//import ir.proprog.enrollassist.repository.StudentRepository;
-//import lombok.AllArgsConstructor;
-//import org.springframework.http.HttpStatus;
-//import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.server.ResponseStatusException;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.stream.Collectors;
-//
-//@RestController
-//@RequestMapping("/friends")
-//@AllArgsConstructor
-//public class FriendshipController {
-//    private StudentRepository studentRepository;
-//    private EnrollmentListRepository enrollmentListRepository;
-//
-//    @PutMapping("/{studentNo}")
-//    public void sendFriendshipRequest(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
-//
-//        try {
-//            student.sendFriendshipRequest(friend);
-//            friend.receiveFriendshipRequest(student);
-//        } catch (Exception exception) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//        }
-//        studentRepository.save(student);
-//        studentRepository.save(friend);
-//    }
-//
-//    @DeleteMapping("/{studentNo}")
-//    public void removeFriendship(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
-//
-//        try {
-//            student.removeFriend(friend);
-//            friend.removeFriend(student);
-//        } catch (Exception exception) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//        }
-//
-//        studentRepository.save(student);
-//        studentRepository.save(friend);
-//    }
-//
-//    @GetMapping("/{studentNo}")
-//    public List<StudentView> getAllFriends(@PathVariable String studentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        return student.getAllFriends().stream().map(StudentView::new).collect(Collectors.toList());
-//    }
-//
-//    @GetMapping("/{studentNo}/friends")
-//    public List<StudentView> getFriends(@PathVariable String studentNo) {
-//        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        return s.getFriends().stream().map(StudentView::new).collect(Collectors.toList());
-//    }
-//
-//
-//    @GetMapping("/{studentNo}/blocked")
-//    public List<StudentView> getBlockedFriends(@PathVariable String studentNo) {
-//        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        return s.getBlocked().stream().map(StudentView::new).collect(Collectors.toList());
-//    }
-//
-//    @GetMapping("/{studentNo}/pending")
-//    public List<StudentView> getPendingFriends(@PathVariable String studentNo) {
-//        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        return s.getPending().stream().map(StudentView::new).collect(Collectors.toList());
-//    }
-//
-//    @GetMapping("/{studentNo}/requested")
-//    public List<StudentView> getRequestedFriends(@PathVariable String studentNo) {
-//        Student s = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        return s.getRequested().stream().map(StudentView::new).collect(Collectors.toList());
-//    }
-//
-//
-//    @PutMapping("/{studentNo}/accept")
-//    public void acceptFriendship(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
-//
-//        try {
-//            student.acceptRequest(friend);
-//            friend.addFriend(student);
-//        }catch (Exception exception) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//        }
-//
-//        studentRepository.save(student);
-//        studentRepository.save(friend);
-//    }
-//
-//    @PutMapping("/{studentNo}/block")
-//    public void blockFriend(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
-//
-//        try {
-//            studentRepository.save(student.blockFriend(friend));
-//        }catch (Exception exception) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//        }
-//    }
-//
-//    @PutMapping("/{studentNo}/unblock")
-//    public void unblockFriend(@PathVariable String studentNo, @RequestBody String friendStudentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//        Student friend = studentRepository.findByStudentNumber(new StudentNumber(friendStudentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + friendStudentNo + " not found"));
-//
-//        try {
-//            studentRepository.save(student.unblockFriend(friend));
-//        }catch (Exception exception) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-//        }
-//    }
-//
+package ir.proprog.enrollassist.controller.friendship;
+
+import ir.proprog.enrollassist.domain.user.User;
+import ir.proprog.enrollassist.repository.UserRepository;
+import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping("/friends")
+@AllArgsConstructor
+public class FriendshipController {
+    private UserRepository userRepository;
+
+    private User getUser(String userId) {
+        return userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested user with id " + userId + " not found"));
+    }
+
+    @PutMapping("/{userId}")
+    public void sendFriendshipRequest(@PathVariable String userId, @RequestBody String friendId) {
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+
+        try {
+            user.sendFriendshipRequest(friend);
+            friend.receiveFriendshipRequest(user);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+        userRepository.save(user);
+        userRepository.save(friend);
+    }
+
+
+
+    @DeleteMapping("/{userId}")
+    public void removeFriendship(@PathVariable String userId, @RequestBody String friendId) {
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+
+        try {
+            user.removeFriend(friend);
+            friend.removeFriend(user);
+        } catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+
+        userRepository.save(user);
+        userRepository.save(friend);
+    }
+
+    @GetMapping("/{userId}")
+    public List<UserView> getAllFriends(@PathVariable String userId) {
+        User user = getUser(userId);
+        return user.getAllFriends().stream().map(UserView::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{userId}/friends")
+    public List<UserView> getFriends(@PathVariable String userId) {
+        User s = getUser(userId);
+        return s.getFriends().stream().map(UserView::new).collect(Collectors.toList());
+    }
+
+
+    @GetMapping("/{userId}/blocked")
+    public List<UserView> getBlockedFriends(@PathVariable String userId) {
+        User s = getUser(userId);
+        return s.getBlocked().stream().map(UserView::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{userId}/pending")
+    public List<UserView> getPendingFriends(@PathVariable String userId) {
+        User s = getUser(userId);
+        return s.getPending().stream().map(UserView::new).collect(Collectors.toList());
+    }
+
+    @GetMapping("/{userId}/requested")
+    public List<UserView> getRequestedFriends(@PathVariable String userId) {
+        User s = getUser(userId);
+        return s.getRequested().stream().map(UserView::new).collect(Collectors.toList());
+    }
+
+
+    @PutMapping("/{userId}/accept")
+    public void acceptFriendship(@PathVariable String userId, @RequestBody String friendId) {
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        try {
+            user.acceptRequest(friend);
+            friend.addFriend(user);
+        }catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+
+        userRepository.save(user);
+        userRepository.save(friend);
+    }
+
+    @PutMapping("/{userId}/block")
+    public void blockFriend(@PathVariable String userId, @RequestBody String friendId) {
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+        try {
+            userRepository.save(user.blockFriend(friend));
+        }catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+    }
+
+    @PutMapping("/{userId}/unblock")
+    public void unblockFriend(@PathVariable String userId, @RequestBody String friendId) {
+        User user = getUser(userId);
+        User friend = getUser(friendId);
+
+        try {
+            userRepository.save(user.unblockFriend(friend));
+        }catch (Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+    }
+
 //    @GetMapping("/{studentNo}/enrollmentLists")
 //    public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable String studentNo) {
 //        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
@@ -158,6 +136,4 @@
 //
 //        return lists.stream().map(EnrollmentListView::new).collect(Collectors.toList());
 //    }
-//
-//
-//}
+}
