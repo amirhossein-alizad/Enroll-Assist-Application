@@ -29,12 +29,4 @@ public class CourseView {
                 prerequisites.add(c.getId());
     }
 
-    public CourseView(Course course, Set<Long> prerequisites) {
-        this.courseId = course.getId();
-        this.courseNumber = course.getCourseNumber();
-        this.courseTitle = course.getTitle();
-        this.courseCredits = course.getCredits();
-        this.graduateLevel = course.getGraduateLevel();
-        this.prerequisites = prerequisites;
-    }
 }
