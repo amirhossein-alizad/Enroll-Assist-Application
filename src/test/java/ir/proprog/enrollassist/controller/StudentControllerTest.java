@@ -7,6 +7,7 @@ import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
+import ir.proprog.enrollassist.domain.user.User;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONObject;
@@ -43,6 +44,8 @@ public class StudentControllerTest {
     private EnrollmentListRepository enrollmentListRepository;
     @MockBean
     private MajorRepository majorRepository;
+    @MockBean
+    private UserRepository userRepository;
 
     @Test
     public void Student_that_does_not_exist_is_not_found() throws Exception {
@@ -85,7 +88,9 @@ public class StudentControllerTest {
         Major major = mock(Major.class);
         request.put("studentNo", "81818181");
         request.put("name", "Sara");
+        request.put("userId", 1L);
         request.put("graduateLevel", "Undergraduate");
+        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user")));
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
         mvc.perform(post("/student")
@@ -103,6 +108,8 @@ public class StudentControllerTest {
         request.put("studentNo", "81818181");
         request.put("name", "");
         request.put("graduateLevel", "Masters");
+        request.put("userId", 1L);
+        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user")));
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
         given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
         MvcResult result =  mvc.perform(post("/student")
