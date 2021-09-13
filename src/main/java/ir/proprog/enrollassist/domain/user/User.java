@@ -28,8 +28,15 @@ public class User {
         name = _name;
     }
 
-    public void addStudent(Student ... student){
-        students.addAll(Arrays.asList(student));
+    public void addStudent(Student student) throws Exception {
+        //Should this violation be checked?
+        //Should all students of a user have the same name?
+        //Should it also be equal to user's name?
+        if(!students.isEmpty())
+            for(Student s : students)
+                if(!s.getName().equals(student.getName()))
+                    throw new Exception("Student name can not be different.");
+        students.add(student);
     }
 
 }
