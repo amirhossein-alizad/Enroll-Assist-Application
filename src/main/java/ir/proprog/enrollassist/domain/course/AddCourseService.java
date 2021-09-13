@@ -21,7 +21,7 @@ public class AddCourseService {
     private ProgramRepository programRepository;
 
 
-    public Course addCourse(CourseMajorView input, Faculty faculty) throws ExceptionList {
+    public Course addCourse(CourseMajorView input) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         if (courseRepository.findCourseByCourseNumber(input.getCourseNumber()).isPresent())
             exceptionList.addNewException(new Exception("Course number already exists."));
@@ -41,6 +41,9 @@ public class AddCourseService {
             course.setPrerequisites(prerequisites);
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
 
+        if (exceptionList.hasException())
+            throw exceptionList;
+
         for(Program p:programs) {
             try {
                 p.addCourse(course);
@@ -49,9 +52,9 @@ public class AddCourseService {
                 exceptionList.addExceptions(ex.getExceptions());
             }
         }
-
         if (exceptionList.hasException())
             throw exceptionList;
+
         this.courseRepository.save(course);
         return course;
     }
