@@ -32,10 +32,9 @@ public class User {
         //Should this violation be checked?
         //Should all students of a user have the same name?
         //Should it also be equal to user's name?
-        if(!students.isEmpty())
-            for(Student s : students)
-                if(!s.getName().equals(student.getName()))
-                    throw new Exception("Student name can not be different.");
+        for(Student s : students)
+            if(!s.getName().equals(student.getName()))
+                throw new Exception("Student name can not be different.");
         students.add(student);
     }
 
