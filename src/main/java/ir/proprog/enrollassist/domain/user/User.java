@@ -4,6 +4,8 @@ import ir.proprog.enrollassist.domain.student.Student;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+
 import javax.persistence.*;
 import java.util.*;
 
@@ -15,6 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String userId;
     @OneToMany(cascade = CascadeType.MERGE)
     private Set<Student> students = new HashSet<>();
 
@@ -28,11 +31,12 @@ public class User {
     private List<User> blocked = new ArrayList<>();
 
 
-    public User(String _name){
-        if(_name == null)
-            throw new IllegalArgumentException("Name can not be null.");
+    public User(@NonNull String _name, @NonNull String _userId){
         if(_name.equals(""))
             throw new IllegalArgumentException("Name can not be empty.");
+        if(_userId.equals(""))
+            throw new IllegalArgumentException("User Id can not be empty.");
+        userId = _userId;
         name = _name;
     }
 
@@ -46,7 +50,13 @@ public class User {
         students.add(student);
     }
 
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User other = (User) o;
+        return this.userId.equals(other.userId);
+    }
 
     public void sendFriendshipRequest(User other) throws Exception {
         if (this.friends.contains(other))
@@ -80,7 +90,7 @@ public class User {
         else if (this.blocked.contains(other))
             this.blocked.remove(other);
         else
-            throw new Exception("There is no relation between these user.");
+            throw new Exception("There is no relation between these users.");
     }
 
     public List<User> getAllFriends() {
