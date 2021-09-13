@@ -4,9 +4,11 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseMajorView;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
+import ir.proprog.enrollassist.repository.ProgramRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -16,8 +18,7 @@ import java.util.*;
 @AllArgsConstructor
 public class AddCourseService {
     private CourseRepository courseRepository;
-    private MajorRepository majorRepository;
-    private FacultyRepository facultyRepository;
+    private ProgramRepository programRepository;
 
 
     public Course addCourse(CourseMajorView input, Faculty faculty) throws ExceptionList {
@@ -27,10 +28,10 @@ public class AddCourseService {
 
         Course course = null;
         Set<Course> prerequisites = new HashSet<>();
-        Set<Major> majors = new HashSet<>();
+        Set<Program> programs = new HashSet<>();
 
         try {
-            majors = getMajors(input.getMajors(), faculty);
+            programs = getPrograms(input.getPrograms());
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
         try {
             prerequisites = this.validatePrerequisites(input.getPrerequisites());
@@ -40,17 +41,19 @@ public class AddCourseService {
             course.setPrerequisites(prerequisites);
         } catch (ExceptionList e) { exceptionList.addExceptions(e.getExceptions()); }
 
+        for(Program p:programs) {
+            try {
+                p.addCourse(course);
+                this.programRepository.save(p);
+            } catch (ExceptionList ex) {
+                exceptionList.addExceptions(ex.getExceptions());
+            }
+        }
+
         if (exceptionList.hasException())
             throw exceptionList;
-
-
-        addCourseToMajors(course, faculty);
-        return course;
-    }
-
-    private void addCourseToMajors(Course course, Faculty faculty) {
         this.courseRepository.save(course);
-        this.facultyRepository.save(faculty);
+        return course;
     }
 
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
@@ -93,20 +96,18 @@ public class AddCourseService {
             throw exceptionList;
     }
 
-    public Set<Major> getMajors(Set<Long> majorIds, Faculty faculty) throws ExceptionList {
+    public Set<Program> getPrograms(Set<Long> ids) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
-        Set<Major> majors = new HashSet<>();
-        for (Long L : majorIds) {
-            Optional<Major> major = majorRepository.findById(L);
-            if (major.isEmpty())
-                exceptionList.addNewException(new Exception(String.format("Major with id = %s was not found.", L)));
-            else if (!faculty.getMajors().contains(major.get()))
-                exceptionList.addNewException(new Exception(String.format("Major with id = %s not belong to this faculty.", L)));
+        Set<Program> programs = new HashSet<>();
+        for (Long L : ids) {
+            Optional<Program> program = programRepository.findById(L);
+            if (program.isEmpty())
+                exceptionList.addNewException(new Exception(String.format("Program with id = %s was not found.", L)));
             else
-                majors.add(major.get());
+                programs.add(program.get());
         }
         if (exceptionList.hasException())
             throw exceptionList;
-        return majors;
+        return programs;
     }
 }
