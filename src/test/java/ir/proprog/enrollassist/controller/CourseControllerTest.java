@@ -10,6 +10,7 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.course.CourseNumber;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.repository.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -45,11 +46,12 @@ public class CourseControllerTest {
     @MockBean
     private FacultyRepository facultyRepository;
     @MockBean
-    private MajorRepository majorRepository;
+    private ProgramRepository programRepository;
     private AddCourseService addCourseService;
     private Course course1, course2, course3;
     private Major major1, major2;
     private Faculty faculty;
+    private Program program1, program2;
     private final List<Course> courses = new ArrayList<>();
 
     @BeforeEach
@@ -64,12 +66,14 @@ public class CourseControllerTest {
         major1 = mock(Major.class);
         given(major1.getId()).willReturn(10L);
         major2 = mock(Major.class);
+        program1 = new Program(major1, "Undergraduate", 70, 80, "Major");
+        program2 = new Program(major2, "Undergraduate", 78, 80, "Major");
         faculty= mock(Faculty.class);
         addCourseService = mock(AddCourseService.class);
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
         given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
-        given(majorRepository.findById(10L)).willReturn(java.util.Optional.of(major1));
+        given(programRepository.findById(10L)).willReturn(java.util.Optional.of(program1));
     }
 
     @Test
@@ -120,7 +124,7 @@ public class CourseControllerTest {
         Course course = new Course("1412121", "C4", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(1L), Set.of(10L,11L));
         ObjectMapper Obj = new ObjectMapper();
-        given(majorRepository.findById(11L)).willReturn(java.util.Optional.of(major2));
+        given(programRepository.findById(11L)).willReturn(java.util.Optional.of(program2));
 
         given(major2.getId()).willReturn(11L);
         given(faculty.getMajors()).willReturn(Set.of(major1, major2));
@@ -153,8 +157,8 @@ public class CourseControllerTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(), Set.of(45L));
 
         ExceptionList exceptionList = new ExceptionList();
-        exceptionList.addNewException(new Exception("Major with id = 45 was not found."));
-        when(addCourseService.getMajors(Set.of(45L), faculty)).thenThrow(exceptionList);
+        exceptionList.addNewException(new Exception("Program with id = 45 was not found."));
+        when(addCourseService.getPrograms(Set.of(45L))).thenThrow(exceptionList);
         when(addCourseService.addCourse(courseMajorView,faculty)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -164,7 +168,7 @@ public class CourseControllerTest {
                 .andExpect(status().isBadRequest())
                 .andReturn();
         String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"Major with id = 45 was not found.\"}");
+        assertEquals(content, "{\"1\":\"Program with id = 45 was not found.\"}");
     }
 
 
@@ -209,8 +213,8 @@ public class CourseControllerTest {
         JSONObject courseN = new JSONObject();
         courseN.put("courseNumber", "");
         JSONObject request = new JSONObject();
-        JSONArray majors = new JSONArray();
-        majors.put(10);
+        JSONArray programs = new JSONArray();
+        programs.put(10L);
 
         JSONArray jArray = new JSONArray();
         jArray.put(12);
@@ -220,26 +224,18 @@ public class CourseControllerTest {
         request.put("courseCredits", -1);
         request.put("courseTitle", "");
         request.put("prerequisites", jArray);
-        request.put("majors", majors);
+        request.put("programs", programs);
 
-        Course mockedCourse1 = mock(Course.class);
-        Course mockedCourse2 = mock(Course.class);
-
-        given(courseRepository.findById(12L)).willReturn(java.util.Optional.of(mockedCourse1));
-        given(courseRepository.findById(13L)).willReturn(java.util.Optional.of(mockedCourse2));
-        given(faculty.getMajors()).willReturn(Set.of(major1));
-        Set<Course> set1 = Set.of(mockedCourse1);
-        Set<Course> set2 = Set.of(mockedCourse2);
-        when(mockedCourse1.getPrerequisites()).thenReturn(set2);
-        when(mockedCourse2.getPrerequisites()).thenReturn(set1);
-        when(mockedCourse1.getTitle()).thenReturn("mockedCourse1");
+        given(courseRepository.findById(12L)).willReturn(java.util.Optional.of(course1));
+        course1.withPre(course2);
+        course2.withPre(course1);
         MvcResult result =  mvc.perform(post("/courses/1")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
                             .andReturn();
         String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"mockedCourse1 has made a loop in prerequisites.\"," +
+        assertEquals(content, "{\"1\":\"C1 has made a loop in prerequisites.\"," +
                                     "\"2\":\"Course must have a name.\"," +
                                     "\"3\":\"Course number cannot be empty.\"," +
                                     "\"4\":\"Credit must be one of the following values: 0, 1, 2, 3, 4.\"}");
