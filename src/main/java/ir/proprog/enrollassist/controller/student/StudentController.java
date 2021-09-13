@@ -7,6 +7,7 @@ import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.student.StudentNumber;
+import ir.proprog.enrollassist.domain.user.User;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,7 @@ public class StudentController {
     private CourseRepository courseRepository;
     private SectionRepository sectionRepository;
     private EnrollmentListRepository enrollmentListRepository;
+    private UserRepository userRepository;
 
     @GetMapping("/all")
     public Iterable<StudentView> all() {
@@ -41,17 +43,29 @@ public class StudentController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public StudentView addStudent(@RequestBody StudentView studentView) {
+        User user = userRepository.findById(studentView.getUserId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + studentView.getUserId() + " was not found."));
+
         Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentView.getStudentNo()));
 
         if (student.isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
+        Student newStudent;
         try {
-            Student newStudent = new Student(studentView.getStudentNo(), studentView.getName(), studentView.getGraduateLevel().toString());
-            this.studentRepository.save(newStudent);
-            return new StudentView(newStudent);
+            newStudent = new Student(studentView.getStudentNo(), studentView.getName(), studentView.getGraduateLevel().toString());
         } catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
+        try {
+            user.addStudent(newStudent);
+        }catch (Exception exception){
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+        studentRepository.save(newStudent);
+        userRepository.save(user);
+        StudentView studentView1 = new StudentView(newStudent);
+        studentView1.setUserId(user.getId());
+        return studentView1;
     }
 
     @GetMapping("/{studentNo}/takeableByMajor")

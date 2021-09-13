@@ -3,12 +3,13 @@ package ir.proprog.enrollassist.controller.student;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.student.Student;
 import lombok.Getter;
-
+@Getter
 public class StudentView {
     private Long studentId;
-    @Getter private String studentNo;
-    @Getter private String name;
-    @Getter private GraduateLevel graduateLevel;
+    private String studentNo;
+    private String name;
+    private GraduateLevel graduateLevel;
+    private Long userId;
 
     public StudentView() {
     }
@@ -20,5 +21,9 @@ public class StudentView {
         if (student.getGraduateLevel() != null)
             this.graduateLevel = student.getGraduateLevel();
 
+    }
+
+    public void setUserId(Long id){
+        userId = id;
     }
 }
