@@ -44,13 +44,10 @@ public class CourseControllerTest {
     @MockBean
     private CourseRepository courseRepository;
     @MockBean
-    private FacultyRepository facultyRepository;
-    @MockBean
     private ProgramRepository programRepository;
     private AddCourseService addCourseService;
     private Course course1, course2, course3;
     private Major major1, major2;
-    private Faculty faculty;
     private Program program1, program2;
     private final List<Course> courses = new ArrayList<>();
 
@@ -68,11 +65,9 @@ public class CourseControllerTest {
         major2 = mock(Major.class);
         program1 = new Program(major1, "Undergraduate", 70, 80, "Major");
         program2 = new Program(major2, "Undergraduate", 78, 80, "Major");
-        faculty= mock(Faculty.class);
         addCourseService = mock(AddCourseService.class);
 
         given(courseRepository.findById(1L)).willReturn(java.util.Optional.of(course1));
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.of(faculty));
         given(programRepository.findById(10L)).willReturn(java.util.Optional.of(program1));
     }
 
@@ -126,28 +121,13 @@ public class CourseControllerTest {
         ObjectMapper Obj = new ObjectMapper();
         given(programRepository.findById(11L)).willReturn(java.util.Optional.of(program2));
 
-        given(major2.getId()).willReturn(11L);
-        given(faculty.getMajors()).willReturn(Set.of(major1, major2));
-
-        mvc.perform(post("/courses/1")
+        mvc.perform(post("/courses")
                 .content(Obj.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.courseTitle", is("C4")))
                 .andExpect(jsonPath("$.courseCredits", is(3)))
                 .andExpect(jsonPath("$.courseNumber.courseNumber", is("1412121")));
-    }
-
-
-    @Test
-    public void Course_cannot_be_added_if_faculty_does_not_exist() throws Exception {
-        JSONObject request = new JSONObject();
-
-        mvc.perform(post("/courses/90")
-                .content(request.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Faculty not found"));
     }
 
 
@@ -159,10 +139,10 @@ public class CourseControllerTest {
         ExceptionList exceptionList = new ExceptionList();
         exceptionList.addNewException(new Exception("Program with id = 45 was not found."));
         when(addCourseService.getPrograms(Set.of(45L))).thenThrow(exceptionList);
-        when(addCourseService.addCourse(courseMajorView,faculty)).thenReturn(course);
+        when(addCourseService.addCourse(courseMajorView)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
-        MvcResult result =  mvc.perform(post("/courses/1")
+        MvcResult result =  mvc.perform(post("/courses")
                 .content(objectMapper.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -182,8 +162,7 @@ public class CourseControllerTest {
 
         given(courseRepository.findCourseByCourseNumber(new CourseNumber("1412121"))).willReturn(Optional.of(preCourse));
 
-        given(faculty.getMajors()).willReturn(Set.of(major1));
-        MvcResult result =  mvc.perform(post("/courses/1")
+        MvcResult result =  mvc.perform(post("/courses")
                 .content(Obj.writeValueAsString(courseMajorView))
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
@@ -197,9 +176,8 @@ public class CourseControllerTest {
         Course course = new Course("1412121", "C4", 3, "Undergraduate");
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(19L), Set.of(10L));
         ObjectMapper Obj = new ObjectMapper();
-        given(faculty.getMajors()).willReturn(Set.of(major1));
 
-        MvcResult result =  mvc.perform(post("/courses/1")
+        MvcResult result =  mvc.perform(post("/courses")
                             .content(Obj.writeValueAsString(courseMajorView))
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
@@ -229,7 +207,7 @@ public class CourseControllerTest {
         given(courseRepository.findById(12L)).willReturn(java.util.Optional.of(course1));
         course1.withPre(course2);
         course2.withPre(course1);
-        MvcResult result =  mvc.perform(post("/courses/1")
+        MvcResult result =  mvc.perform(post("/courses")
                             .content(request.toString())
                             .contentType(MediaType.APPLICATION_JSON))
                             .andExpect(status().isBadRequest())
