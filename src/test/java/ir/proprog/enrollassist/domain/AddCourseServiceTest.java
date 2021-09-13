@@ -24,7 +24,6 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 public class AddCourseServiceTest {
     private AddCourseService addCourseService;
-    private Faculty faculty;
     @MockBean
     private CourseRepository courseRepository;
     @MockBean
@@ -43,8 +42,6 @@ public class AddCourseServiceTest {
 //        ee.addCourse(course2);
         given(programRepository.findAll()).willReturn(List.of(ceMajor, eeMajor));
         given(programRepository.findById(67L)).willReturn(Optional.of(eeMajor));
-        faculty = new Faculty("ece");
-        faculty.addMajor(ce);
         this.addCourseService = new AddCourseService(courseRepository, programRepository);
     }
 
@@ -55,7 +52,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Collections.emptySet(), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
+            Course newCourse = addCourseService.addCourse(courseMajorView);
             assertEquals(newCourse, course);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
@@ -69,7 +66,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(21L), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
+            Course newCourse = addCourseService.addCourse(courseMajorView);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
@@ -87,17 +84,4 @@ public class AddCourseServiceTest {
         }
         assertEquals(error, "{\"1\":\"Program with id = 68 was not found.\"}");
     }
-
-//    @Test
-//    public void Major_that_is_not_in_faculty_is_not_returned_correctly() {
-//        Long id1 = 67L ;
-//        String error = "";
-//        try {
-//            addCourseService.getPrograms(Set.of(id1));
-//        } catch (ExceptionList exceptionList) {
-//            error = exceptionList.toString();
-//        }
-//    }
-
-
 }
