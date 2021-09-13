@@ -9,6 +9,7 @@ import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,16 +20,16 @@ import java.util.stream.StreamSupport;
 
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/sections")
 public class SectionController {
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
     CourseRepository courseRepository;
 
-    public SectionController(SectionRepository sectionRepository, EnrollmentListRepository enrollmentListRepository, CourseRepository courseRepository) {
-        this.sectionRepository = sectionRepository;
-        this.enrollmentListRepository = enrollmentListRepository;
-        this.courseRepository = courseRepository;
+    private Section getSection(Long id) {
+        return sectionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
     }
 
     @GetMapping
@@ -38,15 +39,13 @@ public class SectionController {
 
     @GetMapping("/{id}")
     public SectionView one(@PathVariable Long id) {
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        Section section = getSection(id);
         return new SectionView(section);
     }
 
     @DeleteMapping("/{id}")
     public SectionView removeOne(@PathVariable Long id) {
-        Section section = sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        Section section = getSection(id);
         enrollmentListRepository.findEnrollmentListContainingSection(id).forEach(list -> {
             list.removeSection(section);
             enrollmentListRepository.save(list);
@@ -91,8 +90,7 @@ public class SectionController {
 
     @PutMapping("/{id}/setExamTime")
     public ExamTime setExamTime(@RequestBody ExamTime examTime, @PathVariable Long id) {
-        Section section = this.sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        Section section = getSection(id);
         try {
             section.setExamTime(examTime);
             this.sectionRepository.save(section);
@@ -104,8 +102,7 @@ public class SectionController {
 
     @PutMapping(value = "/{id}/setSchedule")
     public SectionView setSchedule(@RequestBody List<PresentationSchedule> schedule, @PathVariable Long id){
-        Section section = this.sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found."));
+        Section section = getSection(id);
         ExceptionList exceptionList = new ExceptionList();
         for(PresentationSchedule ps: schedule){
             try {
@@ -123,8 +120,7 @@ public class SectionController {
 
     @PutMapping(value = "/{id}/getExamTimeConflicts")
     public ConflictView getNumberOfExamTimeConflicts(@RequestBody ExamTime examTime, @PathVariable Long id) {
-        Section section = this.sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        Section section = getSection(id);
         int numberOfConflict = 0;
         List<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(id);
         for (EnrollmentList e:enrollmentLists) {
@@ -140,8 +136,7 @@ public class SectionController {
 
     @PutMapping(value = "/{id}/getScheduleConflicts")
     public ConflictView getNumberOfScheduleConflicts(@RequestBody List<PresentationSchedule> schedule, @PathVariable Long id) {
-        Section section = this.sectionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
+        Section section = getSection(id);
         int numberOfConflict = 0;
         List<EnrollmentList> enrollmentLists = enrollmentListRepository.findEnrollmentListContainingSection(id);
         for (EnrollmentList e: enrollmentLists) {

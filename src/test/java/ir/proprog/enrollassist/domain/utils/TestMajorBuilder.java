@@ -37,7 +37,6 @@ public class TestMajorBuilder {
 
     public Major build() throws ExceptionList{
         Major major = new Major(majorNumber, majorName);
-        courses.forEach(major::addCourse);
         return major;
     }
 }

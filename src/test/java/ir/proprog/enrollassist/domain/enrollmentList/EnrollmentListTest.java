@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
+import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.student.Student;
@@ -11,6 +12,9 @@ import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.section.ExamTime;
 import ir.proprog.enrollassist.domain.section.PresentationSchedule;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
+import ir.proprog.enrollassist.domain.utils.TestPresentationScheduleBuilder;
+import ir.proprog.enrollassist.domain.utils.TestSectionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -21,38 +25,102 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class EnrollmentListTest {
+    private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
+    private TestPresentationScheduleBuilder testPresentationScheduleBuilder = new TestPresentationScheduleBuilder();
+    private TestSectionBuilder testSectionBuilder = new TestSectionBuilder();
     private Course math1, prog, ap , ds, phys1, maaref, english, phys2;
     private Section math1_1, math1_2, prog_1, ap_1, ds_1, phys1_1, maaref1_1, english_1, phys2_1;
     private Student bebe;
     private PresentationSchedule schedule1, schedule2, schedule3;
     ExamTime examTime1, examTime2, examTime3;
+
     @BeforeEach
     void setUp() throws Exception {
         bebe = mock(Student.class);
+        setUpCourse();
+        setUpSection();
+        setUpSchedule();
+        setUpExamTime();
+    }
 
-        math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        prog = new Course("2222222", "PROG", 4, "Undergraduate");
-        ap = new Course("3333333", "AP", 3, "Undergraduate").withPre(prog);
-        ds = new Course("6666666", "DS", 3, "Undergraduate");
-        phys1 = new Course("7777777", "PHYS1", 4, "Undergraduate");
-        maaref = new Course("9999999", "MAAREF", 4, "Undergraduate");
-        english = new Course("1010101", "EN", 4, "Undergraduate");
-        phys2 = new Course("1313131", "PHYS2", 3, "Undergraduate").withPre(phys1, math1);
+    void setUpCourse() throws Exception{
+        math1 = testCourseBuilder
+                .courseNumber("1111111")
+                .build();
+        prog = testCourseBuilder
+                .courseNumber("1111112")
+                .credits(4)
+                .build();
+        ap = testCourseBuilder
+                .courseNumber("1111113")
+                .credits(3)
+                .build()
+                .withPre(prog);
+        ds = testCourseBuilder
+                .courseNumber("1111116")
+                .build();
+        phys1 = testCourseBuilder
+                .courseNumber("1111117")
+                .credits(4)
+                .build();
+        maaref = testCourseBuilder
+                .courseNumber("1111118")
+                .build();
+        english = testCourseBuilder
+                .courseNumber("1111119")
+                .build();
+        phys2 = testCourseBuilder
+                .courseNumber("1111120")
+                .build()
+                .withPre(phys1, math1);
+    }
 
-        prog_1 = new Section(prog, "01");
-        maaref1_1 = new Section(maaref, "01");
-        english_1 = new Section(english, "01");
-        math1_1 = new Section(math1, "01");
-        math1_2 = new Section(math1, "02");
-        phys1_1 = new Section(phys1, "01");
-        phys2_1 = new Section(phys2, "01");
-        ds_1 = new Section(ds, "01");
-        ap_1 = new Section(ap, "01");
+    void setUpSection() throws Exception{
+        prog_1 = testSectionBuilder
+                .course(prog)
+                .build();
+        maaref1_1 = testSectionBuilder
+                .course(maaref)
+                .build();
+        english_1 = testSectionBuilder
+                .course(english)
+                .build();
+        math1_1 = testSectionBuilder
+                .course(math1)
+                .build();
+        math1_2 = testSectionBuilder
+                .course(math1)
+                .sectionNumber("02")
+                .build();
+        phys1_1 = testSectionBuilder
+                .course(phys1)
+                .sectionNumber("01")
+                .build();
+        phys2_1 = testSectionBuilder
+                .course(phys2)
+                .build();
+        ds_1 = testSectionBuilder
+                .course(ds)
+                .build();
+        ap_1 = testSectionBuilder
+                .course(ap)
+                .build();
+    }
 
-        schedule1 = new PresentationSchedule("Monday", "10:30", "12:00");
-        schedule2 = new PresentationSchedule("Wednesday", "10:30", "12:00");
-        schedule3 = new PresentationSchedule("Monday", "11:00", "13:00");
+    void setUpSchedule() throws Exception{
+        schedule1 = testPresentationScheduleBuilder
+                .build();
+        schedule2 = testPresentationScheduleBuilder
+                .dayOfWeek("Wednesday")
+                .build();
+        schedule3 = testPresentationScheduleBuilder
+                .dayOfWeek("Monday")
+                .startTime("11:30")
+                .endTime("13:00")
+                .build();
+    }
 
+    void setUpExamTime() throws Exception{
         examTime1 = new ExamTime("2021-06-21T11:00", "2021-06-21T13:00");
         examTime2 = new ExamTime("2021-06-21T13:00", "2021-06-21T16:00");
         examTime3 = new ExamTime("2021-06-21T12:00", "2021-06-21T14:00");
@@ -102,17 +170,17 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
-    @Test
-    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() throws Exception {
-        when(bebe.calculateGPA()).thenReturn(new Grade(16));
-        when(bebe.getTotalTakenCredits()).thenReturn(1);
-        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
-        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(math1_1, prog_1, english_1, ap_1, phys1_1, maaref1_1);
-        assertThat(list.checkValidGPALimit())
-                .isNotNull()
-                .hasSize(1);
-    }
+//    @Test
+//    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() throws Exception {
+//        when(bebe.calculateGPA()).thenReturn(new Grade(16));
+//        when(bebe.getTotalTakenCredits()).thenReturn(1);
+//        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
+//        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+//        list.addSections(math1_1, prog_1, eco_1, ap_1, phys1_1, signal_1);
+//        assertThat(list.checkValidGPALimit())
+//                .isNotNull()
+//                .hasSize(1);
+//    }
 
     @Test
     void Nobody_can_take_more_than_24_credits() throws Exception {
@@ -182,10 +250,9 @@ public class EnrollmentListTest {
     @Test
     void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules() throws Exception {
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(phys2_1);
+        list1.addSections(prog_1, maaref1_1, maaref1_1, phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(false);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1), new PrerequisiteNotTaken(phys2, math1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(2);
@@ -196,8 +263,7 @@ public class EnrollmentListTest {
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(true);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(1);

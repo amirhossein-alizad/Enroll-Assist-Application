@@ -11,9 +11,9 @@ public class TestCourseBuilder {
     private int credits;
 
     public TestCourseBuilder(){
-        title = "course";
-        graduateLevel = "PHD";
-        courseNumber = "8101546";
+        title = "C1";
+        graduateLevel = "Undergraduate";
+        courseNumber = "1111111";
         credits = 3;
     }
 

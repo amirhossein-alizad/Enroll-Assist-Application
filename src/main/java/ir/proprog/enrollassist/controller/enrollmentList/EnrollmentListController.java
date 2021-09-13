@@ -8,6 +8,7 @@ import ir.proprog.enrollassist.domain.student.StudentNumber;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.SectionRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -18,17 +19,12 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @RestController
+@AllArgsConstructor
 @RequestMapping("/lists")
 public class EnrollmentListController {
     private EnrollmentListRepository enrollmentListRepository;
     private SectionRepository sectionRepository;
     private StudentRepository studentRepository;
-
-    public EnrollmentListController(EnrollmentListRepository enrollmentListRepository, SectionRepository sectionRepository, StudentRepository studentRepository) {
-        this.enrollmentListRepository = enrollmentListRepository;
-        this.sectionRepository = sectionRepository;
-        this.studentRepository = studentRepository;
-    }
 
     @GetMapping
     public Iterable<EnrollmentListView> all() {
@@ -55,22 +51,19 @@ public class EnrollmentListController {
 
     @GetMapping("/{id}")
     public EnrollmentListView one(@PathVariable Long id) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        EnrollmentList enrollmentList = getEnrollmentList(id);
         return new EnrollmentListView(enrollmentList);
     }
 
     @GetMapping("/{id}/sections")
     public Iterable<SectionView> getListSections(@PathVariable Long id) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        EnrollmentList enrollmentList = getEnrollmentList(id);
         return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
     }
 
     @PutMapping("/{listId}/clear")
     public Iterable<SectionView> emptyList(@PathVariable Long listId) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        EnrollmentList enrollmentList = getEnrollmentList(listId);
         enrollmentList.clear();
         enrollmentListRepository.save(enrollmentList);
         return enrollmentList.getSections().stream().map(SectionView::new).collect(Collectors.toList());
@@ -78,8 +71,7 @@ public class EnrollmentListController {
 
     @PutMapping("/{listId}/sections/{sectionId}")
     public Iterable<SectionView> addSection(@PathVariable Long listId, @PathVariable Long sectionId) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        EnrollmentList enrollmentList = getEnrollmentList(listId);
         Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         enrollmentList.addSection(section);
         enrollmentListRepository.save(enrollmentList);
@@ -88,8 +80,7 @@ public class EnrollmentListController {
 
     @DeleteMapping("/{listId}/sections/{sectionId}")
     public Iterable<SectionView> removeSection(@PathVariable Long listId, @PathVariable Long sectionId) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+        EnrollmentList enrollmentList = getEnrollmentList(listId);
         Section section = sectionRepository.findById(sectionId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Section not found"));
         enrollmentList.removeSection(section);
         enrollmentListRepository.save(enrollmentList);
@@ -98,9 +89,13 @@ public class EnrollmentListController {
 
     @GetMapping("/{listId}/check")
     public EnrollmentCheckResultView checkRegulations(@PathVariable Long listId) {
-        EnrollmentList enrollmentList = enrollmentListRepository.findById(listId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
-
+        EnrollmentList enrollmentList = getEnrollmentList(listId);
         return new EnrollmentCheckResultView(enrollmentList.checkEnrollmentRules());
     }
+
+    private EnrollmentList getEnrollmentList(Long id) {
+        return enrollmentListRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Enrollment List not found"));
+    }
+
 }

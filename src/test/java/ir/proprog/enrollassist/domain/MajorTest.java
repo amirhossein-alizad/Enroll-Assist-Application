@@ -67,10 +67,4 @@ public class MajorTest {
                         + "\"2\":\"Major number can not be empty.\"}");
     }
 
-    @Test
-    public void Courses_are_added_correctly_to_major() throws ExceptionList{
-        major = majorBuilder.build();
-        assertThat(major.getCourses())
-                .containsExactlyInAnyOrder(course1, course2, course3);
-    }
 }

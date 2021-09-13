@@ -2,9 +2,12 @@ package ir.proprog.enrollassist.domain.student;
 
 import com.google.common.annotations.VisibleForTesting;
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.GraduateLevel;
-import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.Program;
+import ir.proprog.enrollassist.domain.program.ProgramType;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.studyRecord.StudyRecord;
@@ -31,15 +34,15 @@ public class Student {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
     private String name;
-    @ManyToOne
-    Major major;
+    @ManyToMany
+    private Set<Program> programs = new HashSet<>();
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
         this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull Major major, @NonNull String graduateLevel) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
@@ -54,7 +57,6 @@ public class Student {
             throw exceptionList;
 
         this.name = name;
-        this.major = major;
     }
 
 
@@ -80,6 +82,19 @@ public class Student {
         return false;
     }
 
+    public Student addProgram(Program program) throws ExceptionList {
+        ExceptionList exceptionList = new ExceptionList();
+        if (!program.getGraduateLevel().equals(graduateLevel))
+            exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
+        for (Program p: this.programs)
+            if (p.getProgramType().equals(program.getProgramType()))
+                exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
+        if (exceptionList.hasException())
+            throw exceptionList;
+        this.programs.add(program);
+        return this;
+    }
+
     public Student setGrade(String term, Course course, double grade) throws ExceptionList {
         grades.add(new StudyRecord(term, course, grade));
         return this;
@@ -102,8 +117,10 @@ public class Student {
 
     @VisibleForTesting
     List<Course> getTakeableCourses(){
-        List<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toList());
-        List<Course> all = new ArrayList<>(major.getCoursesByGraduateLevel(this.graduateLevel));
+        Set<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toSet());
+        Set<Course> all = new HashSet<>();
+        for (Program p: programs)
+            all.addAll(p.getCourses());
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
@@ -114,8 +131,13 @@ public class Student {
         return all.stream().filter(section -> courses.contains(section.getCourse())).collect(Collectors.toList());
     }
 
-    public void setMajor(Major major) {
-        this.major = major;
+    public List<EnrollmentRuleViolation> canTake(Course course) {
+        List<EnrollmentRuleViolation> violations = new ArrayList<>();
+        for (Program p: this.programs)
+            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Major))
+                return course.canBeTakenBy(this);
+
+        return violations;
     }
 
 }

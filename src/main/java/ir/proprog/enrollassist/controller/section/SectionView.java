@@ -34,15 +34,4 @@ public class SectionView {
         this.schedule = section.getPresentationSchedule();
     }
 
-    public SectionView(Section section, ExamTime examTime, Set<PresentationSchedule> schedule) {
-        this.sectionId = section.getId();
-        this.sectionNo = section.getSectionNo();
-        this.examTime = examTime;
-        this.schedule = schedule;
-        this.courseId = section.getCourse().getId();
-        this.courseNumber = section.getCourse().getCourseNumber();
-        this.courseTitle = section.getCourse().getTitle();
-        this.courseCredits = section.getCourse().getCredits();
-    }
-
 }

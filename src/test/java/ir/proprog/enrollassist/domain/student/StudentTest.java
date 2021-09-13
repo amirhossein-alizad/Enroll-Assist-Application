@@ -1,9 +1,13 @@
 package ir.proprog.enrollassist.domain.student;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.Program;
+import ir.proprog.enrollassist.domain.program.ProgramType;
 import ir.proprog.enrollassist.domain.section.Section;
+import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,28 +16,50 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StudentTest {
     private Student bebe;
+    private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
-    Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Major major;
+    private Program program;
 
     @BeforeEach
     void setUp() throws Exception{
-        math1 = new Course("4444444", "MATH1", 3, "Undergraduate");
-        phys1 = new Course("8888888", "PHYS1", 3, "Undergraduate");
-        prog = new Course("7777777", "PROG", 4, "Undergraduate");
-        economy = new Course("1111111", "ECO", 3, "Undergraduate");
-        maaref = new Course("5555555", "MAAREF", 2, "Undergraduate");
-        andishe = new Course("3333333", "ANDISHE", 2, "Undergraduate");
-        math2 = new Course("2222222", "MATH2", 3, "Undergraduate").withPre(math1);
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
-        bebe = new TestStudentBuilder()
-                .withMajor(major)
-                .withGraduateLevel("Undergraduate")
+        math1 = testCourseBuilder
                 .build();
+        phys1 = testCourseBuilder
+                .courseNumber("1111112")
+                .build();
+        prog = testCourseBuilder
+                .courseNumber("1111113")
+                .credits(4)
+                .build();
+        economy = testCourseBuilder
+                .courseNumber("1111114")
+                .credits(3)
+                .build();
+        maaref = testCourseBuilder
+                .courseNumber("1111115")
+                .credits(2)
+                .build();
+        andishe = testCourseBuilder
+                .courseNumber("1111116")
+                .build();
+        math2 = testCourseBuilder
+                .courseNumber("1111117")
+                .credits(3)
+                .build().withPre(math1);
+        Major major = new Major("123", "CE");
+        program = new Program(major, "Undergraduate", 140, 140, "Major");
+        program.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        bebe = new TestStudentBuilder()
+                .withGraduateLevel("Undergraduate")
+                .build()
+                .addProgram(program);
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
@@ -46,11 +72,9 @@ public class StudentTest {
     void Student_with_multiple_invalid_fields_cannot_be_created() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
-                    Major major = mock(Major.class);
                     Student bebe = new TestStudentBuilder()
                             .withName("")
                             .withStudentNumber("")
-                            .withMajor(major)
                             .withGraduateLevel("student")
                             .build();
                 }
@@ -187,24 +211,6 @@ public class StudentTest {
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
     }
 
-    @Test
-    void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
-        Course math1 = new Course("1111111", "MATH1", 3, "Undergraduate");
-        Course prog = new Course("2222222", "PROG", 3, "PHD");
-        Course andishe = new Course("3333333", "ANDISHE", 2, "Masters");
-        Section math1_1 = new Section(math1, "01");
-        Section prog1_1 = new Section(prog, "01");
-        Section andishe1_1 = new Section(andishe, "01");
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();
-
-        assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
-                .isNotEmpty()
-                .hasSize(1)
-                .containsExactlyInAnyOrder(math1_1);
-    }
-
 
     @Test
     void Grade_of_course_with_valid_term_can_set_correctly() throws ExceptionList {
@@ -216,6 +222,15 @@ public class StudentTest {
     void Grade_of_course_with_invalid_season_throws_error() {
         Throwable error = assertThrows(ExceptionList.class, () -> bebe.setGrade("13960", math1, 19.1));
         assertEquals(error.toString(), "{\"1\":\"Season of term is not valid.\"}");
+    }
+
+
+    @Test
+    void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws ExceptionList {
+        Student student = new TestStudentBuilder().withStudentNumber("810197001").withGraduateLevel("Undergraduate").build();
+        Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math2);
+        student.addProgram(p);
+        assertEquals(student.canTake(math2), List.of());
     }
 
 
