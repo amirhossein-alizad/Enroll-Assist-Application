@@ -16,6 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    private String name;
     @OneToMany(cascade = CascadeType.MERGE)
     private Set<Student> students = new HashSet<>();
 
