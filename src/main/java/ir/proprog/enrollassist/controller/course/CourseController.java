@@ -22,7 +22,6 @@ import java.util.stream.StreamSupport;
 public class CourseController {
     private CourseRepository courseRepository;
     private FacultyRepository facultyRepository;
-    private MajorRepository majorRepository;
     private AddCourseService addCourseService;
 
     @GetMapping
