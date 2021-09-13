@@ -20,6 +20,14 @@ public class User {
     @OneToMany(cascade = CascadeType.MERGE)
     private Set<Student> students = new HashSet<>();
 
+    public User(String _name){
+        if(_name == null)
+            throw new IllegalArgumentException("Name can not be null.");
+        if(_name.equals(""))
+            throw new IllegalArgumentException("Name can not be empty.");
+        name = _name;
+    }
+
     public void addStudent(Student ... student){
         students.addAll(Arrays.asList(student));
     }
