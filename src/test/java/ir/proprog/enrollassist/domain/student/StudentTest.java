@@ -1,8 +1,11 @@
 package ir.proprog.enrollassist.domain.student;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.course.Course;
+import ir.proprog.enrollassist.domain.program.Program;
+import ir.proprog.enrollassist.domain.program.ProgramType;
 import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.domain.utils.TestStudentBuilder;
@@ -13,13 +16,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class StudentTest {
     private Student bebe;
     private TestCourseBuilder testCourseBuilder = new TestCourseBuilder();
     private Course math1, phys1, prog, economy, maaref, andishe, math2;
-    Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Section math1_1, prog1_1, andishe1_1, math2_2, math2_1, math1_2;
+    private Major major;
+    private Program program;
 
     @BeforeEach
     void setUp() throws Exception{
@@ -48,11 +54,12 @@ public class StudentTest {
                 .credits(3)
                 .build().withPre(math1);
         Major major = new Major("123", "CE");
-        major.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
+        program = new Program(major, "Undergraduate", 140, 140, "Major");
+        program.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()
-                .withMajor(major)
                 .withGraduateLevel("Undergraduate")
-                .build();
+                .build()
+                .addProgram(program);
         math1_1 = new Section(math1, "01");
         math1_2 = new Section(math1, "02");
         prog1_1 = new Section(prog, "01");
@@ -65,11 +72,9 @@ public class StudentTest {
     void Student_with_multiple_invalid_fields_cannot_be_created() {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
-                    Major major = mock(Major.class);
                     Student bebe = new TestStudentBuilder()
                             .withName("")
                             .withStudentNumber("")
-                            .withMajor(major)
                             .withGraduateLevel("student")
                             .build();
                 }
@@ -204,26 +209,6 @@ public class StudentTest {
                 .isNotEmpty()
                 .hasSize(3)
                 .containsExactlyInAnyOrder(math1_1, prog1_1, andishe1_1);
-    }
-
-    @Test
-    void Student_cannot_see_sections_from_other_graduate_levels_in_their_takeable_list() throws Exception {
-        prog = testCourseBuilder
-                .courseNumber("1111112")
-                .graduateLevel("PHD")
-                .build();
-        andishe = testCourseBuilder
-                .courseNumber("1111113")
-                .graduateLevel("Masters")
-                .build();
-        Major major = new Major("123", "CE");
-        major.addCourse(math1, prog, andishe);
-        Student bebe = new TestStudentBuilder().withGraduateLevel("Undergraduate").withMajor(major).build();
-
-        assertThat(bebe.getTakeableSections(List.of(math1_1, prog1_1, andishe1_1)))
-                .isNotEmpty()
-                .hasSize(1)
-                .containsExactlyInAnyOrder(math1_1);
     }
 
 
@@ -394,5 +379,14 @@ public class StudentTest {
         Throwable error = assertThrows(Exception.class, () -> bebe.acceptRequest(friend));
         assertEquals(error.getMessage(), "This user did not request to be your friend.");
     }
+
+    @Test
+    void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws ExceptionList {
+        Student student = new TestStudentBuilder().withStudentNumber("810197001").withGraduateLevel("Undergraduate").build();
+        Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math2);
+        student.addProgram(p);
+        assertEquals(student.canTake(math2), List.of());
+    }
+
 
 }

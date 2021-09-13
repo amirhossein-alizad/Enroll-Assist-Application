@@ -4,6 +4,7 @@ import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.domain.EnrollmentRules.CourseRequestedTwice;
 import ir.proprog.enrollassist.domain.EnrollmentRules.EnrollmentRuleViolation;
 import ir.proprog.enrollassist.domain.EnrollmentRules.MaxCreditsLimitExceeded;
+import ir.proprog.enrollassist.domain.EnrollmentRules.PrerequisiteNotTaken;
 import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.studyRecord.Grade;
 import ir.proprog.enrollassist.domain.student.Student;
@@ -169,17 +170,17 @@ public class EnrollmentListTest {
                 .hasSize(1);
     }
 
-    @Test
-    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() throws Exception {
-        when(bebe.calculateGPA()).thenReturn(new Grade(16));
-        when(bebe.getTotalTakenCredits()).thenReturn(1);
-        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
-        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
-        list.addSections(math1_1, prog_1, english_1, ap_1, phys1_1, maaref1_1);
-        assertThat(list.checkValidGPALimit())
-                .isNotNull()
-                .hasSize(1);
-    }
+//    @Test
+//    void Enrollment_list_cannot_have_more_than_20_credits_belonging_to_student_with_gpa_less_than_17() throws Exception {
+//        when(bebe.calculateGPA()).thenReturn(new Grade(16));
+//        when(bebe.getTotalTakenCredits()).thenReturn(1);
+//        when(bebe.getGraduateLevel()).thenReturn(GraduateLevel.Undergraduate);
+//        EnrollmentList list = new EnrollmentList("bebe's list", bebe);
+//        list.addSections(math1_1, prog_1, eco_1, ap_1, phys1_1, signal_1);
+//        assertThat(list.checkValidGPALimit())
+//                .isNotNull()
+//                .hasSize(1);
+//    }
 
     @Test
     void Nobody_can_take_more_than_24_credits() throws Exception {
@@ -249,10 +250,9 @@ public class EnrollmentListTest {
     @Test
     void Requesting_courses_with_two_prerequisites_where_none_has_been_passed_violates_two_rules() throws Exception {
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
-        list1.addSections(phys2_1);
+        list1.addSections(prog_1, maaref1_1, maaref1_1, phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(false);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1), new PrerequisiteNotTaken(phys2, math1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(2);
@@ -263,8 +263,7 @@ public class EnrollmentListTest {
         EnrollmentList list1 = new EnrollmentList("TestList1", bebe);
         list1.addSections(phys2_1);
         when(bebe.calculateGPA()).thenReturn(new Grade(15));
-        when(bebe.hasPassed(math1)).thenReturn(true);
-        when(bebe.hasPassed(phys1)).thenReturn(false);
+        when(bebe.canTake(phys2)).thenReturn(List.of(new PrerequisiteNotTaken(phys2, phys1)));
         assertThat(list1.checkHasPassedAllPrerequisites())
                 .isNotNull()
                 .hasSize(1);
