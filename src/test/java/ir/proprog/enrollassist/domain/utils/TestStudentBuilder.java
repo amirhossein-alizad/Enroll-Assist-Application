@@ -15,7 +15,6 @@ public class TestStudentBuilder {
     public TestStudentBuilder()
     {
         name = "bebe";
-        major = mock(Major.class);
         graduateLevel = "PHD";
         studentNumber = "810190000";
     }
@@ -45,6 +44,6 @@ public class TestStudentBuilder {
     }
 
     public Student build() throws ExceptionList {
-        return new Student(studentNumber, name, major, graduateLevel);
+        return new Student(studentNumber, name, graduateLevel);
     }
 }

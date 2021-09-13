@@ -56,7 +56,7 @@ public class EnrollmentListControllerTest {
 
     @BeforeEach
     public void setUp() throws ExceptionList {
-        std = new Student("00000", "gina", mock(Major.class), "Undergraduate");
+        std = new Student("00000", "gina", "Undergraduate");
         list1 = new EnrollmentList("list1", std);
         course = new Course("1111111", "C1", 3, "Undergraduate");
 

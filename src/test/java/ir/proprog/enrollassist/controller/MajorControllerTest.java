@@ -89,19 +89,6 @@ public class MajorControllerTest {
     }
 
     @Test
-    public void All_courses_of_a_major_are_returned_correctly() throws Exception{
-        setUpWithTestBuilders();
-        major1.addCourse(course1, course2);
-        given(majorRepository.findById(1L)).willReturn(java.util.Optional.of(major1));
-        mvc.perform(get("/majors/1/courses")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].courseTitle", anyOf(is("C1"), is("C2"))))
-                .andExpect(jsonPath("$[1].courseCredits", anyOf(is(3), is(4))));
-    }
-
-    @Test
     public void Major_with_acceptable_values_is_added_correctly() throws Exception{
         setUpWithMock();
         request.put("majorName", "CHEM");

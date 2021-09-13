@@ -50,24 +50,4 @@ public class FacultyTest {
         assertThat(faculty.getMajors())
                 .containsExactlyInAnyOrder(major1, major2);
     }
-
-    @Test
-    public void Faculty_majors_change_correctly() throws ExceptionList {
-        major1 = testMajorBuilder.majorName("M1")
-                .build();
-
-        faculty = testFacultyBuilder.build();
-        faculty.addMajor(major1);
-
-        Major copyOfMajor1 = testMajorBuilder.majorName("M1")
-                .build();
-        copyOfMajor1.addCourse(new TestCourseBuilder().build());
-
-        faculty.changeMajor(copyOfMajor1);
-
-        Set<Major> majors = faculty.getMajors();
-        assertEquals(majors.size(), 1);
-        assertTrue(majors.contains(major1));
-        majors.forEach(m -> assertEquals(m.getCourses().size(), 1));
-    }
 }

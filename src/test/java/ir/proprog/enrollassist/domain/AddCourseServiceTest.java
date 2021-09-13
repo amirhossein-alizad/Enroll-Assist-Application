@@ -6,9 +6,11 @@ import ir.proprog.enrollassist.domain.course.AddCourseService;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
+import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.repository.CourseRepository;
 import ir.proprog.enrollassist.repository.FacultyRepository;
 import ir.proprog.enrollassist.repository.MajorRepository;
+import ir.proprog.enrollassist.repository.ProgramRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,13 +24,10 @@ import static org.mockito.BDDMockito.given;
 @SpringBootTest
 public class AddCourseServiceTest {
     private AddCourseService addCourseService;
-    private Faculty faculty;
     @MockBean
     private CourseRepository courseRepository;
     @MockBean
-    private MajorRepository majorRepository;
-    @MockBean
-    private FacultyRepository facultyRepository;
+    private ProgramRepository programRepository;
 
     @BeforeEach
     public void setUp() throws ExceptionList {
@@ -37,13 +36,13 @@ public class AddCourseServiceTest {
         given(courseRepository.findAll()).willReturn(List.of(course1, course2));
         Major ce = new Major("1", "CE");
         Major ee = new Major("2", "EE");
-        ce.addCourse(course1);
-        ee.addCourse(course2);
-        given(majorRepository.findAll()).willReturn(List.of(ce, ee));
-        given(majorRepository.findById(67L)).willReturn(Optional.of(ee));
-        faculty = new Faculty("ece");
-        faculty.addMajor(ce);
-        this.addCourseService = new AddCourseService(courseRepository, majorRepository, facultyRepository);
+        Program ceMajor = new Program(ce, "Undergraduate", 140, 140, "Major");
+        Program eeMajor = new Program(ee, "Undergraduate", 140, 140, "Major");
+//        ce.addCourse(course1);
+//        ee.addCourse(course2);
+        given(programRepository.findAll()).willReturn(List.of(ceMajor, eeMajor));
+        given(programRepository.findById(67L)).willReturn(Optional.of(eeMajor));
+        this.addCourseService = new AddCourseService(courseRepository, programRepository);
     }
 
 
@@ -53,7 +52,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Collections.emptySet(), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
+            Course newCourse = addCourseService.addCourse(courseMajorView);
             assertEquals(newCourse, course);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
@@ -67,7 +66,7 @@ public class AddCourseServiceTest {
         CourseMajorView courseMajorView = new CourseMajorView(course, Set.of(21L), Collections.emptySet());
         String error = "";
         try {
-            Course newCourse = addCourseService.addCourse(courseMajorView, faculty);
+            Course newCourse = addCourseService.addCourse(courseMajorView);
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
@@ -79,24 +78,10 @@ public class AddCourseServiceTest {
         Long id1 = 68L;
         String error = "";
         try {
-            addCourseService.getMajors(Set.of(id1), faculty);
+            addCourseService.getPrograms(Set.of(id1));
         } catch (ExceptionList exceptionList) {
             error = exceptionList.toString();
         }
-        assertEquals(error, "{\"1\":\"Major with id = 68 was not found.\"}");
+        assertEquals(error, "{\"1\":\"Program with id = 68 was not found.\"}");
     }
-
-    @Test
-    public void Major_that_is_not_in_faculty_is_not_returned_correctly() {
-        Long id1 = 67L ;
-        String error = "";
-        try {
-            addCourseService.getMajors(Set.of(id1), faculty);
-        } catch (ExceptionList exceptionList) {
-            error = exceptionList.toString();
-        }
-        assertEquals(error, "{\"1\":\"Major with id = " + id1 + " not belong to this faculty.\"}");
-    }
-
-
 }

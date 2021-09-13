@@ -105,7 +105,8 @@ public class EnrollmentList {
     List<EnrollmentRuleViolation> checkHasPassedAllPrerequisites() {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
         for (Section sec : sections)
-            violations.addAll(sec.courseCanBeTakenBy(owner));
+            violations.addAll(owner.canTake(sec.getCourse()));
+//            violations.addAll(sec.courseCanBeTakenBy(owner));
         return violations;
     }
 

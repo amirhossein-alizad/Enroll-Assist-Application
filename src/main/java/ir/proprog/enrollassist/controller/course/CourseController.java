@@ -21,8 +21,6 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/courses")
 public class CourseController {
     private CourseRepository courseRepository;
-    private FacultyRepository facultyRepository;
-    private MajorRepository majorRepository;
     private AddCourseService addCourseService;
 
     @GetMapping
@@ -30,13 +28,11 @@ public class CourseController {
         return StreamSupport.stream(courseRepository.findAll().spliterator(), false).map(CourseView::new).collect(Collectors.toList());
     }
 
-    @PostMapping(value = "/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE})
-    public CourseView addNewCourse(@PathVariable Long facultyId, @RequestBody CourseMajorView input) {
-        Faculty faculty = facultyRepository.findById(facultyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE})
+    public CourseView addNewCourse(@RequestBody CourseMajorView input) {
 
         try {
-            Course course = addCourseService.addCourse(input, faculty);
+            Course course = addCourseService.addCourse(input);
             return new CourseView(course);
         }catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
