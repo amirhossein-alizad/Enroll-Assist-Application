@@ -34,16 +34,6 @@ public class Student {
     @ManyToOne
     Major major;
 
-    @OneToMany
-    private List<Student> pending = new ArrayList<>();
-    @OneToMany
-    private List<Student> requested = new ArrayList<>();
-    @OneToMany
-    private List<Student> friends = new ArrayList<>();
-    @OneToMany
-    private List<Student> blocked = new ArrayList<>();
-
-
     public Student(@NonNull String studentNumber, @NonNull String name) {
         this.studentNumber = new StudentNumber(studentNumber);
         this.name = name;
@@ -126,92 +116,6 @@ public class Student {
 
     public void setMajor(Major major) {
         this.major = major;
-    }
-
-    public void sendFriendshipRequest(Student other) throws Exception {
-        if (this.friends.contains(other))
-            throw new Exception("This user is already your friend.");
-        else if (this.requested.contains(other))
-            throw new Exception("You requested to this user before.");
-        else if (this.pending.contains(other))
-            throw new Exception("This user requested first.");
-        else if(this.blocked.contains(other))
-            throw new Exception("You have blocked this user.");
-        else if (this.equals(other))
-            throw new Exception("You cannot send friendship request to yourself.");
-
-        this.pending.add(other);
-    }
-
-    public void receiveFriendshipRequest(Student other) throws Exception {
-        if(this.blocked.contains(other))
-            throw new Exception("You have been blocked by this user.");
-
-        this.requested.add(other);
-    }
-
-    public void removeFriend(Student other) throws Exception {
-        if (this.requested.contains(other))
-            this.requested.remove(other);
-        else if (this.pending.contains(other))
-            this.pending.remove(other);
-        else if (this.friends.contains(other))
-            this.friends.remove(other);
-        else if (this.blocked.contains(other))
-            this.blocked.remove(other);
-        else
-            throw new Exception("There is no relation between these students.");
-    }
-
-    public List<Student> getAllFriends() {
-        List<Student> allFriends = new ArrayList<>();
-        allFriends.addAll(this.friends);
-        allFriends.addAll(this.requested);
-        allFriends.addAll(this.blocked);
-        allFriends.addAll(this.pending);
-        return allFriends;
-    }
-
-    public void acceptRequest(Student other) throws Exception {
-        if (this.requested.contains(other)) {
-            this.requested.remove(other);
-            this.friends.add(other);
-        }
-        else
-            throw new Exception("This user did not request to be your friend.");
-
-    }
-
-    public void addFriend(Student other) {
-        this.pending.remove(other);
-        this.friends.add(other);
-    }
-
-    public Student blockFriend(Student other) throws Exception {
-        if (this.friends.contains(other)) {
-            this.friends.remove(other);
-            this.blocked.add(other);
-            return this;
-        }
-        else
-            throw new Exception("This student is not your friend.");
-    }
-
-    public Student unblockFriend(Student other) throws Exception{
-        if (this.blocked.contains(other)) {
-            this.blocked.remove(other);
-            return this;
-        }
-        else
-            throw new Exception("This user is not blocked.");
-    }
-
-    public List<Student> getFriendsWhoDoesntBlock() {
-        List<Student> friendStudents = new ArrayList<>();
-        for (Student s: this.friends)
-            if (s.friends.contains(this))
-                friendStudents.add(s);
-        return friendStudents;
     }
 
 }
