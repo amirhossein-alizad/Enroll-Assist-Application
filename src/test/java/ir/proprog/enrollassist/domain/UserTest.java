@@ -31,17 +31,6 @@ public class UserTest {
         assertEquals(error.getMessage().toString(), "Name can not be empty.");
     }
 
-
-    @Test
-    void Students_with_different_names_are_not_added_to_users_list() throws Exception{
-        student2 = testStudentBuilder
-                .withName("amir")
-                .build();
-        Throwable error = assertThrows(Exception.class, () ->
-                user.addStudent(student2));
-        assertEquals(error.getMessage().toString(), "Student name can not be different.");
-    }
-
     @Test
     void Students_with_the_same_name_are_added_to_users_list_correctly() throws Exception{
         student2 = testStudentBuilder

@@ -1,6 +1,8 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.controller.user.FriendshipController;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.user.User;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -296,18 +298,20 @@ public class FriendshipControllerTest {
         this.user2.getPending().clear();
     }
 
-//    @Test
-//    public void Student_can_see_her_friends_enrollments() throws Exception{
-//        Student student = mock(Student.class);
-//        Student friend1 = new Student("000012", "Sarina");
-//        EnrollmentList enrollmentList1 = new EnrollmentList("Sarina's list", friend1);
-//        given(studentRepository.findByStudentNumber(new StudentNumber("000011"))).willReturn(Optional.of(student));
-//        when(student.getFriendsWhoDoesntBlock()).thenReturn(List.of(friend1));
-//        given(enrollmentListRepository.findByOwner(friend1)).willReturn(List.of(enrollmentList1));
-//        mvc.perform(get("/friends/000011/enrollmentLists")
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$", hasSize(1)))
-//                .andExpect(jsonPath("$[0].enrollmentListName", is(enrollmentList1.getListName())));
-//    }
+    @Test
+    public void Student_can_see_her_friends_enrollments() throws Exception{
+        User user = mock(User.class);
+        Student student = new Student("000012", "Sarina");
+        User friend = new User("Nina", "NN");
+        friend.addStudent(student);
+        EnrollmentList enrollmentList1 = new EnrollmentList("Sarina's list", student);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+        when(user.getFriendsWhoDoesntBlock()).thenReturn(List.of(friend));
+        given(enrollmentListRepository.findByOwner(student)).willReturn(List.of(enrollmentList1));
+        mvc.perform(get("/friends/1/lists")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].enrollmentListName", is(enrollmentList1.getListName())));
+    }
 }

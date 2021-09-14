@@ -133,7 +133,7 @@ public class FriendshipController {
         }
     }
 
-    @GetMapping("/{id}/enrollmentLists")
+    @GetMapping("/{id}/lists")
     public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
