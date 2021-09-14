@@ -34,8 +34,8 @@ public class Student {
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
     private String name;
-    @ManyToMany
-    private Set<Program> programs = new HashSet<>();
+    @ManyToOne
+    private Program program;
 
     public Student(@NonNull String studentNumber, @NonNull String name) {
         this.studentNumber = new StudentNumber(studentNumber);
@@ -82,16 +82,10 @@ public class Student {
         return false;
     }
 
-    public Student addProgram(Program program) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
-        if (!program.getGraduateLevel().equals(graduateLevel))
-            exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
-        for (Program p: this.programs)
-            if (p.getProgramType().equals(program.getProgramType()))
-                exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
-        if (exceptionList.hasException())
-            throw exceptionList;
-        this.programs.add(program);
+    public Student addProgram(Program newProgram) throws Exception {
+        if (!newProgram.getGraduateLevel().equals(this.graduateLevel))
+            throw  new Exception("You must take programs with the same graduate level.");
+        this.program = newProgram;
         return this;
     }
 
@@ -118,9 +112,7 @@ public class Student {
     @VisibleForTesting
     List<Course> getTakeableCourses(){
         Set<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toSet());
-        Set<Course> all = new HashSet<>();
-        for (Program p: programs)
-            all.addAll(p.getCourses());
+        Set<Course> all = new HashSet<>(program.getCourses());
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
@@ -133,10 +125,8 @@ public class Student {
 
     public List<EnrollmentRuleViolation> canTake(Course course) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Program p: this.programs)
-            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Major))
-                return course.canBeTakenBy(this);
-
+        if (program.hasCourse(course) && program.getProgramType().equals(ProgramType.Major))
+            return course.canBeTakenBy(this);
         return violations;
     }
 
