@@ -1,9 +1,6 @@
 package ir.proprog.enrollassist.controller;
 
-import ir.proprog.enrollassist.controller.friendship.FriendshipController;
-import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-import ir.proprog.enrollassist.domain.student.Student;
-import ir.proprog.enrollassist.domain.student.StudentNumber;
+import ir.proprog.enrollassist.controller.user.FriendshipController;
 import ir.proprog.enrollassist.domain.user.User;
 import ir.proprog.enrollassist.repository.EnrollmentListRepository;
 import ir.proprog.enrollassist.repository.StudentRepository;
@@ -34,6 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class FriendshipControllerTest {
     @MockBean
     private UserRepository userRepository;
+    @MockBean
+    private StudentRepository studentRepository;
     @MockBean
     private EnrollmentListRepository enrollmentListRepository;
     @Autowired

@@ -1,13 +1,19 @@
-package ir.proprog.enrollassist.controller.friendship;
+package ir.proprog.enrollassist.controller.user;
 
+import ir.proprog.enrollassist.controller.enrollmentList.EnrollmentListView;
 import ir.proprog.enrollassist.controller.user.UserView;
+import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
+import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.domain.user.User;
+import ir.proprog.enrollassist.repository.EnrollmentListRepository;
+import ir.proprog.enrollassist.repository.StudentRepository;
 import ir.proprog.enrollassist.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,6 +22,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class FriendshipController {
     private UserRepository userRepository;
+    private StudentRepository studentRepository;
+    private EnrollmentListRepository enrollmentListRepository;
 
     private User getUser(String userId) {
         return userRepository.findByUserId(userId)
@@ -125,16 +133,19 @@ public class FriendshipController {
         }
     }
 
-//    @GetMapping("/{studentNo}/enrollmentLists")
-//    public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable String studentNo) {
-//        Student student = studentRepository.findByStudentNumber(new StudentNumber(studentNo))
-//                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "requested Student with id " + studentNo + " not found"));
-//
-//        List<Student> friends = student.getFriendsWhoDoesntBlock();
-//        List<EnrollmentList> lists = new ArrayList<>();
-//        for (Student s : friends)
-//            lists.addAll(enrollmentListRepository.findByOwner(s));
-//
-//        return lists.stream().map(EnrollmentListView::new).collect(Collectors.toList());
-//    }
+    @GetMapping("/{id}/enrollmentLists")
+    public List<EnrollmentListView> getFriendsEnrollmentLists(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
+
+        List<User> friends = user.getFriendsWhoDoesntBlock();
+        List<Student> students = new ArrayList<>();
+        for (User f: friends)
+            students.addAll(f.getStudents());
+        List<EnrollmentList> lists = new ArrayList<>();
+        for (Student s : students)
+            lists.addAll(enrollmentListRepository.findByOwner(s));
+
+        return lists.stream().map(EnrollmentListView::new).collect(Collectors.toList());
+    }
 }
