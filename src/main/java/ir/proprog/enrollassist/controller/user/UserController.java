@@ -48,4 +48,12 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         return new UserView(user);
     }
+
+    @GetMapping("/{id}/students")
+    public Iterable<StudentView> getStudents(@PathVariable Long id) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return user.getStudents().stream().map(StudentView::new).collect(Collectors.toList());
+    }
 }
+
