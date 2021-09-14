@@ -43,28 +43,24 @@ public class StudentController {
 
     @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     public StudentView addStudent(@RequestBody StudentView studentView) {
-        User user = userRepository.findById(studentView.getUserId())
+        User user = userRepository.findByUserId(studentView.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id: " + studentView.getUserId() + " was not found."));
 
-        Optional<Student> student = this.studentRepository.findByStudentNumber(new StudentNumber(studentView.getStudentNo()));
+        Optional<Student> student = this.studentRepository.findByStudentNumber(studentView.getStudentNo());
 
         if (student.isPresent())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         Student newStudent;
         try {
-            newStudent = new Student(studentView.getStudentNo(), studentView.getGraduateLevel().toString());
+            newStudent = new Student(studentView.getStudentNo().getNumber(), studentView.getGraduateLevel().toString());
         } catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
-        try {
-            user.addStudent(newStudent);
-        }catch (Exception exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
-        }
+        user.addStudent(newStudent);
         studentRepository.save(newStudent);
         userRepository.save(user);
         StudentView studentView1 = new StudentView(newStudent);
-        studentView1.setUserId(user.getId());
+        studentView1.setUserId(user.getUserId());
         return studentView1;
     }
 
