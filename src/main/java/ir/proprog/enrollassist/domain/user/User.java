@@ -45,8 +45,8 @@ public class User {
         //Should all students of a user have the same name?
         //Should it also be equal to user's name?
         for(Student s : students)
-            if(!s.getName().equals(student.getName()))
-                throw new Exception("Student name can not be different.");
+            if(s.equals(student))
+                throw new Exception("This student already exists.");
         students.add(student);
     }
 
