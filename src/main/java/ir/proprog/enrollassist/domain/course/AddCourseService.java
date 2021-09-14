@@ -13,8 +13,8 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class AddCourseService {
-    private CourseRepository courseRepository;
-    private ProgramRepository programRepository;
+    private final CourseRepository courseRepository;
+    private final ProgramRepository programRepository;
 
 
     public Course addCourse(CourseMajorView input) throws ExceptionList {
@@ -59,7 +59,7 @@ public class AddCourseService {
         return prerequisites;
     }
 
-    private void validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptionList) throws ExceptionList {
+    private void validatePrerequisites(Set<Long> prerequisiteIds, ExceptionList exceptionList) {
         ExceptionList exceptions = new ExceptionList();
         prerequisiteIds.forEach(L -> courseRepository.findById(L).
                 ifPresentOrElse(c -> checkLoop(c, exceptions), () -> exceptions.addNewException(new Exception(String.format("Course with id = %s was not found.", L)))));
@@ -81,7 +81,7 @@ public class AddCourseService {
         }
     }
 
-    public Set<Program> getPrograms(Set<Long> ids, ExceptionList exceptions) throws ExceptionList {
+    public Set<Program> getPrograms(Set<Long> ids, ExceptionList exceptions) {
         Set<Program> programs = new HashSet<>();
         ExceptionList exceptionList = new ExceptionList();
         ids.forEach(L -> programRepository.findById(L).
