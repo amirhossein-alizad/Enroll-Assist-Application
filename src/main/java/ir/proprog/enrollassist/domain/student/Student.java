@@ -33,32 +33,18 @@ public class Student {
     private StudentNumber studentNumber;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
-    private String name;
-    @ManyToMany
-    private Set<Program> programs = new HashSet<>();
+    @ManyToOne
+    private Program program;
 
-    @OneToMany
-    private List<Student> pending = new ArrayList<>();
-    @OneToMany
-    private List<Student> requested = new ArrayList<>();
-    @OneToMany
-    private List<Student> friends = new ArrayList<>();
-    @OneToMany
-    private List<Student> blocked = new ArrayList<>();
-
-
-    public Student(@NonNull String studentNumber, @NonNull String name) {
+    public Student(@NonNull String studentNumber) {
         this.studentNumber = new StudentNumber(studentNumber);
-        this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull String graduateLevel) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
         } catch (Exception e) { exceptionList.addNewException(e); }
-        if (name.equals(""))
-            exceptionList.addNewException(new Exception("Student name can not be empty."));
         try {
             this.graduateLevel = GraduateLevel.valueOf(graduateLevel);
         } catch (Exception e) { exceptionList.addNewException(new Exception("Graduate level is not valid.")); }
@@ -66,7 +52,6 @@ public class Student {
         if (exceptionList.hasException())
             throw exceptionList;
 
-        this.name = name;
     }
 
 
@@ -92,16 +77,10 @@ public class Student {
         return false;
     }
 
-    public Student addProgram(Program program) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
-        if (!program.getGraduateLevel().equals(graduateLevel))
-            exceptionList.addNewException(new Exception("You must take programs with the same graduate level."));
-        for (Program p: this.programs)
-            if (p.getProgramType().equals(program.getProgramType()))
-                exceptionList.addNewException(new Exception("You cannot take more than one major or minor program."));
-        if (exceptionList.hasException())
-            throw exceptionList;
-        this.programs.add(program);
+    public Student addProgram(Program newProgram) throws Exception {
+        if (!newProgram.getGraduateLevel().equals(this.graduateLevel))
+            throw  new Exception("You must take programs with the same graduate level.");
+        this.program = newProgram;
         return this;
     }
 
@@ -128,9 +107,7 @@ public class Student {
     @VisibleForTesting
     List<Course> getTakeableCourses(){
         Set<Course> passed = grades.stream().filter(sr -> sr.isPassed(this.graduateLevel)).map(StudyRecord::getCourse).collect(Collectors.toSet());
-        Set<Course> all = new HashSet<>();
-        for (Program p: programs)
-            all.addAll(p.getCourses());
+        Set<Course> all = new HashSet<>(program.getCourses());
         all.removeAll(passed);
         return all.stream().filter(course -> course.canBeTakenBy(this).isEmpty()).collect(Collectors.toList());
     }
@@ -143,97 +120,9 @@ public class Student {
 
     public List<EnrollmentRuleViolation> canTake(Course course) {
         List<EnrollmentRuleViolation> violations = new ArrayList<>();
-        for (Program p: this.programs)
-            if (p.hasCourse(course) && p.getProgramType().equals(ProgramType.Major))
-                return course.canBeTakenBy(this);
-
+        if (program.hasCourse(course) && program.getProgramType().equals(ProgramType.Major))
+            return course.canBeTakenBy(this);
         return violations;
-    }
-
-    public void sendFriendshipRequest(Student other) throws Exception {
-        if (this.friends.contains(other))
-            throw new Exception("This user is already your friend.");
-        else if (this.requested.contains(other))
-            throw new Exception("You requested to this user before.");
-        else if (this.pending.contains(other))
-            throw new Exception("This user requested first.");
-        else if(this.blocked.contains(other))
-            throw new Exception("You have blocked this user.");
-        else if (this.equals(other))
-            throw new Exception("You cannot send friendship request to yourself.");
-
-        this.pending.add(other);
-    }
-
-    public void receiveFriendshipRequest(Student other) throws Exception {
-        if(this.blocked.contains(other))
-            throw new Exception("You have been blocked by this user.");
-
-        this.requested.add(other);
-    }
-
-    public void removeFriend(Student other) throws Exception {
-        if (this.requested.contains(other))
-            this.requested.remove(other);
-        else if (this.pending.contains(other))
-            this.pending.remove(other);
-        else if (this.friends.contains(other))
-            this.friends.remove(other);
-        else if (this.blocked.contains(other))
-            this.blocked.remove(other);
-        else
-            throw new Exception("There is no relation between these students.");
-    }
-
-    public List<Student> getAllFriends() {
-        List<Student> allFriends = new ArrayList<>();
-        allFriends.addAll(this.friends);
-        allFriends.addAll(this.requested);
-        allFriends.addAll(this.blocked);
-        allFriends.addAll(this.pending);
-        return allFriends;
-    }
-
-    public void acceptRequest(Student other) throws Exception {
-        if (this.requested.contains(other)) {
-            this.requested.remove(other);
-            this.friends.add(other);
-        }
-        else
-            throw new Exception("This user did not request to be your friend.");
-
-    }
-
-    public void addFriend(Student other) {
-        this.pending.remove(other);
-        this.friends.add(other);
-    }
-
-    public Student blockFriend(Student other) throws Exception {
-        if (this.friends.contains(other)) {
-            this.friends.remove(other);
-            this.blocked.add(other);
-            return this;
-        }
-        else
-            throw new Exception("This student is not your friend.");
-    }
-
-    public Student unblockFriend(Student other) throws Exception{
-        if (this.blocked.contains(other)) {
-            this.blocked.remove(other);
-            return this;
-        }
-        else
-            throw new Exception("This user is not blocked.");
-    }
-
-    public List<Student> getFriendsWhoDoesntBlock() {
-        List<Student> friendStudents = new ArrayList<>();
-        for (Student s: this.friends)
-            if (s.friends.contains(this))
-                friendStudents.add(s);
-        return friendStudents;
     }
 
 }

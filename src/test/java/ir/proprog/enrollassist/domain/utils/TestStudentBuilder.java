@@ -7,25 +7,18 @@ import ir.proprog.enrollassist.domain.student.Student;
 import static org.mockito.Mockito.mock;
 
 public class TestStudentBuilder {
-    private String name;
     private Major major;
     private String graduateLevel;
     private String studentNumber;
 
     public TestStudentBuilder()
     {
-        name = "bebe";
         graduateLevel = "PHD";
         studentNumber = "810190000";
     }
 
     public TestStudentBuilder withGraduateLevel(String _graduateLevel) {
         graduateLevel = _graduateLevel;
-        return this;
-    }
-
-    public TestStudentBuilder withName(String _name) {
-        name = _name;
         return this;
     }
 
@@ -44,6 +37,6 @@ public class TestStudentBuilder {
     }
 
     public Student build() throws ExceptionList {
-        return new Student(studentNumber, name, graduateLevel);
+        return new Student(studentNumber, graduateLevel);
     }
 }
