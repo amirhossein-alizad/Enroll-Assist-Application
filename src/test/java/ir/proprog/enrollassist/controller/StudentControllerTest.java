@@ -1,6 +1,7 @@
 package ir.proprog.enrollassist.controller;
 
 import ir.proprog.enrollassist.controller.student.StudentController;
+import ir.proprog.enrollassist.domain.GraduateLevel;
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.program.Program;
@@ -56,69 +57,62 @@ public class StudentControllerTest {
 
     @Test
     public void Requested_student_is_returned_correctly() throws Exception {
-        Student student = new Student("81818181", "Mehrnaz");
+        Student student = new Student("81818181");
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
         mvc.perform(get("/student/81818181")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Mehrnaz")))
-                .andExpect(jsonPath("$.studentNo", is("81818181")));
+                .andExpect(jsonPath("$.studentNo.number", is("81818181")));
+    }
+
+    @Test
+    public void Student_unreal_userId_not_found() throws Exception {
+        JSONObject request = new JSONObject();
+        JSONObject studentNo = new JSONObject();
+        studentNo.put("number", "81818181");
+        request.put("studentNo", studentNo);
+        request.put("userId", "12");
+        request.put("graduateLevel", GraduateLevel.Undergraduate);
+        mvc.perform(post("/student")
+                .content(request.toString())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test
     public void Student_with_same_student_number_cannot_be_added_again() throws Exception {
         JSONObject request = new JSONObject();
-        request.put("studentNo", "81818181");
-        request.put("name", "Sara");
-        request.put("majorId", 12L);
-        request.put("educationGrade", "Undergraduate");
-        Major major = mock(Major.class);
-        Student student = new Student("81818181", "Mehrnaz");
+        JSONObject studentNo = new JSONObject();
+        studentNo.put("number", "81818181");
+        request.put("studentNo", studentNo);
+        request.put("userId", "12");
+        request.put("graduateLevel", GraduateLevel.Undergraduate);
+        Student student = new Student("81818181");
+        given(userRepository.findByUserId("12")).willReturn(Optional.of(new User("user", "12")));
         given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.of(student));
-        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
-        mvc.perform(post("/student")
+        MvcResult result = mvc.perform(post("/student")
                .content(request.toString())
                .contentType(MediaType.APPLICATION_JSON))
-               .andExpect(status().isBadRequest());
+               .andExpect(status().isBadRequest())
+                .andReturn();
+        assertEquals(result.getResponse().getErrorMessage(), "This student already exists.");
+
     }
 
     @Test
     public void Valid_student_is_added_correctly() throws Exception {
         JSONObject request = new JSONObject();
-        Major major = mock(Major.class);
-        request.put("studentNo", "81818181");
-        request.put("name", "Sara");
-        request.put("userId", 1L);
+        JSONObject studentNo = new JSONObject();
+        studentNo.put("number", "81818181");
+        request.put("studentNo", studentNo);
+        request.put("userId", "12");
         request.put("graduateLevel", "Undergraduate");
-        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user", "30")));
-        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
-        given(this.majorRepository.findById(12L)).willReturn(Optional.of(major));
+        given(userRepository.findByUserId("12")).willReturn(Optional.of(new User("user", "12")));
         mvc.perform(post("/student")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name", is("Sara")))
-                .andExpect(jsonPath("$.studentNo", is("81818181")));
-    }
-
-    @Test
-    public void Student_with_invalid_info_is_not_added() throws Exception {
-        JSONObject request = new JSONObject();
-        Major major = mock(Major.class);
-        request.put("studentNo", "81818181");
-        request.put("name", "");
-        request.put("graduateLevel", "Masters");
-        request.put("userId", 1L);
-        given(userRepository.findById(1L)).willReturn(Optional.of(new User("user", "12")));
-        given(this.studentRepository.findByStudentNumber(new StudentNumber("81818181"))).willReturn(Optional.empty());
-        given(this.majorRepository.findById(12L)).willReturn(Optional.ofNullable(major));
-        MvcResult result =  mvc.perform(post("/student")
-                .content(request.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andReturn();
-        String content = result.getResponse().getErrorMessage();
-        assertEquals(content, "{\"1\":\"Student name can not be empty.\"}");
+                .andExpect(jsonPath("$.studentNo.number", is("81818181")));
     }
 
 

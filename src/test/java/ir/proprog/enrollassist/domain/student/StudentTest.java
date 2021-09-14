@@ -73,15 +73,13 @@ public class StudentTest {
         Throwable error = assertThrows(
                 ExceptionList.class, () -> {
                     Student bebe = new TestStudentBuilder()
-                            .withName("")
                             .withStudentNumber("")
                             .withGraduateLevel("student")
                             .build();
                 }
         );
         assertEquals(error.toString(), "{\"1\":\"Student number can not be empty.\"," +
-                "\"2\":\"Student name can not be empty.\"," +
-                "\"3\":\"Graduate level is not valid.\"}");
+                "\"2\":\"Graduate level is not valid.\"}");
     }
 
     @Test

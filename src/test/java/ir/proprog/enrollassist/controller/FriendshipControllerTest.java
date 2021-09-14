@@ -301,7 +301,7 @@ public class FriendshipControllerTest {
     @Test
     public void Student_can_see_her_friends_enrollments() throws Exception{
         User user = mock(User.class);
-        Student student = new Student("000012", "Sarina");
+        Student student = new Student("000012", "Undergraduate");
         User friend = new User("Nina", "NN");
         friend.addStudent(student);
         EnrollmentList enrollmentList1 = new EnrollmentList("Sarina's list", student);

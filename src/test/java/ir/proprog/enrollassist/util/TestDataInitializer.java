@@ -49,14 +49,14 @@ public class TestDataInitializer {
         Program p = new Program(ce, "Undergraduate", 140, 140, "Major");
         p.addCourse();
 
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate")
+        Student mahsa = new Student("810199999", "Undergraduate")
                 .setGrade("13981", math1, 10)
                 .setGrade("13981", phys1, 12)
                 .setGrade("13981", prog, 16.3)
                 .setGrade("13981", farsi, 18.5)
                 .setGrade("13981", akhlagh, 15);
         studentRepository.save(mahsa);
-        Student changiz = new Student("810199998", "Changiz Changizi", "Undergraduate")
+        Student changiz = new Student("810199998", "Undergraduate")
                 .setGrade("13981", math1, 13.2)
                 .setGrade("13981", phys1, 8.3)
                 .setGrade("13981", prog, 10.5)

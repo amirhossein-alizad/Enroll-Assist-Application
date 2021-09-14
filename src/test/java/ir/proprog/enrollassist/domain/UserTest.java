@@ -31,6 +31,7 @@ public class UserTest {
         assertEquals(error.getMessage().toString(), "Name can not be empty.");
     }
 
+
     @Test
     void Students_with_the_same_name_are_added_to_users_list_correctly() throws Exception{
         student2 = testStudentBuilder

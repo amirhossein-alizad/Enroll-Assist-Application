@@ -31,11 +31,10 @@ public class StudentRepositoryTest {
     public void Student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
         Major major = new Major("12", "CE");
         majorRepository.save(major);
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate");
+        Student mahsa = new Student("810199999", "Undergraduate");
         studentRepository.save(mahsa);
         Optional<Student> res = studentRepository.findByStudentNumber(new StudentNumber("810199999"));
         assertThat(res.get().getStudentNumber().getNumber()).isEqualTo("810199999");
-        assertThat(res.get().getName()).isEqualTo("Mahsa Mahsaei");
     }
 
     @Test
@@ -48,7 +47,7 @@ public class StudentRepositoryTest {
     public void All_lists_for_student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
         Major major = new Major("12", "CE");
         majorRepository.save(major);
-        Student john = new Student("810100000", "John  Doe", "Undergraduate");
+        Student john = new Student("810100000", "Undergraduate");
         studentRepository.save(john);
         EnrollmentList list1 = new EnrollmentList("1st list", john);
         EnrollmentList list2 = new EnrollmentList("2nd list", john);

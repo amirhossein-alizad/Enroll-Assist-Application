@@ -45,8 +45,8 @@ public class UserControllerTest {
     static void setUp() throws Exception {
          user1 = new User("Matt", "M1");
          user2 = new User("Pat", "P1");
-         student1 = new Student("1111111", "Matt");
-         student2 = new Student("2222222", "Matt");
+         student1 = new Student("1111111", "Undergraduate");
+         student2 = new Student("2222222", "Undergraduate");
          user1.addStudent(student1);
          user1.addStudent(student2);
     }
@@ -151,10 +151,10 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].name", is("Matt")))
-                .andExpect(jsonPath("$[0].studentNo", is("2222222")))
-                .andExpect(jsonPath("$[1].name", is("Matt")))
-                .andExpect(jsonPath("$[1].studentNo", is("1111111")));
+                .andExpect(jsonPath("$[0].graduateLevel", is("Undergraduate")))
+                .andExpect(jsonPath("$[0].studentNo.number", is("2222222")))
+                .andExpect(jsonPath("$[1].graduateLevel", is("Undergraduate")))
+                .andExpect(jsonPath("$[1].studentNo.number", is("1111111")));
     }
 
     @Test
@@ -165,8 +165,8 @@ public class UserControllerTest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].name", is("Matt")))
-                .andExpect(jsonPath("$[0].studentNo", is("1111111")));
+                .andExpect(jsonPath("$[0].graduateLevel", is("Undergraduate")))
+                .andExpect(jsonPath("$[0].studentNo.number", is("1111111")));
     }
 
     @Test
