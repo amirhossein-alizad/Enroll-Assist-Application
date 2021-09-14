@@ -171,13 +171,13 @@ public class UserControllerTest {
 
     @Test
     public void Student_cannot_be_added_to_user_twice() throws Exception {
-        user2.addStudent(student1);
         given(userRepository.findById(2L)).willReturn(Optional.ofNullable(user2));
+        given(userRepository.findByStudentId(1L)).willReturn(Optional.ofNullable(user2));
         given(studentRepository.findById(1L)).willReturn(Optional.ofNullable(student1));
         mvc.perform(put("/users/2/students/1")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "This student already exists."));
+                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "This student is taken by a user."));
     }
 
     @Test

@@ -63,6 +63,8 @@ public class UserController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
         Student student = this.studentRepository.findById(studentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        if (userRepository.findByStudentId(studentId).isPresent())
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student is taken by a user.");
         try {
             user.addStudent(student);
         } catch(Exception exception) {
