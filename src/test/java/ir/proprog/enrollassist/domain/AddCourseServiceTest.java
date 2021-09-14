@@ -74,14 +74,10 @@ public class AddCourseServiceTest {
     }
 
     @Test
-    public void Unreal_major_is_not_returned_correctly() {
+    public void Unreal_major_is_not_returned_correctly() throws ExceptionList {
         Long id1 = 68L;
-        String error = "";
-        try {
-            addCourseService.getPrograms(Set.of(id1));
-        } catch (ExceptionList exceptionList) {
-            error = exceptionList.toString();
-        }
-        assertEquals(error, "{\"1\":\"Program with id = 68 was not found.\"}");
+        ExceptionList exceptionList = new ExceptionList();
+        addCourseService.getPrograms(Set.of(id1), exceptionList);
+        assertEquals(exceptionList.toString(), "{\"1\":\"Program with id = 68 was not found.\"}");
     }
 }

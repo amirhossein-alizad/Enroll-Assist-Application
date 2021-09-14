@@ -147,7 +147,6 @@ public class CourseControllerTest {
 
         ExceptionList exceptionList = new ExceptionList();
         exceptionList.addNewException(new Exception("Program with id = 45 was not found."));
-        when(addCourseService.getPrograms(Set.of(45L))).thenThrow(exceptionList);
         when(addCourseService.addCourse(courseMajorView)).thenReturn(course);
 
         ObjectMapper objectMapper = new ObjectMapper();
