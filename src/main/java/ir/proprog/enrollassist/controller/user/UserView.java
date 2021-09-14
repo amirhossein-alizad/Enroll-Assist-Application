@@ -1,7 +1,9 @@
-package ir.proprog.enrollassist.controller.friendship;
+package ir.proprog.enrollassist.controller.user;
 
 import ir.proprog.enrollassist.domain.user.User;
+import lombok.Getter;
 
+@Getter
 public class UserView {
     private Long id;
     private String userId;

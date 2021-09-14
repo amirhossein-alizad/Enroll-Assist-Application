@@ -1,5 +1,6 @@
 package ir.proprog.enrollassist.controller.friendship;
 
+import ir.proprog.enrollassist.controller.user.UserView;
 import ir.proprog.enrollassist.domain.user.User;
 import ir.proprog.enrollassist.repository.UserRepository;
 import lombok.AllArgsConstructor;
