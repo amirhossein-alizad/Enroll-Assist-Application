@@ -13,6 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 @AllArgsConstructor
@@ -62,53 +64,35 @@ public class AddCourseService {
     private Set<Course> validatePrerequisites(Set<Long> prerequisiteIds) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         Set<Course> prerequisites = new HashSet<>();
-        for(Long L : prerequisiteIds){
-            Optional<Course> pre = courseRepository.findById(L);
-            if(pre.isEmpty())
-                exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)));
-            else {
-                try {
-                    this.checkLoop(pre.get());
-                    prerequisites.add(pre.get());
-                }catch (ExceptionList e) {
-                    exceptionList.addExceptions(e.getExceptions());
-                }
-            }
-        }
+        prerequisiteIds.forEach(L -> courseRepository.findById(L).
+                ifPresentOrElse(c -> checkLoop(c, exceptionList), () -> exceptionList.addNewException(new Exception(String.format("Course with id = %s was not found.", L)))));
         if (exceptionList.hasException())
             throw exceptionList;
+        courseRepository.findAllById(prerequisiteIds).forEach(prerequisites::add);
         return prerequisites;
     }
 
-    private void checkLoop(Course prerequisite) throws ExceptionList {
-        ExceptionList exceptionList = new ExceptionList();
+    private void checkLoop(Course prerequisite, ExceptionList exceptions) {
         Stack<Course> courseStack = new Stack<>();
         List<Course> courseList = new ArrayList<>();
         courseStack.push(prerequisite);
         while(!courseStack.isEmpty()){
             Course c = courseStack.pop();
             if(courseList.contains(c))
-                exceptionList.addNewException(new Exception(String.format("%s has made a loop in prerequisites.", c.getTitle())));
+                exceptions.addNewException(new Exception(String.format("%s has made a loop in prerequisites.", c.getTitle())));
             else{
-                for(Course p : c.getPrerequisites())
-                    courseStack.push(p);
+                courseStack.addAll(c.getPrerequisites());
                 courseList.add(c);
             }
         }
-        if (exceptionList.hasException())
-            throw exceptionList;
     }
 
     public Set<Program> getPrograms(Set<Long> ids) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         Set<Program> programs = new HashSet<>();
-        for (Long L : ids) {
-            Optional<Program> program = programRepository.findById(L);
-            if (program.isEmpty())
-                exceptionList.addNewException(new Exception(String.format("Program with id = %s was not found.", L)));
-            else
-                programs.add(program.get());
-        }
+        ids.forEach(L -> programRepository.findById(L).
+                ifPresentOrElse(programs::add,
+                        () -> exceptionList.addNewException(new Exception(String.format("Program with id = %s was not found.", L)))));
         if (exceptionList.hasException())
             throw exceptionList;
         return programs;
