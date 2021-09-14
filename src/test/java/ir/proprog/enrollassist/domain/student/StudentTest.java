@@ -226,7 +226,7 @@ public class StudentTest {
 
 
     @Test
-    void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws ExceptionList {
+    void Student_can_take_course_in_Minor_program_without_checking_prerequisites() throws Exception {
         Student student = new TestStudentBuilder().withStudentNumber("810197001").withGraduateLevel("Undergraduate").build();
         Program p = new Program(major, "Undergraduate", 12, 12, "Minor").addCourse(math2);
         student.addProgram(p);
