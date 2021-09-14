@@ -7,7 +7,6 @@ import lombok.Getter;
 public class StudentView {
     private Long studentId;
     private String studentNo;
-    private String name;
     private GraduateLevel graduateLevel;
     private Long userId;
 
@@ -17,7 +16,6 @@ public class StudentView {
     public StudentView(Student student) {
         this.studentId = student.getId();
         this.studentNo = student.getStudentNumber().getNumber();
-        this.name = student.getName();
         if (student.getGraduateLevel() != null)
             this.graduateLevel = student.getGraduateLevel();
 

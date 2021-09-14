@@ -61,7 +61,7 @@ public class DataInitializer {
         programRepository.saveAll(List.of(ceProgram, eeProgram));
 
 
-        Student mahsa = new Student("810199999", "Mahsa Mahsaei", "Undergraduate")
+        Student mahsa = new Student("810199999", "Undergraduate")
                 .setGrade("11112", math1, 10)
                 .setGrade("11112", phys1, 12)
                 .setGrade("11112", prog, 16.3)
@@ -69,7 +69,7 @@ public class DataInitializer {
                 .setGrade("11112", akhlagh, 15);
         mahsa.addProgram(ceProgram);
         studentRepository.save(mahsa);
-        Student changiz = new Student("810199998", "Changiz Changizi", "Undergraduate")
+        Student changiz = new Student("810199998", "Undergraduate")
                 .setGrade("11112", math1, 13.2)
                 .setGrade("11112", phys1, 8.3)
                 .setGrade("11112", prog, 10.5)

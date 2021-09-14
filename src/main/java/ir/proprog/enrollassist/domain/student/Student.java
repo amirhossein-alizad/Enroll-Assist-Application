@@ -33,22 +33,18 @@ public class Student {
     private StudentNumber studentNumber;
     @OneToMany(cascade = CascadeType.ALL)
     private Set<StudyRecord> grades = new HashSet<>();
-    private String name;
     @ManyToOne
     private Program program;
 
-    public Student(@NonNull String studentNumber, @NonNull String name) {
+    public Student(@NonNull String studentNumber) {
         this.studentNumber = new StudentNumber(studentNumber);
-        this.name = name;
     }
 
-    public Student(@NonNull String studentNumber, @NonNull String name, @NonNull String graduateLevel) throws ExceptionList {
+    public Student(@NonNull String studentNumber, @NonNull String graduateLevel) throws ExceptionList {
         ExceptionList exceptionList = new ExceptionList();
         try {
             this.studentNumber = new StudentNumber(studentNumber);
         } catch (Exception e) { exceptionList.addNewException(e); }
-        if (name.equals(""))
-            exceptionList.addNewException(new Exception("Student name can not be empty."));
         try {
             this.graduateLevel = GraduateLevel.valueOf(graduateLevel);
         } catch (Exception e) { exceptionList.addNewException(new Exception("Graduate level is not valid.")); }
@@ -56,7 +52,6 @@ public class Student {
         if (exceptionList.hasException())
             throw exceptionList;
 
-        this.name = name;
     }
 
 

@@ -28,19 +28,9 @@ public class UserTest {
     void User_name_can_not_be_empty(){
         Throwable error = assertThrows(Exception.class, () ->
                 new User("", "12"));
-        assertEquals(error.getMessage().toString(), "Name can not be empty.");
+        assertEquals(error.getMessage(), "Name can not be empty.");
     }
 
-
-    @Test
-    void Students_with_different_names_are_not_added_to_users_list() throws Exception{
-        student2 = testStudentBuilder
-                .withName("amir")
-                .build();
-        Throwable error = assertThrows(Exception.class, () ->
-                user.addStudent(student2));
-        assertEquals(error.getMessage().toString(), "Student name can not be different.");
-    }
 
     @Test
     void Students_with_the_same_name_are_added_to_users_list_correctly() throws Exception{
@@ -64,7 +54,7 @@ public class UserTest {
 
 
     @Test
-    void Student_cant_block_other_student_who_is_not_her_friend() throws ExceptionList {
+    void Student_cant_block_other_student_who_is_not_her_friend() {
         User friend = new User("Ali", "30");
         Throwable error = assertThrows(Exception.class, () -> bebe.blockFriend(friend));
         assertEquals(error.getMessage(), "This student is not your friend.");
@@ -79,14 +69,14 @@ public class UserTest {
     }
 
     @Test
-    void Student_cant_unblocked_the_student_who_is_not_blocked() throws ExceptionList {
+    void Student_cant_unblocked_the_student_who_is_not_blocked() {
         User friend = new User("Ali", "30");
         Throwable error = assertThrows(Exception.class, () -> bebe.unblockFriend(friend));
         assertEquals(error.getMessage(), "This user is not blocked.");
     }
 
     @Test
-    void Students_friends_who_dont_block_student_return_correctly() throws ExceptionList {
+    void Students_friends_who_dont_block_student_return_correctly() {
         User friend1 = new User("Ali", "30");
         User friend2 = new User("Zahra", "31");
         bebe.getFriends().add(friend1);
@@ -96,7 +86,7 @@ public class UserTest {
         assertThat(bebe.getFriendsWhoDoesntBlock()).hasSize(1).contains(friend1);
     }
     @Test
-    void Students_cannot_send_friendship_request_to_their_friends() throws ExceptionList {
+    void Students_cannot_send_friendship_request_to_their_friends() {
         User friend = new User("Ali", "30");
         bebe.getFriends().add(friend);
         Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
@@ -104,7 +94,7 @@ public class UserTest {
     }
 
     @Test
-    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() throws ExceptionList {
+    void Students_cannot_send_friendship_request_to_students_they_have_already_requested() {
         User friend = new User("Ali", "30");
         bebe.getRequested().add(friend);
         Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
@@ -112,7 +102,7 @@ public class UserTest {
     }
 
     @Test
-    void Students_cannot_send_friendship_request_to_pending_students() throws ExceptionList {
+    void Students_cannot_send_friendship_request_to_pending_students() {
         User friend = new User("Ali", "30");
         bebe.getPending().add(friend);
         Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
@@ -120,7 +110,7 @@ public class UserTest {
     }
 
     @Test
-    void Students_cannot_send_friendship_request_to_blocked_students() throws ExceptionList {
+    void Students_cannot_send_friendship_request_to_blocked_students() {
         User friend = new User("Ali", "30");
         bebe.getBlocked().add(friend);
         Throwable error = assertThrows(Exception.class, () -> bebe.sendFriendshipRequest(friend));
@@ -176,14 +166,14 @@ public class UserTest {
     }
 
     @Test
-    void Friendships_cannot_be_removed_without_any_relation() throws ExceptionList {
+    void Friendships_cannot_be_removed_without_any_relation() {
         User friend = new User("Ali", "30");
         Throwable error = assertThrows(Exception.class, () -> bebe.removeFriend(friend));
         assertEquals(error.getMessage(), "There is no relation between these users.");
     }
 
     @Test
-    void All_friends_are_returned_correctly() throws ExceptionList {
+    void All_friends_are_returned_correctly() {
         User friend1 = new User("Ali", "30");
         User friend2 = new User("Zahra", "31");
         User friend3 = new User("Arash", "33");
@@ -204,7 +194,7 @@ public class UserTest {
     }
 
     @Test
-    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() throws ExceptionList {
+    void Student_cannot_accept_friends_who_are_not_in_her_requested_list() {
         User friend = new User("Ali", "30");
         bebe.getBlocked().add(friend);
         Throwable error = assertThrows(Exception.class, () -> bebe.acceptRequest(friend));

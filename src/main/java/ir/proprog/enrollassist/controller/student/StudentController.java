@@ -52,7 +52,7 @@ public class StudentController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "This student already exists.");
         Student newStudent;
         try {
-            newStudent = new Student(studentView.getStudentNo(), studentView.getName(), studentView.getGraduateLevel().toString());
+            newStudent = new Student(studentView.getStudentNo(), studentView.getGraduateLevel().toString());
         } catch (ExceptionList exceptionList) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptionList.toString());
         }
