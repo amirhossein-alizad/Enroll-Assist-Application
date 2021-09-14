@@ -19,6 +19,7 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/users")
 public class UserController {
     private UserRepository userRepository;
+    private StudentRepository studentRepository;
 
     @GetMapping
     public Iterable<UserView> all() {
@@ -53,6 +54,21 @@ public class UserController {
     public Iterable<StudentView> getStudents(@PathVariable Long id) {
         User user = this.userRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        return user.getStudents().stream().map(StudentView::new).collect(Collectors.toList());
+    }
+
+    @PutMapping("/{id}/students/{studentId}")
+    public Iterable<StudentView> addStudent(@PathVariable Long id,@PathVariable Long studentId) {
+        User user = this.userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        Student student = this.studentRepository.findById(studentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Student not found"));
+        try {
+            user.addStudent(student);
+        } catch(Exception exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        }
+        userRepository.save(user);
         return user.getStudents().stream().map(StudentView::new).collect(Collectors.toList());
     }
 }
