@@ -3,7 +3,6 @@ package ir.proprog.enrollassist.controller;
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.major.MajorController;
 import ir.proprog.enrollassist.domain.course.Course;
-import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.utils.TestCourseBuilder;
 import ir.proprog.enrollassist.domain.utils.TestMajorBuilder;
@@ -35,11 +34,8 @@ public class MajorControllerTest {
     private MockMvc mvc;
     @MockBean
     private MajorRepository majorRepository;
-    @MockBean
-    private FacultyRepository facultyRepository;
     private Major major1, major2;
     private Course course1, course2;
-    private Faculty faculty;
     JSONObject request;
     JSONObject response;
 
@@ -67,7 +63,6 @@ public class MajorControllerTest {
     }
 
     void setUpWithMock() {
-        faculty = mock(Faculty.class);
         major1 = mock(Major.class);
         request = new JSONObject();
         response = new JSONObject();
@@ -94,7 +89,6 @@ public class MajorControllerTest {
         request.put("majorName", "CHEM");
         request.put("majorNumber", "8102");
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
         mvc.perform(post("/majors/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -110,7 +104,6 @@ public class MajorControllerTest {
         request.put("majorNumber", "8101");
         response.put("1", "Major with name EE exists.");
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
         mvc.perform(post("/majors/1")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
@@ -138,7 +131,6 @@ public class MajorControllerTest {
         response.put("1", "Major name can not be empty.");
         response.put("2", "Major number can not be empty.");
 
-        given(facultyRepository.findById(1L)).willReturn(java.util.Optional.ofNullable(faculty));
 
         mvc.perform(post("/majors/1")
                 .content(request.toString())

@@ -1,8 +1,6 @@
 package ir.proprog.enrollassist.controller.major;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.controller.course.CourseView;
-import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
@@ -19,7 +17,6 @@ import java.util.stream.StreamSupport;
 @RequestMapping("/majors")
 public class MajorController {
     private MajorRepository majorRepository;
-    private FacultyRepository facultyRepository;
 
     @GetMapping
     public Iterable<MajorView> all() {
@@ -33,10 +30,8 @@ public class MajorController {
 //        return major.getCourses().stream().map(CourseView::new).collect(Collectors.toList());
 //    }
 
-    @PostMapping(value = "/{facultyId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
-    public MajorView addOne(@PathVariable Long facultyId, @RequestBody MajorView majorView) {
-        Faculty faculty = this.facultyRepository.findById(facultyId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Faculty not found"));
+    @PostMapping(consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public MajorView addOne(@RequestBody MajorView majorView) {
         ExceptionList exceptions = new ExceptionList();
         if (majorRepository.findByMajorName(majorView.getMajorName()).isPresent())
             exceptions.addNewException(new Exception("Major with name " + majorView.getMajorName() + " exists."));
@@ -48,8 +43,6 @@ public class MajorController {
         }
         if (exceptions.hasException())
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exceptions.toString());
-        faculty.addMajor(major);
-        facultyRepository.save(faculty);
         majorRepository.save(major);
         return new MajorView(major);
     }

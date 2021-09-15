@@ -2,11 +2,8 @@ package ir.proprog.enrollassist.controller.program;
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
 import ir.proprog.enrollassist.controller.course.CourseView;
-import ir.proprog.enrollassist.controller.major.MajorView;
-import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.program.Program;
-import ir.proprog.enrollassist.domain.program.ProgramType;
 import ir.proprog.enrollassist.repository.MajorRepository;
 import ir.proprog.enrollassist.repository.ProgramRepository;
 import lombok.AllArgsConstructor;

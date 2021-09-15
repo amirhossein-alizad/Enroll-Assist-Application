@@ -3,7 +3,6 @@ package ir.proprog.enrollassist;
 
 import ir.proprog.enrollassist.domain.course.Course;
 import ir.proprog.enrollassist.domain.enrollmentList.EnrollmentList;
-import ir.proprog.enrollassist.domain.faculty.Faculty;
 import ir.proprog.enrollassist.domain.major.Major;
 import ir.proprog.enrollassist.domain.program.Program;
 import ir.proprog.enrollassist.domain.section.ExamTime;
@@ -11,7 +10,6 @@ import ir.proprog.enrollassist.domain.section.Section;
 import ir.proprog.enrollassist.domain.student.Student;
 import ir.proprog.enrollassist.repository.*;
 import lombok.AllArgsConstructor;
-import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.Collections;
@@ -25,7 +23,6 @@ public class DataInitializer {
     SectionRepository sectionRepository;
     EnrollmentListRepository enrollmentListRepository;
     MajorRepository majorRepository;
-    FacultyRepository facultyRepository;
     ProgramRepository programRepository;
 
     @PostConstruct
@@ -50,9 +47,6 @@ public class DataInitializer {
 //        ee.addCourse();
         majorRepository.saveAll(List.of(ce, ee));
 
-        Faculty ece = new Faculty("ECE");
-        ece.addMajor(ee, ce);
-        facultyRepository.save(ece);
 
         Program ceProgram = new Program(ce, "Undergraduate", 140, 140, "Major");
         ceProgram.addCourse(math1, math2, phys1, phys2);
@@ -107,11 +101,5 @@ public class DataInitializer {
         changizList.addSections(math2_1, phys1_1, ap_1, dm_1);
         enrollmentListRepository.save(changizList);
 
-        Faculty f1 = new Faculty("TECH");
-        Faculty f2 = new Faculty("ART");
-        Faculty f3 = new Faculty("SOCIAL SCIENCE");
-        facultyRepository.save(f1);
-        facultyRepository.save(f2);
-        facultyRepository.save(f3);
     }
 }

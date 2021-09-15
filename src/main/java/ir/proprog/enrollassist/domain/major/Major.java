@@ -2,9 +2,6 @@ package ir.proprog.enrollassist.domain.major;
 
 
 import ir.proprog.enrollassist.Exception.ExceptionList;
-import ir.proprog.enrollassist.domain.GraduateLevel;
-import ir.proprog.enrollassist.domain.course.Course;
-import ir.proprog.enrollassist.domain.faculty.Faculty;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,7 +18,6 @@ public class Major {
     private Long id;
     private String majorNumber;
     private String majorName;
-    @ManyToOne
     private Faculty faculty;
 
     public Major(String majorNumber, String majorName) throws ExceptionList {
