@@ -89,7 +89,7 @@ public class MajorControllerTest {
         request.put("majorName", "CHEM");
         request.put("majorNumber", "8102");
 
-        mvc.perform(post("/majors/1")
+        mvc.perform(post("/majors")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -104,23 +104,11 @@ public class MajorControllerTest {
         request.put("majorNumber", "8101");
         response.put("1", "Major with name EE exists.");
 
-        mvc.perform(post("/majors/1")
+        mvc.perform(post("/majors")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), response.toString()));
-    }
-
-    @Test
-    public void Major_can_not_be_added_to_a_faculty_that_does_not_exist() throws Exception{
-        setUpWithMock();
-        request.put("majorName", "EE");
-        request.put("majorNumber", "8101");
-        mvc.perform(post("/majors/1")
-                .content(request.toString())
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(mvcResult -> assertEquals(mvcResult.getResponse().getErrorMessage(), "Faculty not found"));
     }
 
     @Test
@@ -132,7 +120,7 @@ public class MajorControllerTest {
         response.put("2", "Major number can not be empty.");
 
 
-        mvc.perform(post("/majors/1")
+        mvc.perform(post("/majors")
                 .content(request.toString())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
