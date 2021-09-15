@@ -42,8 +42,8 @@ public class DataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3, "Undergraduate");
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
-        Major ce = new Major("8101", "CE");
-        Major ee = new Major("8101", "EE");
+        Major ce = new Major("8101", "CE", "Engineering");
+        Major ee = new Major("8101", "EE", "Engineering");
 //        ee.addCourse();
         majorRepository.saveAll(List.of(ce, ee));
 

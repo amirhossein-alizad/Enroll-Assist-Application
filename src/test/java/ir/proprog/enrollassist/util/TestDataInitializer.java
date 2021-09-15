@@ -43,7 +43,7 @@ public class TestDataInitializer {
         Course karafarini = new Course("1313131", "KAR", 3, "Undergraduate");
         courseRepository.saveAll(List.of(math1, phys1, prog, math2, phys2, ap, dm, economy, maaref, farsi, english, akhlagh, karafarini));
 
-        Major ce = new Major("8101", "CE");
+        Major ce = new Major("8101", "CE", "Engineering");
         majorRepository.save(ce);
 
         Program p = new Program(ce, "Undergraduate", 140, 140, "Major");

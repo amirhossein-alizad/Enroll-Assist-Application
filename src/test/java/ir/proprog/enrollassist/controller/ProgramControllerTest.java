@@ -35,8 +35,8 @@ public class ProgramControllerTest {
 
     @Test
     public void All_programs_are_returned_correctly() throws Exception{
-        Major cs = new Major("8101", "CS");
-        Major ee = new Major("8101", "EE");
+        Major cs = new Major("8101", "CS", "Engineering");
+        Major ee = new Major("8101", "EE", "Engineering");
         Program p1 = new Program(cs, "Undergraduate", 140, 140, "Major");
         Program p2 = new Program(cs, "Undergraduate", 20, 32, "Minor");
         Program p3 = new Program(ee, "Undergraduate", 20, 32, "Minor");
@@ -70,7 +70,7 @@ public class ProgramControllerTest {
 
     @Test
     public void New_valid_program_is_added_correctly() throws Exception {
-        Major cs = new Major("8101", "CS");
+        Major cs = new Major("8101", "CS", "Engineering");
         JSONObject request = new JSONObject();
         request.put("graduateLevel", "Undergraduate");
         request.put("type", "Major");
@@ -92,7 +92,7 @@ public class ProgramControllerTest {
 
     @Test
     public void Program_with_invalid_graduate_level_cannot_be_added() throws Exception {
-        Major cs = new Major("8101", "CS");
+        Major cs = new Major("8101", "CS", "Engineering");
         JSONObject request = new JSONObject();
         request.put("graduateLevel", "bachelors");
         request.put("type", "regular");

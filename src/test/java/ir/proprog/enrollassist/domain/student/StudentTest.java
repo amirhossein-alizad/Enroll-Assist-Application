@@ -53,7 +53,7 @@ public class StudentTest {
                 .courseNumber("1111117")
                 .credits(3)
                 .build().withPre(math1);
-        Major major = new Major("123", "CE");
+        Major major = new Major("123", "CE", "Engineering");
         program = new Program(major, "Undergraduate", 140, 140, "Major");
         program.addCourse(math1, phys1, prog, economy, maaref, andishe, math2);
         bebe = new TestStudentBuilder()

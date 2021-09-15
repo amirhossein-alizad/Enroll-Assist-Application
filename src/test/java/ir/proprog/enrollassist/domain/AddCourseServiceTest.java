@@ -31,8 +31,8 @@ public class AddCourseServiceTest {
         Course course1 = new Course("1100112", "DS", 3, "Undergraduate");
         Course course2 = new Course("1100113", "DA", 3, "Undergraduate");
         given(courseRepository.findAll()).willReturn(List.of(course1, course2));
-        Major ce = new Major("1", "CE");
-        Major ee = new Major("2", "EE");
+        Major ce = new Major("1", "CE", "Engineering");
+        Major ee = new Major("2", "EE", "Engineering");
         Program ceMajor = new Program(ce, "Undergraduate", 140, 140, "Major");
         Program eeMajor = new Program(ee, "Undergraduate", 140, 140, "Major");
 //        ce.addCourse(course1);
@@ -71,7 +71,7 @@ public class AddCourseServiceTest {
     }
 
     @Test
-    public void Unreal_major_is_not_returned_correctly() throws ExceptionList {
+    public void Unreal_major_is_not_returned_correctly() {
         Long id1 = 68L;
         ExceptionList exceptionList = new ExceptionList();
         addCourseService.getPrograms(Set.of(id1), exceptionList);

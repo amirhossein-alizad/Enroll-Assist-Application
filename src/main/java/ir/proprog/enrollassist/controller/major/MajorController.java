@@ -37,7 +37,7 @@ public class MajorController {
             exceptions.addNewException(new Exception("Major with name " + majorView.getMajorName() + " exists."));
         Major major = null;
         try {
-            major = new Major(majorView.getMajorNumber(), majorView.getMajorName());
+            major = new Major(majorView.getMajorNumber(), majorView.getMajorName(), majorView.getFaculty());
         } catch (ExceptionList exceptionList) {
             exceptions.addExceptions(exceptionList.getExceptions());
         }

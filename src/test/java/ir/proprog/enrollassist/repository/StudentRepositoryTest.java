@@ -29,7 +29,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void Student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
-        Major major = new Major("12", "CE");
+        Major major = new Major("12", "CE", "Engineering");
         majorRepository.save(major);
         Student mahsa = new Student("810199999", "Undergraduate");
         studentRepository.save(mahsa);
@@ -45,7 +45,7 @@ public class StudentRepositoryTest {
 
     @Test
     public void All_lists_for_student_with_specific_student_number_is_returned_correctly() throws ExceptionList {
-        Major major = new Major("12", "CE");
+        Major major = new Major("12", "CE", "Engineering");
         majorRepository.save(major);
         Student john = new Student("810100000", "Undergraduate");
         studentRepository.save(john);

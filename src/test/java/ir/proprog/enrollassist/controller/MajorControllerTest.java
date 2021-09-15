@@ -88,6 +88,7 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "CHEM");
         request.put("majorNumber", "8102");
+        request.put("faculty", "Engineering");
 
         mvc.perform(post("/majors")
                 .content(request.toString())
@@ -102,6 +103,8 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "EE");
         request.put("majorNumber", "8101");
+        request.put("faculty", "Engineering");
+
         response.put("1", "Major with name EE exists.");
 
         mvc.perform(post("/majors")
@@ -116,6 +119,8 @@ public class MajorControllerTest {
         setUpWithMock();
         request.put("majorName", "");
         request.put("majorNumber", "");
+        request.put("faculty", "Engineering");
+
         response.put("1", "Major name can not be empty.");
         response.put("2", "Major number can not be empty.");
 

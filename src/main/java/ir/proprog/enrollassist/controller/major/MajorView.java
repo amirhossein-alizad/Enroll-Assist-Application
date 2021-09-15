@@ -8,6 +8,7 @@ public class MajorView {
     private Long majorId;
     private String majorNumber;
     private String majorName;
+    private String faculty;
 
     public MajorView() {
     }
@@ -16,5 +17,6 @@ public class MajorView {
         this.majorId = major.getId();
         this.majorNumber = major.getMajorNumber();
         this.majorName = major.getMajorName();
+        this.faculty = major.getFaculty().toString();
     }
 }

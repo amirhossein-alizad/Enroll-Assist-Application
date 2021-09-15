@@ -130,7 +130,7 @@ public class StudentControllerTest {
         Course ap = new Course("4444004", "AP", 3, "Undergraduate");
         Course math2 = new Course("4666644", "MATH2", 3, "Undergraduate").withPre(math1);
 
-        Major cs = new Major("1", "CS");
+        Major cs = new Major("1", "CS", "Engineering");
         Program p = new Program(cs, "Undergraduate", 140, 140, "Major");
         p.addCourse(math1, math2);
 
